@@ -23,9 +23,18 @@ import neatlogs
 # inside neatlogs.init()) auto-patches any already-imported provider SDK
 # found in SUPPORTED_PROVIDERS (which includes "anthropic"), so this runs
 # before any Anthropic API call regardless of import order.
+#
+# neatlogs.init() returns the LLMTracker it creates - capture that return
+# value directly rather than re-fetching it later via neatlogs.get_tracker().
+# The latter has been observed to raise AttributeError ("module 'neatlogs'
+# has no attribute 'get_tracker'") in some environments, seemingly from an
+# interaction between neatlogs' own import-hook self-patching and other
+# import hooks (e.g. pytest's assertion rewriter) - capturing the reference
+# up front avoids depending on that attribute resolving later at all.
 _NEATLOGS_API_KEY = os.environ.get("NEATLOGS_API_KEY")
+_neatlogs_tracker = None
 if _NEATLOGS_API_KEY:
-    neatlogs.init(
+    _neatlogs_tracker = neatlogs.init(
         api_key=_NEATLOGS_API_KEY,
         tags=["agent:intake", "project:auditflow"],
     )
@@ -41,9 +50,8 @@ def _flush_neatlogs() -> None:
     atexit hook makes) is what actually blocks until those in-flight
     sends finish, so it's the real equivalent of "flush" here.
     """
-    tracker = neatlogs.get_tracker()
-    if tracker is not None:
-        tracker.shutdown()
+    if _neatlogs_tracker is not None:
+        _neatlogs_tracker.shutdown()
 
 
 MODEL = "claude-opus-5"
