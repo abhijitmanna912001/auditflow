@@ -153,11 +153,11 @@ transaction_id is required on every case file (not optional) - it is the same jo
 
 ### Physical document fixtures (for /dataset)
 
-Each case's source documents live in a matching subfolder, one file per document, named by document ID:
+Each case's source documents live in a matching subfolder, one file per document, named by document ID. The subfolder name is the case_id EXACTLY as written (uppercase, e.g. CASE_01) - not lowercased, not reformatted. This matches what evaluation/evaluate.py actually does: it builds the fixture folder path directly from the case_id field (`os.path.join(dataset_dir, case["case_id"])`), so a mismatch here is a real path bug, not just a style inconsistency. This matters on case-sensitive filesystems (Linux) even though it can silently work on case-insensitive ones (Windows, default macOS).
 
     dataset/
-    |-- case_01.json              (ground truth)
-    |-- case_01/
+    |-- case_01.json              (ground truth - lowercase filename, by convention)
+    |-- CASE_01/                  (fixture folder - matches case_id exactly, uppercase)
     |   |-- PO-1001.txt
     |   |-- INV-1001.txt
     |   |-- REC-1001.txt
@@ -192,7 +192,7 @@ Every case JSON must satisfy all of the following before it's committed. All of 
 - transaction_id is present (deterministic CASE_NN -> TXN_NN mapping)
 - expected_action is exactly one of: auto_clear, human_review (no other values)
 - every expected_findings[].type is one of the six allowed types: duplicate_invoice, amount_mismatch, missing_po, missing_receipt, vendor_mismatch, date_inconsistency
-- every document ID referenced in expected_findings[].documents actually exists in that case's document fixtures (dataset/case_NN/)
+- every document ID referenced in expected_findings[].documents actually exists in that case's document fixtures (dataset/CASE_NN/, matching case_id exactly)
 - a case with expected_findings: [] always has expected_action: "auto_clear" (never human_review with zero findings)
 - no duplicate document IDs within a single finding's documents list
 - no duplicate findings (same type + same set of documents appearing twice)

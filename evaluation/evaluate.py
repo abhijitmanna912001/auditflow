@@ -92,7 +92,29 @@ def validate_case(case, path, case_folder=None):
             f"got {case.get('expected_action')!r}"
         )
 
-    fixture_docs = _fixture_documents(case_folder) if case_folder else None
+    # fixture_docs semantics:
+    #   case_folder is None       -> caller didn't pass one at all; skip the
+    #                                 fixture check (backward compatible with
+    #                                 validation-only callers that don't care
+    #                                 about physical fixtures yet)
+    #   case_folder given but the
+    #   directory doesn't exist   -> this is a real error: every case with
+    #                                 findings must have its fixture folder,
+    #                                 named EXACTLY as case_id (see agent-spec.md).
+    #                                 A silently-skipped check here is exactly
+    #                                 the case-sensitivity bug this guards against.
+    #   case_folder exists        -> check documents against what's actually there
+    fixture_docs = None
+    if case_folder is not None:
+        fixture_docs = _fixture_documents(case_folder)
+        if fixture_docs is None and case.get("expected_findings"):
+            errors.append(
+                f"case has expected_findings but its fixture folder does not "
+                f"exist at {case_folder}/ - the folder name must match "
+                f"case_id EXACTLY (e.g. case_id 'CASE_01' needs folder "
+                f"'CASE_01/', not 'case_01/' - see agent-spec.md 'Physical "
+                f"document fixtures')"
+            )
 
     findings = case.get("expected_findings", [])
     seen_findings = set()
