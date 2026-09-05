@@ -173,7 +173,78 @@ def score_case(expected, predicted):
     }
 
 
-def build_report(ground_truth, predictions):
+def load_anomaly_predictions(anomaly_predictions_path):
+    """
+    Load typed Anomaly Agent output for per-finding-type precision/recall.
+    Expected shape: a JSON list of Anomaly Agent outputs (agent-spec.md
+    section 3), one entry per transaction, each with case_id and findings[].
+
+    This is optional and separate from the Workpaper-based --predictions
+    scoring above, because Workpaper output only has a plain-language
+    `finding` string, not a typed `type` field, so it can't be scored
+    per-finding-type. Pass --anomaly-predictions to get this breakdown.
+    """
+    with open(anomaly_predictions_path) as f:
+        raw = json.load(f)
+    by_case = defaultdict(list)
+    for entry in raw:
+        by_case[entry["case_id"]].extend(entry.get("findings", []))
+    return by_case
+
+
+def score_finding_types(ground_truth, anomaly_predictions):
+    """
+    Per-finding-type precision/recall, comparing expected_findings[].type
+    (ground truth) against predicted findings[].type (Anomaly Agent output),
+    matched by case_id. A prediction counts as a true positive for a type if
+    that type appears in both the expected and predicted sets for that case
+    (set-based per case, not exact document-list matching).
+    """
+    tp = defaultdict(int)
+    fp = defaultdict(int)
+    fn = defaultdict(int)
+
+    for case_id, case in ground_truth.items():
+        expected_types = {f["type"] for f in case.get("expected_findings", [])}
+        predicted_types = {
+            f.get("type") for f in anomaly_predictions.get(case_id, []) if f.get("type")
+        }
+
+        for t in expected_types & predicted_types:
+            tp[t] += 1
+        for t in predicted_types - expected_types:
+            fp[t] += 1
+        for t in expected_types - predicted_types:
+            fn[t] += 1
+
+    breakdown = {}
+    for t in ALLOWED_FINDING_TYPES:
+        t_tp, t_fp, t_fn = tp[t], fp[t], fn[t]
+        precision = t_tp / (t_tp + t_fp) if (t_tp + t_fp) else None
+        recall = t_tp / (t_tp + t_fn) if (t_tp + t_fn) else None
+        if t_tp or t_fp or t_fn:
+            breakdown[t] = {
+                "precision": round(precision, 4) if precision is not None else None,
+                "recall": round(recall, 4) if recall is not None else None,
+                "true_positives": t_tp,
+                "false_positives": t_fp,
+                "false_negatives": t_fn,
+            }
+    return breakdown
+
+
+def print_finding_breakdown(breakdown):
+    if not breakdown:
+        print("(no finding-type data - pass --anomaly-predictions for this breakdown)")
+        return
+    print(f"\n{'Finding type':<20}{'Precision':>12}{'Recall':>10}{'TP':>6}{'FP':>6}{'FN':>6}")
+    for t, m in sorted(breakdown.items()):
+        p = f"{m['precision']:.0%}" if m["precision"] is not None else "n/a"
+        r = f"{m['recall']:.0%}" if m["recall"] is not None else "n/a"
+        print(f"{t:<20}{p:>12}{r:>10}{m['true_positives']:>6}{m['false_positives']:>6}{m['false_negatives']:>6}")
+
+
+def build_report(ground_truth, predictions, anomaly_predictions=None):
     case_results = []
     missing_predictions = []
 
@@ -200,6 +271,7 @@ def build_report(ground_truth, predictions):
         "avg_latency_seconds": round(sum(latencies) / len(latencies), 2) if latencies else None,
         "avg_cost_usd": round(sum(costs) / len(costs), 4) if costs else None,
         "case_results": case_results,
+        "finding_type_breakdown": score_finding_types(ground_truth, anomaly_predictions) if anomaly_predictions else {},
     }
     return report
 
@@ -224,6 +296,9 @@ def print_report(report, label=""):
             f"  [{status}] {r['case_id']}: expected {r['expected_issue_count']} "
             f"issue(s), predicted {r['predicted_issue_count']}{flag}"
         )
+
+    print("\nPer-finding-type precision/recall:")
+    print_finding_breakdown(report.get("finding_type_breakdown", {}))
 
 
 def compare_reports(report_a_path, report_b_path):
@@ -262,6 +337,7 @@ def compare_reports(report_a_path, report_b_path):
 def main():
     parser = argparse.ArgumentParser(description="AuditFlow benchmark evaluation")
     parser.add_argument("--predictions", help="Path to predictions JSON (list of Workpaper Agent outputs)")
+    parser.add_argument("--anomaly-predictions", help="Optional: path to Anomaly Agent output JSON, for per-finding-type precision/recall")
     parser.add_argument("--dataset", default="../dataset", help="Path to dataset directory (ground truth case_*.json files)")
     parser.add_argument("--output", help="Path to write the report JSON")
     parser.add_argument("--compare", nargs=2, metavar=("REPORT_A", "REPORT_B"), help="Compare two previously generated reports (e.g. V1 vs V2)")
@@ -276,7 +352,8 @@ def main():
 
     ground_truth = load_ground_truth(args.dataset)
     predictions = load_predictions(args.predictions)
-    report = build_report(ground_truth, predictions)
+    anomaly_predictions = load_anomaly_predictions(args.anomaly_predictions) if args.anomaly_predictions else None
+    report = build_report(ground_truth, predictions, anomaly_predictions)
     print_report(report, label=f"({args.predictions})")
 
     if args.output:
