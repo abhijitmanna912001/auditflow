@@ -1,22 +1,31 @@
 """Decision Agent for AuditFlow.
 
-Implements docs/agent-spec.md section 4: applies fixed confidence
-thresholds to a transaction's Anomaly Agent findings to decide auto_clear
-vs human_review.
+Implements docs/agent-spec.md section 4: decides auto_clear vs
+human_review for a transaction based on whether its Anomaly Agent findings
+list is empty or not, and reports the finding confidence for context.
 
-The threshold logic (confidence >= 0.95 -> auto_clear; confidence < 0.80 ->
-human_review; 0.80-0.95 -> human_review, borderline) is computed
-deterministically in code from the Anomaly Agent's findings, not left to
-the model. It's a fixed, mechanical rule - the system prompt itself says
-"Never silently override the threshold logic" - and an audit pipeline
-should not have a stochastic auto_clear/human_review boundary that an LLM
-might round differently between runs. The Anthropic API is still called,
-with the system prompt copied verbatim, to write the plain-language
-`reason` field the spec asks for: the one part of this agent's job that
-actually requires judgment/natural language generation rather than
-arithmetic. Every other output field (action, confidence, thresholds_used,
-findings) is computed/carried forward in code and is not something the
-model can alter.
+Decision rule (see docs/agent-spec.md section 4 for the full rationale):
+findings empty -> auto_clear; findings non-empty (any finding at all,
+regardless of type, severity, or confidence) -> human_review. This is
+computed deterministically in code, not left to the model - it's a fixed,
+mechanical rule, and an audit pipeline shouldn't have a decision an LLM
+could get wrong or apply inconsistently between runs. An earlier version of
+this rule instead gated on whether confidence crossed 0.95/0.80; that
+caused obvious, high-severity findings (which the Anomaly Agent rates with
+*high* confidence precisely because they're so clear-cut) to auto-clear -
+the opposite of intended. Ground truth confirmed the corrected rule: every
+one of this benchmark's 12 cases with any expected_findings expects
+human_review, regardless of finding type or severity.
+
+confidence and thresholds_used are still computed/echoed for context (the
+reason field, downstream display), but no longer gate the action - see the
+module-level AUTO_CLEAR_THRESHOLD/HUMAN_REVIEW_THRESHOLD constants, which
+are informational only now. The Anthropic API is still called, with the
+system prompt copied verbatim, to write the plain-language `reason` field
+the spec asks for: the one part of this agent's job that actually requires
+judgment/natural language generation rather than arithmetic. Every other
+output field (action, confidence, thresholds_used, findings) is
+computed/carried forward in code and is not something the model can alter.
 
 Per section 4's example and section 5's "(type, documents, severity,
 explanation)" description of what Workpaper receives, findings carried
@@ -42,20 +51,28 @@ MODEL = "claude-opus-5"
 # Copied verbatim from docs/agent-spec.md section 4 ("System prompt:").
 SYSTEM_PROMPT = (
     "You are the Decision Agent for AuditFlow. You receive anomaly findings "
-    "per transaction. Using the confidence score of the highest-severity "
-    "finding (or 1.0 if no findings), apply these thresholds: confidence "
-    ">= 0.95 -> action auto_clear. confidence < 0.80 -> action human_review. "
-    "Between 0.80 and 0.95 -> action human_review but flagged as borderline. "
-    "Always output a reason field explaining the decision in plain language "
-    "referencing the actual finding, and echo the thresholds used. Carry "
-    "the full findings list forward unchanged from your input into your "
-    "output (empty list if none) - you decide the action, you do not drop "
-    "or summarize the findings data, since the next agent needs it. Never "
-    "silently override the threshold logic."
+    "per transaction. If the findings list is empty, the action is "
+    "auto_clear. If the findings list is non-empty - any finding at all, "
+    "regardless of its type, severity, or confidence - the action is "
+    "human_review. Still compute a confidence value as the confidence score "
+    "of the highest-severity finding (or 1.0 if no findings) and include it "
+    "in the output for context, and echo the thresholds used (auto_clear: "
+    "0.95, human_review: 0.80) as reference values - but do not use either "
+    "one to decide the action; presence of findings alone determines "
+    "auto_clear vs human_review. Always output a reason field explaining "
+    "the decision in plain language referencing the actual finding (or "
+    "noting the transaction was clean). Carry the full findings list "
+    "forward unchanged from your input into your output (empty list if "
+    "none) - you decide the action, you do not drop or summarize the "
+    "findings data, since the next agent needs it."
 )
 
 ACTIONS = ["auto_clear", "human_review"]
 
+# Informational only as of the corrected decision rule (see module
+# docstring) - echoed in thresholds_used for context, but no longer used to
+# decide the action. The action is decided solely by whether findings is
+# empty (see _decide_action).
 AUTO_CLEAR_THRESHOLD = 0.95
 HUMAN_REVIEW_THRESHOLD = 0.80
 
@@ -150,13 +167,9 @@ def _confidence_of_highest_severity_finding(findings: list[dict]) -> float:
     return min(tied_confidences)
 
 
-def _decide_action(confidence: float) -> tuple[str, bool]:
-    """Returns (action, is_borderline) per the spec's threshold logic."""
-    if confidence >= AUTO_CLEAR_THRESHOLD:
-        return "auto_clear", False
-    if confidence < HUMAN_REVIEW_THRESHOLD:
-        return "human_review", False
-    return "human_review", True
+def _decide_action(findings: list[dict]) -> str:
+    """Per the corrected rule: any finding at all -> human_review; none -> auto_clear."""
+    return "human_review" if findings else "auto_clear"
 
 
 def _carry_forward_finding(finding: dict) -> dict:
@@ -175,26 +188,25 @@ def _build_user_message(
     action: str,
     confidence: float,
     thresholds_used: dict,
-    is_borderline: bool,
 ) -> str:
     return (
         f"Case ID: {case_id}\n"
         f"Transaction ID: {transaction_id}\n\n"
         "Anomaly Agent findings for this transaction:\n"
         f"{json.dumps(findings, indent=2)}\n\n"
-        "The action, confidence, and thresholds below have already been "
-        "computed deterministically by applying the threshold logic exactly "
-        "as specified - do not recompute, second-guess, or contradict them. "
+        "The action below has already been decided deterministically - "
+        "human_review if findings is non-empty, auto_clear if it's empty - "
+        "regardless of confidence. confidence and thresholds_used are "
+        "computed/echoed for context only and do not affect the action. Do "
+        "not recompute, second-guess, or contradict any of these values. "
         "Your only job is to write the reason field: a one-to-two sentence, "
         "plain-language explanation of this decision that references the "
         "actual finding(s) involved (or says the transaction was clean, if "
         "there are none).\n"
         f"action: {action}\n"
-        "confidence (of the highest-severity finding, or 1.0 if none): "
-        f"{confidence}\n"
-        f"thresholds_used: {json.dumps(thresholds_used)}\n"
-        f"borderline: {is_borderline} (true only when 0.80 <= confidence < "
-        "0.95 - mention this explicitly in the reason if true)\n"
+        "confidence (of the highest-severity finding, or 1.0 if none - "
+        f"context only, does not determine the action): {confidence}\n"
+        f"thresholds_used (reference values only): {json.dumps(thresholds_used)}\n"
     )
 
 
@@ -213,7 +225,7 @@ def run_decision_agent(
     findings = anomaly_transaction["findings"]
 
     confidence = _confidence_of_highest_severity_finding(findings)
-    action, is_borderline = _decide_action(confidence)
+    action = _decide_action(findings)
     thresholds_used = {
         "auto_clear": AUTO_CLEAR_THRESHOLD,
         "human_review": HUMAN_REVIEW_THRESHOLD,
@@ -221,7 +233,7 @@ def run_decision_agent(
     carried_findings = [_carry_forward_finding(f) for f in findings]
 
     user_message = _build_user_message(
-        case_id, transaction_id, findings, action, confidence, thresholds_used, is_borderline
+        case_id, transaction_id, findings, action, confidence, thresholds_used
     )
 
     client = client or anthropic.Anthropic()
