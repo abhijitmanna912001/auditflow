@@ -1,1 +1,8 @@
 anthropic>=1.4.0,<2
+neatlogs>=1.1.8,<2
+# neatlogs imports requests at module load but doesn't declare it as an
+# install dependency in its PyPI metadata (its bundled internal
+# requirements.txt lists it, but that's not wired into the wheel's
+# Requires-Dist) - pinned explicitly so `pip install -r requirements.txt`
+# doesn't hit ModuleNotFoundError: No module named 'requests'.
+requests>=2.31

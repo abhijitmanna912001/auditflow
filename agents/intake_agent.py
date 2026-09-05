@@ -11,10 +11,40 @@ Usage:
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
 import anthropic
+import neatlogs
+
+# Tracing is opt-in via env var so no secret is ever committed to this
+# public repo - set NEATLOGS_API_KEY to enable. instrument_all() (called
+# inside neatlogs.init()) auto-patches any already-imported provider SDK
+# found in SUPPORTED_PROVIDERS (which includes "anthropic"), so this runs
+# before any Anthropic API call regardless of import order.
+_NEATLOGS_API_KEY = os.environ.get("NEATLOGS_API_KEY")
+if _NEATLOGS_API_KEY:
+    neatlogs.init(
+        api_key=_NEATLOGS_API_KEY,
+        tags=["agent:intake", "project:auditflow"],
+    )
+
+
+def _flush_neatlogs() -> None:
+    """Block until any in-flight Neatlogs trace uploads finish.
+
+    neatlogs 1.1.8 has no public flush() function - each span is POSTed to
+    the Neatlogs backend on a background thread as soon as it completes
+    (LLMTracker.log_llm_call -> _send_data_to_server), not buffered for a
+    later flush. LLMTracker.shutdown() (the same call neatlogs' own
+    atexit hook makes) is what actually blocks until those in-flight
+    sends finish, so it's the real equivalent of "flush" here.
+    """
+    tracker = neatlogs.get_tracker()
+    if tracker is not None:
+        tracker.shutdown()
+
 
 MODEL = "claude-opus-5"
 
@@ -120,6 +150,9 @@ def run_intake_agent(
 
     text = next(block.text for block in response.content if block.type == "text")
     parsed = json.loads(text)
+
+    _flush_neatlogs()
+
     return parsed["documents"]
 
 
