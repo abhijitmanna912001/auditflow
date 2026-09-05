@@ -6,3 +6,7 @@ neatlogs>=1.1.8,<2
 # Requires-Dist) - pinned explicitly so `pip install -r requirements.txt`
 # doesn't hit ModuleNotFoundError: No module named 'requests'.
 requests>=2.31
+
+# orchestration/api.py - minimal local HTTP wrapper around the pipeline
+fastapi>=0.115
+uvicorn>=0.34
