@@ -143,6 +143,23 @@ Each case's expected result should mirror the Anomaly + Decision shape so agent 
         severity: "medium"
     expected_action: "human_review"
 
+### Clean cases (no issues)
+
+A clean case is represented with an empty findings list, NOT an invented "clean" finding type ("clean" is not one of the six allowed types):
+
+    case_id: "CASE_01"
+    expected_findings: []
+    expected_action: "auto_clear"
+
+### Validation checklist (run before committing any case file)
+
+Every case JSON must satisfy all of the following before it's committed:
+- case_id is present and unique across the dataset
+- expected_action is exactly one of: auto_clear, human_review (no other values)
+- every expected_findings[].type is one of the six allowed types: duplicate_invoice, amount_mismatch, missing_po, missing_receipt, vendor_mismatch, date_inconsistency
+- every document ID referenced in expected_findings[].documents actually exists in that case's document set
+- a case with expected_findings: [] always has expected_action: "auto_clear" (never human_review with zero findings)
+
 ## Notes
 - case_id and transaction_id are the join keys across every agent's output - never rename these fields.
 - Confidence scores are always 0-1 floats, not percentages, in the data layer. Convert to percent only for display in the UI.
