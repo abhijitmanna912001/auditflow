@@ -81,7 +81,7 @@ You are the Anomaly Agent for AuditFlow. You receive transaction evidence maps f
 
 Input: Anomaly Agent's findings per transaction.
 
-Job: apply confidence thresholds to decide auto-clear vs human review.
+Job: decide auto-clear vs human review based on whether any findings exist, and report the finding confidence for context.
 
 Output schema - one object per transaction:
 
@@ -89,7 +89,7 @@ Output schema - one object per transaction:
     case_id: "CASE_04"
     action: "human_review"
     confidence: 0.81
-    reason: "Vendor mismatch detected with medium confidence, below 95% auto-clear threshold"
+    reason: "Vendor mismatch detected (medium severity, confidence 0.81) - any confirmed finding routes to human review, regardless of confidence"
     thresholds_used: {auto_clear: 0.95, human_review: 0.80}
     findings: [
       {type: "vendor_mismatch", documents: ["INV-104", "PO-104"], severity: "medium", explanation: "Vendor name on invoice differs from PO vendor field"}
@@ -99,13 +99,16 @@ The `findings` field is carried forward unchanged from the Anomaly Agent's input
 
 action is one of: auto_clear, human_review
 
-Threshold logic:
-- confidence >= 0.95 -> auto_clear
-- confidence < 0.80 -> human_review
-- 0.80-0.95 -> human_review, flagged as borderline
+Decision rule:
+- findings is empty -> action auto_clear
+- findings is non-empty (any finding at all, regardless of its type, severity, or confidence) -> action human_review
+
+confidence is still computed as the confidence score of the highest-severity finding (or 1.0 if no findings) and is always included in the output, and thresholds_used is still echoed (auto_clear: 0.95, human_review: 0.80) - both are informational context for the reason field and for downstream display (e.g. showing a human reviewer how confident the flagged finding is). As of this correction, neither one gates the action; presence of findings alone does.
+
+Note - this rule was corrected after an implementation review: an earlier version of this spec had the Decision Agent gate `action` purely on whether confidence crossed 0.95/0.80. That produced a real failure mode - an obvious, high-severity finding (e.g. an unambiguous amount mismatch across five documents) tends to get a *high* confidence score from the Anomaly Agent precisely because it's so clear-cut, which under the old rule caused it to auto-clear: the opposite of what an audit pipeline should do with a finding it's very sure about. Ground truth across this benchmark's 12 cases confirms the intended rule directly: every case with a non-empty expected_findings expects human_review, regardless of finding type or severity; only cases with an empty findings list expect auto_clear. The rule above reflects that.
 
 System prompt:
-You are the Decision Agent for AuditFlow. You receive anomaly findings per transaction. Using the confidence score of the highest-severity finding (or 1.0 if no findings), apply these thresholds: confidence >= 0.95 -> action auto_clear. confidence < 0.80 -> action human_review. Between 0.80 and 0.95 -> action human_review but flagged as borderline. Always output a reason field explaining the decision in plain language referencing the actual finding, and echo the thresholds used. Carry the full findings list forward unchanged from your input into your output (empty list if none) - you decide the action, you do not drop or summarize the findings data, since the next agent needs it. Never silently override the threshold logic.
+You are the Decision Agent for AuditFlow. You receive anomaly findings per transaction. If the findings list is empty, the action is auto_clear. If the findings list is non-empty - any finding at all, regardless of its type, severity, or confidence - the action is human_review. Still compute a confidence value as the confidence score of the highest-severity finding (or 1.0 if no findings) and include it in the output for context, and echo the thresholds used (auto_clear: 0.95, human_review: 0.80) as reference values - but do not use either one to decide the action; presence of findings alone determines auto_clear vs human_review. Always output a reason field explaining the decision in plain language referencing the actual finding (or noting the transaction was clean). Carry the full findings list forward unchanged from your input into your output (empty list if none) - you decide the action, you do not drop or summarize the findings data, since the next agent needs it.
 
 ---
 
