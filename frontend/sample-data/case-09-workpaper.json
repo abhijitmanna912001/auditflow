@@ -1,0 +1,26 @@
+{
+  "case_id": "CASE_09",
+  "rows": [
+    {
+      "document": "INV-1009-A",
+      "finding": "Duplicate invoice; amount exceeds PO; missing goods receipt",
+      "evidence": [
+        "INV-1009-A",
+        "INV-1009-B",
+        "LED-1009",
+        "BNK-1009",
+        "PO-1009"
+      ],
+      "confidence": 0.9,
+      "action": "human_review"
+    }
+  ],
+  "summary": {
+    "items_reviewed": 1,
+    "auto_cleared": 0,
+    "human_review": 1,
+    "critical": 1,
+    "assumed_minutes_per_item": 3,
+    "estimated_minutes_saved": 0
+  }
+}
