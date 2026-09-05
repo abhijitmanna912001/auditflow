@@ -1,0 +1,6 @@
+# Next.js build output
+.next/
+out/
+
+# Local dependencies
+node_modules/
