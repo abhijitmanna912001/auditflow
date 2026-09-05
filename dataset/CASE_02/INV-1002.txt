@@ -1,0 +1,15 @@
+TAX INVOICE
+Document ID: INV-1002
+Supplier Invoice No: CDS/BLR/0826/441
+Invoice Date: 2026-08-02
+Vendor: CloudDesk Software India Pvt. Ltd.
+Bill To: AuditFlow Finance Team, Bengaluru
+PO Reference: PO-1002
+
+Description: Annual collaboration software subscription, 20 users
+Subscription Period: 2026-08-01 to 2027-07-31
+Subtotal: INR 80,000.00
+GST @ 18%: INR 14,400.00
+Invoice Total: INR 94,400.00
+
+Payment Terms: Net 30 days from invoice date.

@@ -1,0 +1,10 @@
+SERVICE ACCEPTANCE RECEIPT
+Receipt No: REC-1010
+Acceptance Date: 2026-09-03
+Vendor: Beacon IT Consulting Pvt. Ltd.
+PO Reference: PO-1010
+Invoice Reference: INV-1010
+
+Service Accepted: Data-centre rack audit and cable labelling service
+Accepted Value: INR 70,800.00 including GST
+Accepted By: AuditFlow Technology Team Lead

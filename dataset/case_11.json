@@ -1,0 +1,17 @@
+{
+  "case_id": "CASE_11",
+  "transaction_id": "TXN_11",
+  "expected_findings": [
+    {
+      "type": "missing_po",
+      "documents": ["INV-1011"],
+      "severity": "medium"
+    },
+    {
+      "type": "amount_mismatch",
+      "documents": ["INV-1011", "BNK-1011", "LED-1011"],
+      "severity": "high"
+    }
+  ],
+  "expected_action": "human_review"
+}

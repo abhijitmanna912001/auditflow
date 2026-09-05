@@ -1,0 +1,8 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-1012
+Posting Date: 2026-09-20
+Vendor: Nova Archive Storage Pvt. Ltd.
+Invoice Reference: INV-1012
+Account: Records Storage Expense and Input GST
+Debit Amount: INR 236,000.00
+Narration: Payment posted for first-quarter archive storage and indexing service.

@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-1001
+Transaction Date: 2026-07-25
+Account Holder: AuditFlow Operations
+Beneficiary: Horizon Office Systems Pvt. Ltd.
+Narration: NEFT payment against INV-1001 and PO-1001
+Debit Amount: INR 47,200.00
+Status: Successful

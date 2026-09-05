@@ -1,0 +1,8 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-1006
+Posting Date: 2026-08-28
+Vendor: Meridian Network Components Pvt. Ltd.
+Invoice Reference: INV-1006
+Account: Network Equipment Expense and Input GST
+Debit Amount: INR 141,600.00
+Narration: Payment posted for managed network switch installation.

@@ -1,0 +1,8 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-1002
+Posting Date: 2026-09-01
+Vendor: CloudDesk Software India Pvt. Ltd.
+Supporting Documents: PO-1002, INV-1002, REC-1002, BNK-1002
+Account: Software Subscriptions and Input GST
+Debit Amount: INR 94,400.00
+Narration: Annual collaboration software subscription for 20 users.

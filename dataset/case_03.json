@@ -1,0 +1,12 @@
+{
+  "case_id": "CASE_03",
+  "transaction_id": "TXN_03",
+  "expected_findings": [
+    {
+      "type": "duplicate_invoice",
+      "documents": ["INV-1003-A", "INV-1003-B"],
+      "severity": "high"
+    }
+  ],
+  "expected_action": "human_review"
+}

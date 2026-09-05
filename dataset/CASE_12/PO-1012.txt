@@ -1,0 +1,13 @@
+PURCHASE ORDER
+Purchase Order No: PO-1012
+Issue Date: 2026-08-08
+Supplier: Nova Archive Storage Pvt. Ltd.
+Ship To: AuditFlow Records Centre, Bengaluru
+
+Description: Off-site document storage and indexing service, first quarter
+Subtotal: INR 200,000.00
+GST @ 18%: INR 36,000.00
+Purchase Order Total: INR 236,000.00
+
+Payment Terms: Payment only after signed service acceptance receipt and valid invoice.
+Authorized by: Records and Compliance Manager

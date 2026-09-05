@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-1009
+Transaction Date: 2026-07-22
+Account Holder: AuditFlow Operations
+Beneficiary: Pioneer Industrial Supplies Pvt. Ltd.
+Narration: NEFT payment for supplier invoice PIS/2026/091, PO-1009
+Debit Amount: INR 141,600.00
+Status: Successful

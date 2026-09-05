@@ -1,0 +1,15 @@
+TAX INVOICE
+Document ID: INV-1009-B
+Supplier Invoice No: PIS/2026/091
+Invoice Date: 2026-07-15
+Vendor: Pioneer Industrial Supplies Pvt. Ltd.
+Bill To: AuditFlow Warehouse, Bengaluru
+PO Reference: PO-1009
+
+Description: Warehouse packing materials for quarterly dispatches
+Subtotal: INR 120,000.00
+GST @ 18%: INR 21,600.00
+Invoice Total: INR 141,600.00
+
+Payment Terms: Payment after signed goods receipt and accepted invoice.
+Ingestion Note: Second received scan of supplier invoice PIS/2026/091.

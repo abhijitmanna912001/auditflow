@@ -1,0 +1,9 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-1003
+Posting Date: 2026-08-10
+Vendor: Sterling Safety Supplies Pvt. Ltd.
+Supporting Documents: PO-1003, REC-1003, BNK-1003
+Supplier Invoice Reference: SSS/2026/188
+Account: Safety Equipment Expense and Input GST
+Debit Amount: INR 70,800.00
+Narration: Single payment posted for 20 industrial safety kits.

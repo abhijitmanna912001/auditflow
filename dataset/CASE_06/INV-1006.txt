@@ -1,0 +1,14 @@
+TAX INVOICE
+Document ID: INV-1006
+Supplier Invoice No: MNC/BLR/2026/354
+Invoice Date: 2026-08-14
+Vendor: Meridian Network Components Pvt. Ltd.
+Bill To: AuditFlow Data Centre, Bengaluru
+PO Reference: PO-1006
+
+Description: Managed network switch and installation service
+Subtotal: INR 120,000.00
+GST @ 18%: INR 21,600.00
+Invoice Total: INR 141,600.00
+
+Payment Terms: Payment after signed goods or service receipt.

@@ -1,0 +1,9 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-1009
+Posting Date: 2026-07-22
+Vendor: Pioneer Industrial Supplies Pvt. Ltd.
+Supporting Documents: PO-1009, BNK-1009
+Supplier Invoice Reference: PIS/2026/091
+Account: Warehouse Supplies Expense and Input GST
+Debit Amount: INR 141,600.00
+Narration: Payment posted for quarterly packing-materials supply.

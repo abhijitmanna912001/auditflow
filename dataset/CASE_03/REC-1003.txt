@@ -1,0 +1,11 @@
+GOODS RECEIPT NOTE
+Receipt No: REC-1003
+Receipt Date: 2026-07-19
+Vendor: Sterling Safety Supplies Pvt. Ltd.
+PO Reference: PO-1003
+Supplier Invoice Reference: SSS/2026/188
+
+Received: 20 industrial safety kits, standard issue
+Condition: All kits inspected and accepted.
+Accepted Value: INR 70,800.00 including GST
+Received By: AuditFlow Warehouse Supervisor

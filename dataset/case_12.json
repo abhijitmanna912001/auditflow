@@ -1,0 +1,12 @@
+{
+  "case_id": "CASE_12",
+  "transaction_id": "TXN_12",
+  "expected_findings": [
+    {
+      "type": "missing_receipt",
+      "documents": ["PO-1012", "INV-1012", "BNK-1012", "LED-1012"],
+      "severity": "medium"
+    }
+  ],
+  "expected_action": "human_review"
+}

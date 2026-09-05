@@ -1,0 +1,22 @@
+{
+  "case_id": "CASE_09",
+  "transaction_id": "TXN_09",
+  "expected_findings": [
+    {
+      "type": "duplicate_invoice",
+      "documents": ["INV-1009-A", "INV-1009-B"],
+      "severity": "high"
+    },
+    {
+      "type": "amount_mismatch",
+      "documents": ["PO-1009", "INV-1009-A", "INV-1009-B", "BNK-1009", "LED-1009"],
+      "severity": "high"
+    },
+    {
+      "type": "missing_receipt",
+      "documents": ["PO-1009", "INV-1009-A", "BNK-1009"],
+      "severity": "high"
+    }
+  ],
+  "expected_action": "human_review"
+}

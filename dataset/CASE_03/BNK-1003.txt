@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-1003
+Transaction Date: 2026-08-10
+Account Holder: AuditFlow Operations
+Beneficiary: Sterling Safety Supplies Pvt. Ltd.
+Narration: NEFT payment for supplier invoice SSS/2026/188, PO-1003
+Debit Amount: INR 70,800.00
+Status: Successful

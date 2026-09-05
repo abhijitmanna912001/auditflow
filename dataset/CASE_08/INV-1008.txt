@@ -1,0 +1,14 @@
+TAX INVOICE
+Document ID: INV-1008
+Supplier Invoice No: BPT/2026/0805
+Invoice Date: 2026-08-05
+Vendor: BluePeak Training Services Pvt. Ltd.
+Bill To: AuditFlow Learning Team, Bengaluru
+PO Reference: PO-1008
+
+Description: Finance-controls workshop for 25 employees
+Subtotal: INR 90,000.00
+GST @ 18%: INR 16,200.00
+Invoice Total: INR 106,200.00
+
+Payment Terms: Net 30 days from invoice date; payment due 2026-09-04.

@@ -1,0 +1,12 @@
+{
+  "case_id": "CASE_07",
+  "transaction_id": "TXN_07",
+  "expected_findings": [
+    {
+      "type": "vendor_mismatch",
+      "documents": ["PO-1007", "INV-1007", "REC-1007", "BNK-1007", "LED-1007"],
+      "severity": "high"
+    }
+  ],
+  "expected_action": "human_review"
+}

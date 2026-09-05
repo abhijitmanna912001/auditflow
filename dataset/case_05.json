@@ -1,0 +1,12 @@
+{
+  "case_id": "CASE_05",
+  "transaction_id": "TXN_05",
+  "expected_findings": [
+    {
+      "type": "missing_po",
+      "documents": ["INV-1005"],
+      "severity": "medium"
+    }
+  ],
+  "expected_action": "human_review"
+}

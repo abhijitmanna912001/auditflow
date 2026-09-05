@@ -1,0 +1,11 @@
+SERVICE COMPLETION RECEIPT
+Receipt No: REC-1005
+Completion Date: 2026-07-18
+Vendor: GreenRoute Logistics Pvt. Ltd.
+Invoice Reference: INV-1005
+PO Reference Cited by Vendor: PO-1005
+
+Service Accepted: Inter-city movement of archived finance records
+Accepted Value: INR 59,000.00 including GST
+Acceptance Note: All cartons delivered to the Bengaluru records store.
+Accepted By: AuditFlow Administration Team

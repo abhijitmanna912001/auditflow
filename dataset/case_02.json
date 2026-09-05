@@ -1,0 +1,6 @@
+{
+  "case_id": "CASE_02",
+  "transaction_id": "TXN_02",
+  "expected_findings": [],
+  "expected_action": "auto_clear"
+}

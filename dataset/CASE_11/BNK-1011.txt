@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-1011
+Transaction Date: 2026-08-12
+Account Holder: AuditFlow Operations
+Beneficiary: Apex Process Systems Pvt. Ltd.
+Narration: NEFT settlement of INV-1011
+Debit Amount: INR 129,800.00
+Status: Successful

@@ -1,0 +1,10 @@
+SERVICE ACCEPTANCE RECEIPT
+Receipt No: REC-1011
+Acceptance Date: 2026-07-18
+Vendor: Apex Process Systems Pvt. Ltd.
+Invoice Reference: INV-1011
+PO Reference Cited by Vendor: PO-1011
+
+Service Accepted: Finance workflow configuration and user training
+Accepted Value: INR 118,000.00 including GST
+Accepted By: AuditFlow Finance Transformation Lead

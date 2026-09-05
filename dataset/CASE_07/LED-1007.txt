@@ -1,0 +1,8 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-1007
+Posting Date: 2026-07-20
+Vendor: Orchid Workspace Solutions Pvt. Ltd.
+Supporting Documents: PO-1007, INV-1007, REC-1007, BNK-1007
+Account: Facilities Maintenance Expense and Input GST
+Debit Amount: INR 53,100.00
+Narration: Payment posted to invoice vendor for quarterly facilities service.

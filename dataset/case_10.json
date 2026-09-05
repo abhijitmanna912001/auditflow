@@ -1,0 +1,17 @@
+{
+  "case_id": "CASE_10",
+  "transaction_id": "TXN_10",
+  "expected_findings": [
+    {
+      "type": "vendor_mismatch",
+      "documents": ["PO-1010", "INV-1010", "REC-1010", "BNK-1010", "LED-1010"],
+      "severity": "high"
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": ["PO-1010", "INV-1010", "BNK-1010"],
+      "severity": "high"
+    }
+  ],
+  "expected_action": "human_review"
+}

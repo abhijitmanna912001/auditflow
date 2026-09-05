@@ -1,0 +1,15 @@
+TAX INVOICE
+Document ID: INV-1005
+Supplier Invoice No: GRS/2026/071
+Invoice Date: 2026-07-21
+Vendor: GreenRoute Logistics Pvt. Ltd.
+Bill To: AuditFlow Operations, Bengaluru
+PO Reference: PO-1005
+
+Description: Inter-city movement of archived finance records
+Service Period: 2026-07-15 to 2026-07-18
+Subtotal: INR 50,000.00
+GST @ 18%: INR 9,000.00
+Invoice Total: INR 59,000.00
+
+Payment Terms: Net 30 days from invoice date.

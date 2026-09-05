@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-1010
+Transaction Date: 2026-09-10
+Account Holder: AuditFlow Operations
+Beneficiary: Beacon IT Consulting Pvt. Ltd.
+Narration: NEFT payment against INV-1010 / PO-1010
+Debit Amount: INR 70,800.00
+Status: Successful

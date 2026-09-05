@@ -1,0 +1,12 @@
+{
+  "case_id": "CASE_04",
+  "transaction_id": "TXN_04",
+  "expected_findings": [
+    {
+      "type": "amount_mismatch",
+      "documents": ["PO-1004", "INV-1004", "REC-1004", "BNK-1004", "LED-1004"],
+      "severity": "high"
+    }
+  ],
+  "expected_action": "human_review"
+}

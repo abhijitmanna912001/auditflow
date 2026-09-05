@@ -1,0 +1,8 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-1004
+Posting Date: 2026-07-10
+Vendor: Vertex Print Solutions Pvt. Ltd.
+Supporting Documents: PO-1004, INV-1004, REC-1004, BNK-1004
+Account: Marketing Collateral Expense and Input GST
+Debit Amount: INR 82,500.00
+Narration: Payment posted at invoice value for presentation folders.

@@ -1,0 +1,8 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-1011
+Posting Date: 2026-08-12
+Vendor: Apex Process Systems Pvt. Ltd.
+Invoice Reference: INV-1011
+Account: Finance Systems Implementation Expense and Input GST
+Debit Amount: INR 129,800.00
+Narration: Settlement posted at bank debit amount for workflow configuration.
