@@ -8,3 +8,4 @@ dist/
 build/
 *.log
 runs/*.json
+evaluation/runs/*.json

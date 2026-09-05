@@ -40,7 +40,15 @@ def load_ground_truth(dataset_dir):
     for path in sorted(glob.glob(os.path.join(dataset_dir, "case_*.json"))):
         with open(path) as f:
             case = json.load(f)
-        validate_case(case, path)
+        case_folder = os.path.join(dataset_dir, case.get("case_id", ""))
+        validate_case(case, path, case_folder)
+
+        if case["case_id"] in cases:
+            raise ValueError(
+                f"Duplicate case_id {case['case_id']!r} found in {path} "
+                f"(already loaded from another file) - case_id must be "
+                f"unique across the dataset"
+            )
         cases[case["case_id"]] = case
     if not cases:
         raise ValueError(
@@ -50,16 +58,42 @@ def load_ground_truth(dataset_dir):
     return cases
 
 
-def validate_case(case, path):
+def _fixture_documents(case_folder):
+    """
+    Return the set of document IDs that have a matching fixture file in
+    dataset/<case_id>/. Document ID is the filename without extension
+    (e.g. dataset/CASE_04/INV-104.txt -> "INV-104"). Returns None if the
+    case folder doesn't exist at all, so callers can distinguish "no
+    fixtures directory" from "fixtures directory exists but is empty".
+    """
+    if not os.path.isdir(case_folder):
+        return None
+    return {
+        os.path.splitext(fname)[0]
+        for fname in os.listdir(case_folder)
+        if os.path.isfile(os.path.join(case_folder, fname))
+    }
+
+
+def validate_case(case, path, case_folder=None):
     """Validation checklist from docs/agent-spec.md - fail loudly on bad ground truth."""
     errors = []
     if "case_id" not in case:
         errors.append("missing case_id")
+    if "transaction_id" not in case:
+        errors.append(
+            "missing transaction_id (required - every case must carry its "
+            "TXN_NN mapping in ground truth, matching what Evidence/Anomaly/"
+            "Decision Agent output will use)"
+        )
     if case.get("expected_action") not in ALLOWED_ACTIONS:
         errors.append(
             f"expected_action must be one of {ALLOWED_ACTIONS}, "
             f"got {case.get('expected_action')!r}"
         )
+
+    fixture_docs = _fixture_documents(case_folder) if case_folder else None
+
     findings = case.get("expected_findings", [])
     seen_findings = set()
     for i, finding in enumerate(findings):
@@ -75,6 +109,15 @@ def validate_case(case, path):
                 f"expected_findings[{i}] has duplicate document IDs within "
                 f"its documents list: {docs}"
             )
+
+        if fixture_docs is not None:
+            missing_fixtures = [d for d in docs if d not in fixture_docs]
+            if missing_fixtures:
+                errors.append(
+                    f"expected_findings[{i}] references document(s) "
+                    f"{missing_fixtures} with no matching fixture file in "
+                    f"{case_folder}/"
+                )
 
         fingerprint = (finding.get("type"), tuple(sorted(set(docs))))
         if fingerprint in seen_findings:
