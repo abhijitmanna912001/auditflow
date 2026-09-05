@@ -159,6 +159,9 @@ Every case JSON must satisfy all of the following before it's committed:
 - every expected_findings[].type is one of the six allowed types: duplicate_invoice, amount_mismatch, missing_po, missing_receipt, vendor_mismatch, date_inconsistency
 - every document ID referenced in expected_findings[].documents actually exists in that case's document set
 - a case with expected_findings: [] always has expected_action: "auto_clear" (never human_review with zero findings)
+- no duplicate document IDs within a single finding's documents list
+- no duplicate findings (same type + same set of documents appearing twice)
+
 
 ## Notes
 - case_id and transaction_id are the join keys across every agent's output - never rename these fields.

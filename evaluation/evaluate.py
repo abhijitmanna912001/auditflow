@@ -61,12 +61,29 @@ def validate_case(case, path):
             f"got {case.get('expected_action')!r}"
         )
     findings = case.get("expected_findings", [])
+    seen_findings = set()
     for i, finding in enumerate(findings):
         if finding.get("type") not in ALLOWED_FINDING_TYPES:
             errors.append(
                 f"expected_findings[{i}].type must be one of "
                 f"{ALLOWED_FINDING_TYPES}, got {finding.get('type')!r}"
             )
+
+        docs = finding.get("documents", [])
+        if len(docs) != len(set(docs)):
+            errors.append(
+                f"expected_findings[{i}] has duplicate document IDs within "
+                f"its documents list: {docs}"
+            )
+
+        fingerprint = (finding.get("type"), tuple(sorted(set(docs))))
+        if fingerprint in seen_findings:
+            errors.append(
+                f"expected_findings[{i}] duplicates an earlier finding "
+                f"(same type {finding.get('type')!r} and same documents {docs})"
+            )
+        seen_findings.add(fingerprint)
+
     if not findings and case.get("expected_action") != "auto_clear":
         errors.append(
             "case has empty expected_findings but expected_action is not "
