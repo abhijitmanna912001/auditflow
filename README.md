@@ -105,6 +105,31 @@ No findings     → auto_clear
 Compiles the final evidence-backed workpaper for the reviewer.
 
 ---
+## Product Preview
+
+### CASE_09 — Evidence-backed exception
+
+AuditFlow identifies a multi-issue exception and routes it to human review with the supporting evidence visible in the workpaper.
+
+![AuditFlow CASE_09 exception review](docs/screenshots/case-09-review.png)
+
+### CASE_01 — Clean transaction
+
+A clean evidence bundle can be automatically cleared without manual intervention.
+
+![AuditFlow CASE_01 clean case](docs/screenshots/case-01-clean.png)
+
+### 12-case benchmark
+
+The benchmark selector exposes the controlled audit scenarios used to evaluate the pipeline.
+
+![AuditFlow 12-case benchmark selector](docs/screenshots/case-selector.png)
+
+### Observability
+
+Neatlogs provides visibility into workflow execution, model usage, latency, token consumption, and cost.
+
+![AuditFlow Neatlogs observability](docs/screenshots/neatlogs-trace.png)
 
 ## Orchestration & Observability
 
