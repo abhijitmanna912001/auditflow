@@ -8,7 +8,7 @@ import json
 
 import pytest
 
-from evidence_agent import run_evidence_agent, _derive_transaction_id, OUTPUT_SCHEMA
+from evidence_agent import run_evidence_agent, _derive_transaction_id, OUTPUT_SCHEMA, SYSTEM_PROMPT
 
 
 class _FakeTextBlock:
@@ -99,3 +99,12 @@ def test_run_evidence_agent_raises_when_model_returns_wrong_transaction_count():
     client = _FakeClient([])  # zero transactions instead of exactly one
     with pytest.raises(ValueError):
         run_evidence_agent([_INTAKE_DOC], client=client)
+
+
+def test_system_prompt_guards_against_the_consistency_and_payment_fallacies():
+    # Regression guard for the CASE_06 fix: internal consistency among
+    # present documents, or a successful payment, must not be read as proof
+    # nothing is missing. Can't test the model's actual behavior without a
+    # live call, but a future edit dropping this clause should fail loudly.
+    assert "never proves an absent document type wasn't required" in SYSTEM_PROMPT
+    assert "successful payment status is not proof" in SYSTEM_PROMPT

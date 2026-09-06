@@ -40,7 +40,12 @@ SYSTEM_PROMPT = (
     "transaction), and an evidence_confidence score (0-1) reflecting how "
     "well-supported the transaction is. If a document type is missing, check "
     "whether that's expected (e.g., some vendors are PO-exempt - infer this "
-    "only from patterns in the provided documents, never assume). Output one "
+    "only from patterns in the provided documents, never assume). Internal "
+    "consistency among the documents you do have (matching amounts, vendor "
+    "names, a logical date sequence) never proves an absent document type "
+    "wasn't required, and a successful payment status is not proof that a "
+    "payment-terms condition like a required receipt was actually satisfied - "
+    "only the document itself, if present, can establish that. Output one "
     "JSON object per transaction following the schema above."
 )
 
