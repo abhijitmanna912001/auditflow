@@ -1,493 +1,151 @@
 # AuditFlow
 
-> **Autonomous audit-evidence review for the Office of the CFO.**
+> Autonomous audit-evidence review for the Office of the CFO.
 
-AuditFlow turns financial document bundles into review-ready audit workpapers.
+AuditFlow turns controlled financial-document bundles into review-ready audit workpapers. Five specialized agents cross-reference evidence, identify bounded exceptions, route them to a reviewer, and compile the result into a single workpaper.
 
-It cross-references invoices, purchase orders, receipts, bank records, and ledger evidence, detects bounded exceptions, applies a review policy, and routes evidence-backed exceptions to a human reviewer instead of silently clearing them.
+Built for **Syndicate by Maximor — AO Hackathon**, **Track 2: Autonomous Office of the CFO**.
 
-Built for **Syndicate by Maximor (AO Hackathon)**, **Track 2: Autonomous Office of the CFO**.
+🚀 **[Live Demo](https://auditflow-kohl.vercel.app)** · [Backend API](https://auditflow-sxik.onrender.com) · [Repository](https://github.com/abhijitmanna912001/auditflow)
 
-## Live Demo
+The deployed demo runs the real five-agent pipeline rather than a static frontend mock.
 
-### Frontend
+## Why AuditFlow?
 
-https://auditflow-kohl.vercel.app
+Audit review is often slowed less by the final judgment than by collecting evidence, checking whether records agree, and documenting exceptions.
 
-### Backend API
+- **5 specialized AI agents** with bounded responsibilities
+- **12 controlled benchmark cases** spanning clean, missing, conflicting, and multi-issue evidence
+- **Evidence-backed human review** instead of silently accepting exceptions
 
-https://auditflow-sxik.onrender.com
+### Verified benchmark
 
-The deployed system runs the real five-agent pipeline rather than a static frontend mock.
+**12 cases · 100% case-level routing accuracy on the verified benchmark run**
 
----
-
-## What AuditFlow Solves
-
-Traditional audit-evidence review requires people to repeatedly cross-reference:
-
-- invoices
-- purchase orders
-- receipts
-- bank records
-- ledger entries
-
-The tedious part is often not making the final accounting judgment. It is collecting the evidence, checking whether records agree, finding missing support, and documenting exceptions.
-
-AuditFlow automates that evidence-review layer.
-
-The system aims to:
-
-1. identify what documents are present
-2. connect supporting evidence
-3. detect bounded audit exceptions
-4. route exceptions for human review
-5. produce an audit-ready workpaper
-
-The design intentionally keeps a human reviewer in the loop for detected exceptions.
-
----
-
-## Architecture
-
-```text
-Document Bundle
-      │
-      ▼
-┌─────────────┐
-│ Intake Agent│
-└──────┬──────┘
-       ▼
-┌───────────────┐
-│ Evidence Agent│
-└───────┬───────┘
-        ▼
-┌────────────────┐
-│ Anomaly Agent  │
-└───────┬────────┘
-        ▼
-┌────────────────┐
-│ Decision Agent │
-└───────┬────────┘
-        ▼
-┌─────────────────┐
-│ Workpaper Agent │
-└───────┬─────────┘
-        ▼
- Review-ready Workpaper
-```
-
-### Agent responsibilities
-
-**Intake Agent**
-
-Classifies the source documents in the audit bundle.
-
-**Evidence Agent**
-
-Links the transaction to supporting records and checks whether required evidence is actually present.
-
-**Anomaly Agent**
-
-Checks for bounded exception types such as duplicate invoices, amount mismatches, missing POs, missing receipts, vendor mismatches, and date inconsistencies.
-
-**Decision Agent**
-
-Applies the routing policy:
-
-```text
-Any finding      → human_review
-No findings     → auto_clear
-```
-
-**Workpaper Agent**
-
-Compiles the final evidence-backed workpaper for the reviewer.
-
----
 ## Product Preview
 
-### CASE_09 — Evidence-backed exception
-
-AuditFlow identifies a multi-issue exception and routes it to human review with the supporting evidence visible in the workpaper.
+**CASE_09 · complex exception routed to review**
 
 ![AuditFlow CASE_09 exception review](docs/screenshots/case-09-review.png)
 
-### CASE_01 — Clean transaction
+**CASE_01 · clean transaction auto-cleared**
 
-A clean evidence bundle can be automatically cleared without manual intervention.
+![AuditFlow CASE_01 clean review](docs/screenshots/case-01-clean.png)
 
-![AuditFlow CASE_01 clean case](docs/screenshots/case-01-clean.png)
+**Controlled benchmark bundle selector**
 
-### 12-case benchmark
+![AuditFlow case selector](docs/screenshots/case-selector.png)
 
-The benchmark selector exposes the controlled audit scenarios used to evaluate the pipeline.
+**Neatlogs execution observability**
 
-![AuditFlow 12-case benchmark selector](docs/screenshots/case-selector.png)
+![AuditFlow Neatlogs trace](docs/screenshots/neatlogs-trace.png)
 
-### Observability
-
-Neatlogs provides visibility into workflow execution, model usage, latency, token consumption, and cost.
-
-![AuditFlow Neatlogs observability](docs/screenshots/neatlogs-trace.png)
-
-## Orchestration & Observability
-
-AuditFlow uses:
-
-- **AO (Agent Orchestrator)** for multi-agent orchestration
-- **Neatlogs** for LLM observability and tracing
-- **Anthropic Claude** for agent reasoning
-
-The pipeline is intentionally separated into bounded stages so each responsibility can be tested independently.
-
----
-
-## Model Strategy
-
-AuditFlow uses a mixed-model strategy based on observed reliability and cost.
-
-| Agent | Model | Why |
-|---|---|---|
-| Intake | Claude Sonnet 5 | Fast document classification |
-| Evidence | Claude Sonnet 5 | Efficient evidence extraction and linking |
-| Anomaly | Claude Opus 5 | Most reasoning-intensive classification step |
-| Decision | Claude Sonnet 5 | Deterministic routing/application of policy |
-| Workpaper | Claude Sonnet 5 | Efficient output compilation |
-
-The Anomaly Agent receives the stronger model because it performs the most nuanced judgment:
-
-> Is there actually an exception, which bounded type does it represent, and how confident are we?
-
-This keeps the expensive model focused on the stage where it provides the most value.
-
----
-
-## Benchmark
-
-AuditFlow includes **12 controlled benchmark cases** covering both clean transactions and exception scenarios.
-
-The benchmark includes:
-
-- clean cases
-- duplicate invoices
-- amount mismatches
-- missing purchase orders
-- missing receipts
-- vendor mismatches
-- date inconsistencies
-- multi-issue cases
-- incomplete or conflicting evidence
-
-The cases are controlled evaluation scenarios, not real customer audits.
-
-### Verified benchmark result
-
-**12-case benchmark: 100% case-level routing accuracy on the verified benchmark run.**
-
-The benchmark was also used to catch and fix several real reliability issues before the final demo, including:
-
-- confidence-based Decision Agent routing
-- overlapping Anomaly Agent classifications
-- missing-receipt evidence reasoning
-- model reliability differences across pipeline stages
-- Neatlogs/Python compatibility issues
-
-### Known limitation
-
-`CASE_06` is an intentionally more ambiguous mixed goods/service scenario.
-
-It has shown some residual variance in full-sequence LLM runs. The system has maintained precision while handling the case, and a future structural improvement would be confidence-based retry plus disagreement flagging.
-
-This limitation is documented rather than hidden.
-
----
-
-## Example Cases
-
-### CASE_01 — Clean
-
-Expected behavior:
+## Five-agent pipeline
 
 ```text
-No findings
-     ↓
-auto_clear
+Intake → Evidence → Anomaly → Decision → Workpaper
 ```
 
-AuditFlow clears the transaction when the expected supporting evidence is consistent.
+| Agent | Responsibility |
+|---|---|
+| Intake Agent | Classifies source documents and extracts structured fields. |
+| Evidence Agent | Links transaction evidence and identifies missing support. |
+| Anomaly Agent | Checks only the bounded exception taxonomy. |
+| Decision Agent | Routes any finding to `human_review`; routes no findings to `auto_clear`. |
+| Workpaper Agent | Produces the evidence-backed, review-ready workpaper. |
 
-### CASE_09 — Complex Exception
+The bounded exception types are duplicate invoice, amount mismatch, missing PO, missing receipt, vendor mismatch, and date inconsistency.
 
-CASE_09 contains multiple exception signals, including:
+## Architecture and model strategy
 
-- duplicate invoice
-- amount mismatch
-- missing receipt
+AO (Agent Orchestrator) coordinates the pipeline; a FastAPI endpoint exposes a full run at `POST /run-case`; Neatlogs provides LLM tracing for workflow execution, model usage, latency, token consumption, and cost. Anthropic Claude is used with a focused mixed-model strategy:
 
-Expected behavior:
+| Agent | Model |
+|---|---|
+| Intake | Claude Sonnet 5 |
+| Evidence | Claude Sonnet 5 |
+| Anomaly | Claude Opus 5 |
+| Decision | Claude Sonnet 5 |
+| Workpaper | Claude Sonnet 5 |
 
-```text
-Findings detected
-     ↓
-human_review
-```
+The Anomaly Agent uses the stronger model because exception classification is the most nuanced reasoning step.
 
-The workpaper links the finding back to the supporting evidence so the reviewer can inspect the underlying documents.
+## Benchmark and review controls
 
----
+The benchmark contains 12 controlled scenarios: clean cases, duplicate invoices, amount mismatches, missing POs and receipts, vendor mismatches, date inconsistencies, multi-issue cases, and incomplete or conflicting evidence. These are evaluation fixtures—not customer audits.
 
-## Human-in-the-Loop Review
+**Known limitation:** `CASE_06` is an intentionally more ambiguous mixed goods/service scenario and has residual variance in full-sequence LLM runs. A future improvement is confidence-based retry with disagreement flagging.
 
-Detected exceptions are not silently accepted.
+Detected exceptions are routed to a reviewer, who can inspect the finding, evidence, confidence, rationale, and workpaper context. The current UI supports **Clear exception**, **Request evidence**, and **Escalate** actions.
 
-The workpaper UI lets a reviewer inspect:
+### Upload Documents
 
-- document
-- finding
-- evidence
-- confidence
-- agent action
-- decision rationale
+The hackathon demo runs controlled benchmark bundles for reproducible evaluation. **Upload Documents** is the intended production ingestion surface; uploaded files are currently staged locally and are not sent through the backend five-agent pipeline.
 
-The reviewer can then:
+## Stack and deployment
 
-- **Clear exception**
-- **Request evidence**
-- **Escalate**
+| Area | Implementation |
+|---|---|
+| Frontend | Next.js, React, TypeScript |
+| API | Python, FastAPI, Uvicorn |
+| Reasoning | Anthropic Claude Sonnet 5 and Claude Opus 5 |
+| Orchestration / tracing | AO (Agent Orchestrator), Neatlogs |
+| Deployment | Vercel frontend, Render backend |
 
-The goal is not to replace the auditor.
+## Run locally
 
-The goal is to reduce repetitive evidence-review work while keeping the final exception decision with a human.
-
----
-
-## Upload Documents
-
-The current hackathon demo uses controlled benchmark bundles so the evaluation scenarios remain reproducible.
-
-The **Upload Documents** control represents the intended document-ingestion surface for a production workflow. In the current implementation, uploaded files are staged locally and are not sent through the backend five-agent pipeline.
-
----
-
-## Tech Stack
-
-### Frontend
-
-- Next.js
-- React
-- TypeScript
-
-### Backend
-
-- Python
-- FastAPI
-- Uvicorn
-
-### AI
-
-- Anthropic Claude
-- Claude Sonnet 5
-- Claude Opus 5
-
-### Orchestration & Observability
-
-- AO (Agent Orchestrator)
-- Neatlogs
-
-### Deployment
-
-- Vercel — frontend
-- Render — backend
-
----
-
-## Local Development
-
-### Prerequisites
-
-- Python 3.13.5
-- Node.js
-- Anthropic API key
-
-The repository pins Python 3.13.5 for deployment compatibility.
-
-### 1. Clone
+Prerequisites: Python 3.13.5, Node.js, and `ANTHROPIC_API_KEY`. Set `NEATLOGS_API_KEY` to enable tracing.
 
 ```bash
 git clone https://github.com/abhijitmanna912001/auditflow.git
 cd auditflow
-```
-
-### 2. Install backend dependencies
-
-```bash
 pip install -r requirements.txt
 ```
 
-Set:
-
 ```bash
-ANTHROPIC_API_KEY=your-key
-```
+# Backend
+ANTHROPIC_API_KEY=your-key uvicorn orchestration.api:app --host 127.0.0.1 --port 8000
 
-Neatlogs tracing can be enabled with:
-
-```bash
-NEATLOGS_API_KEY=your-key
-```
-
-### 3. Start the backend
-
-```bash
-uvicorn orchestration.api:app --host 127.0.0.1 --port 8000
-```
-
-The API is available at:
-
-```text
-http://127.0.0.1:8000
-```
-
-### 4. Start the frontend
-
-```bash
+# Frontend, in a second terminal
 cd frontend
 npm install
 npm run dev
 ```
 
-The frontend runs at:
-
-```text
-http://localhost:3000
-```
-
-The frontend uses:
-
-```text
-NEXT_PUBLIC_API_BASE_URL
-```
-
-to configure the backend URL, with localhost as the development fallback.
-
----
+The API defaults to `http://127.0.0.1:8000`; set `NEXT_PUBLIC_API_BASE_URL` to point the frontend at another backend.
 
 ## API
 
-Run an audit case with:
-
 ```http
 POST /run-case
+Content-Type: application/json
+
+{ "case_id": "CASE_09" }
 ```
 
-Example:
+The response is the Workpaper Agent’s review-ready JSON output.
 
-```json
-{
-  "case_id": "CASE_09"
-}
-```
-
-Example local request:
-
-```bash
-curl -X POST http://127.0.0.1:8000/run-case \
-  -H "Content-Type: application/json" \
-  -d '{"case_id":"CASE_09"}'
-```
-
-The API returns the Workpaper Agent's review-ready JSON output.
-
----
-
-## Project Structure
+## Repository map
 
 ```text
-auditflow/
-├── agents/
-│   ├── intake_agent.py
-│   ├── evidence_agent.py
-│   ├── anomaly_agent.py
-│   ├── decision_agent.py
-│   ├── workpaper_agent.py
-│   └── observability.py
-│
-├── orchestration/
-│   └── api.py
-│
-├── evaluation/
-│   └── benchmark tooling
-│
-├── frontend/
-│   ├── components/
-│   ├── lib/
-│   └── ...
-│
-├── dataset/
-│   ├── CASE_01/
-│   ├── CASE_02/
-│   ├── ...
-│   └── CASE_12/
-│
-├── docs/
-├── requirements.txt
-├── runtime.txt
-└── README.md
+agents/         Five agent implementations and unit tests
+orchestration/  FastAPI pipeline endpoint
+dataset/        12 ground-truth cases and text document fixtures
+evaluation/     Benchmark scoring and report comparison
+frontend/       Next.js reviewer workspace
+docs/           Agent contract and product screenshots
 ```
 
----
+## Next steps
 
-## Engineering Approach
-
-AuditFlow was developed around repeated validation rather than a single happy-path demo.
-
-During development we:
-
-- benchmarked all 12 cases
-- tested clean and exception scenarios
-- verified routing behavior
-- investigated classification boundary failures
-- tested missing-evidence reasoning
-- validated model reliability
-- validated LLM observability
-- used separate PRs for focused changes
-- verified frontend builds independently
-- tested the live frontend against the real backend
-
-The result is a system designed to be **observable, testable, and reviewable**, not just visually convincing.
-
----
-
-## Future Improvements
-
-Potential next steps include:
-
-- confidence-based retries
-- disagreement detection between independent reasoning passes
-- persistent reviewer decisions
-- full arbitrary-document ingestion
-- richer audit-history and workpaper export
-- additional benchmark cases and audit domains
-
----
+- Confidence-based retries and independent-pass disagreement detection
+- Persistent reviewer decisions and audit trail
+- Full arbitrary-document ingestion
+- Workpaper export and broader audit-domain coverage
 
 ## Team
 
-**Abhijit Manna**
+- **Abhijit Manna** — agent logic, orchestration, evaluation, backend reliability, deployment
+- **Garvit Mathur** — dataset, frontend, testing, integration, observability, deployment preparation
 
-Agent logic, orchestration, evaluation, backend reliability, deployment
-
-**Garvit Mathur**
-
-Dataset, frontend, testing, integration, observability, deployment preparation
-
----
-
-## Hackathon
-
-Built for:
-
-**Syndicate by Maximor — AO Hackathon**
-
-**Track 2: Autonomous Office of the CFO**
+Built for **Syndicate by Maximor — AO Hackathon · Track 2: Autonomous Office of the CFO**.
