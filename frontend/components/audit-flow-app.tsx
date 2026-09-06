@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type KeyboardEvent, type ReactNode } from "react";
-import { workpaperPayload } from "../lib/mock-workpaper";
+import { fetchWorkpaper, workpaperPayloadFallback } from "../lib/mock-workpaper";
 import type { Action, Confidence, Workpaper, WorkpaperRow } from "../types/workpaper";
 import { Icon } from "./icons";
 
@@ -68,10 +68,29 @@ export function AuditFlowApp() {
   const timers = useRef<number[]>([]);
 
   const selectedCaseInfo = cases.find((item) => item.id === selectedCase) ?? cases[0];
-  const activeWorkpaper = useMemo<Workpaper>(() => ({
-    ...workpaperPayload,
-    case_id: selectedCase === "UPLOAD" ? "UPLOADED_BUNDLE" : selectedCase,
-  }), [selectedCase]);
+  const [backendLoaded, setBackendLoaded] = useState(false);
+  const [workpaper, setWorkpaper] = useState<Workpaper | null>(null);
+  useEffect(() => {
+    // Load initial data from backend when available, else fall back to mock payload
+    let mounted = true;
+    (async () => {
+      const payload = await fetchWorkpaper();
+      if (mounted) {
+        if (payload) {
+          setWorkpaper({ ...payload, case_id: selectedCase === "UPLOAD" ? "UPLOADED_BUNDLE" : payload.case_id });
+        } else {
+          setWorkpaper({ ...workpaperPayloadFallback, case_id: selectedCase === "UPLOAD" ? "UPLOADED_BUNDLE" : workpaperPayloadFallback.case_id } as Workpaper);
+        }
+        setBackendLoaded(true);
+      }
+    })();
+    return () => { mounted = false; };
+  }, [selectedCase]);
+
+  const activeWorkpaper = useMemo<Workpaper>(() => {
+    if (workpaper) return { ...workpaper, case_id: selectedCase === "UPLOAD" ? "UPLOADED_BUNDLE" : workpaper.case_id };
+    return { ...workpaperPayloadFallback, case_id: selectedCase === "UPLOAD" ? "UPLOADED_BUNDLE" : workpaperPayloadFallback.case_id } as Workpaper;
+  }, [workpaper, selectedCase]);
   const isComplete = runState === "complete";
   const humanQueue = useMemo(() => activeWorkpaper.rows.filter((row) => row.action === "human_review"), [activeWorkpaper]);
 
