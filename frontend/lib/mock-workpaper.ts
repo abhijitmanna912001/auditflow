@@ -4,9 +4,12 @@ import { confidence, type Workpaper } from "../types/workpaper";
 // It exports a single function to obtain the payload matching the Workpaper contract.
 export type MaybeWorkpaper = Workpaper | null;
 
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+
 export async function fetchWorkpaper(caseId: string): Promise<MaybeWorkpaper> {
   try {
-    const resp = await fetch("http://127.0.0.1:8000/run-case", {
+    const resp = await fetch(`${API_BASE}/run-case`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ case_id: caseId }),
