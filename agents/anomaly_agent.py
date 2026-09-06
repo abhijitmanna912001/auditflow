@@ -22,6 +22,10 @@ from __future__ import annotations
 import json
 import sys
 
+from observability import configure_neatlogs, shutdown_neatlogs
+
+configure_neatlogs()
+
 import anthropic
 
 from evidence_agent import run_evidence_agent
@@ -162,6 +166,8 @@ def run_anomaly_agent(
     # already know rather than trust the model's echo of them.
     transaction["case_id"] = case_id
     transaction["transaction_id"] = transaction_id
+
+    shutdown_neatlogs()
 
     return transaction
 

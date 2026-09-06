@@ -22,6 +22,7 @@ Call:
 from __future__ import annotations
 
 import sys
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -33,9 +34,20 @@ DATASET_DIR = REPO_ROOT / "dataset"
 
 sys.path.insert(0, str(REPO_ROOT / "agents"))
 
+from observability import configure_neatlogs, shutdown_neatlogs  # noqa: E402
+
+configure_neatlogs()
+
 from workpaper_agent import run_full_pipeline  # noqa: E402 (needs sys.path set first)
 
-app = FastAPI(title="AuditFlow Orchestration API")
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    yield
+    shutdown_neatlogs()
+
+
+app = FastAPI(title="AuditFlow Orchestration API", lifespan=lifespan)
 
 # Allows the Next.js frontend (running on either hostname a dev server might
 # bind to) to call this API directly from the browser.

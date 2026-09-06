@@ -34,6 +34,10 @@ from __future__ import annotations
 import json
 import sys
 
+from observability import configure_neatlogs, shutdown_neatlogs
+
+configure_neatlogs()
+
 import anthropic
 
 from anomaly_agent import run_anomaly_agent
@@ -257,7 +261,7 @@ def run_workpaper_agent(
     )
     estimated_minutes_saved = auto_cleared * assumed_minutes_per_item
 
-    return {
+    result = {
         "case_id": case_id,
         "rows": rows,
         "summary": {
@@ -269,6 +273,10 @@ def run_workpaper_agent(
             "estimated_minutes_saved": estimated_minutes_saved,
         },
     }
+
+    shutdown_neatlogs()
+
+    return result
 
 
 def run_full_pipeline(
