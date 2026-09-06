@@ -9,4 +9,4 @@ dist/
 build/
 *.log
 runs/*.json
-evaluation/runs/*.json
+evaluation/runs/*.jsonvenv/
