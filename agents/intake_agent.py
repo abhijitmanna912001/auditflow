@@ -54,7 +54,7 @@ def _flush_neatlogs() -> None:
         _neatlogs_tracker.shutdown()
 
 
-MODEL = "claude-opus-5"
+MODEL = "claude-sonnet-5"
 
 # Copied verbatim from docs/agent-spec.md section 1 ("System prompt:").
 SYSTEM_PROMPT = (
