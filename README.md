@@ -6,7 +6,7 @@ AuditFlow turns controlled financial-document bundles into review-ready audit wo
 
 Built for **Syndicate by Maximor — AO Hackathon**, **Track 2: Autonomous Office of the CFO**.
 
-🚀 **[Live Demo](https://auditflow-kohl.vercel.app)** · [Backend API](https://auditflow-sxik.onrender.com) · [Repository](https://github.com/abhijitmanna912001/auditflow)
+🚀 **[Live Demo](https://auditflow-kohl.vercel.app)** · [Backend API](https://auditflow-sxik.onrender.com) · [Demo Video](https://www.loom.com/share/674a3829f506421897b03738399a6329)
 
 The deployed demo runs the real five-agent pipeline rather than a static frontend mock.
 
