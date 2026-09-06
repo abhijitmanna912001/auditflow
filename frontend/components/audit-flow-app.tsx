@@ -8,10 +8,9 @@ import { Icon } from "./icons";
 type RunState = "ready" | "running" | "complete";
 type StageState = "idle" | "active" | "complete";
 type ReviewerDecision = "cleared" | "escalated" | "evidence_requested";
-type CaseId = "CASE_04" | "CASE_01" | "CASE_09" | "UPLOAD";
 
 interface AuditCase {
-  id: Exclude<CaseId, "UPLOAD">;
+  id: `CASE_${string}`;
   name: string;
   detail: string;
 }
@@ -35,11 +34,23 @@ const stages: Stage[] = [
   { name: "Workpaper", description: "Compile review-ready output", icon: "▤" },
 ];
 
-const cases: AuditCase[] = [
-  { id: "CASE_04", name: "September close · Payables", detail: "4 representative transactions" },
-  { id: "CASE_01", name: "July close · Operations", detail: "Clean control sample" },
-  { id: "CASE_09", name: "Quarter close · Warehouse", detail: "Complex exception sample" },
-];
+const cases = [
+  { id: "CASE_01", name: "TXN_01 · no expected findings", detail: "Expected action: auto_clear" },
+  { id: "CASE_02", name: "TXN_02 · no expected findings", detail: "Expected action: auto_clear" },
+  { id: "CASE_03", name: "TXN_03 · duplicate_invoice", detail: "Expected action: human_review · high severity" },
+  { id: "CASE_04", name: "TXN_04 · amount_mismatch", detail: "Expected action: human_review · high severity" },
+  { id: "CASE_05", name: "TXN_05 · missing_po", detail: "Expected action: human_review · medium severity" },
+  { id: "CASE_06", name: "TXN_06 · missing_receipt", detail: "Expected action: human_review · high severity" },
+  { id: "CASE_07", name: "TXN_07 · vendor_mismatch", detail: "Expected action: human_review · high severity" },
+  { id: "CASE_08", name: "TXN_08 · date_inconsistency", detail: "Expected action: human_review · medium severity" },
+  { id: "CASE_09", name: "TXN_09 · duplicate_invoice, amount_mismatch, missing_receipt", detail: "Expected action: human_review · high severity" },
+  { id: "CASE_10", name: "TXN_10 · vendor_mismatch, date_inconsistency", detail: "Expected action: human_review · high severity" },
+  { id: "CASE_11", name: "TXN_11 · missing_po, amount_mismatch", detail: "Expected action: human_review · medium/high severity" },
+  { id: "CASE_12", name: "TXN_12 · missing_receipt", detail: "Expected action: human_review · medium severity" },
+] as const satisfies readonly AuditCase[];
+
+type BenchmarkCaseId = (typeof cases)[number]["id"];
+type CaseId = BenchmarkCaseId | "UPLOAD";
 
 const detailByDocument: Record<string, ExceptionDetail> = {
   "INV-1001": { reason: "All expected supporting records agree on vendor, date, and amount.", severity: "None" },
