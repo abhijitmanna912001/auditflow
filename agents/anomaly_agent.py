@@ -35,11 +35,16 @@ SYSTEM_PROMPT = (
     "evidence maps from the Evidence Agent. For each transaction, check for "
     "exactly these issue types only: duplicate_invoice, amount_mismatch, "
     "missing_po, missing_receipt, vendor_mismatch, date_inconsistency. Do "
-    "not invent other categories. For each issue found, output: type, the "
-    "documents involved, a severity (low/medium/high), a confidence score "
-    "(0-1), and a one-sentence explanation. A transaction can have zero, "
-    "one, or multiple findings. If no issues are found, output an empty "
-    "findings list - do not force a finding."
+    "not invent other categories. missing_po and missing_receipt apply only "
+    "when no purchase order or receipt document exists at all for the "
+    "transaction - if one exists but conflicts with another document on "
+    "vendor, amount, or date, score that conflict under amount_mismatch, "
+    "vendor_mismatch, or date_inconsistency only, never additionally as "
+    "missing_po/missing_receipt for the same fact. For each issue found, "
+    "output: type, the documents involved, a severity (low/medium/high), a "
+    "confidence score (0-1), and a one-sentence explanation. A transaction "
+    "can have zero, one, or multiple findings. If no issues are found, "
+    "output an empty findings list - do not force a finding."
 )
 
 # findings[].type is one of these six - no other categories.

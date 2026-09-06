@@ -8,7 +8,7 @@ import json
 
 import pytest
 
-from anomaly_agent import run_anomaly_agent, OUTPUT_SCHEMA
+from anomaly_agent import run_anomaly_agent, OUTPUT_SCHEMA, SYSTEM_PROMPT
 
 
 class _FakeTextBlock:
@@ -121,3 +121,12 @@ def test_run_anomaly_agent_raises_when_model_returns_wrong_transaction_count():
     client = _FakeClient([])  # zero transactions instead of exactly one
     with pytest.raises(ValueError):
         run_anomaly_agent(_EVIDENCE_TRANSACTION, _INTAKE_DOCUMENTS, client=client)
+
+
+def test_system_prompt_disambiguates_missing_types_from_mismatch_types():
+    # Regression guard for the CASE_10/CASE_11 double-counting fix: a
+    # present-but-conflicting PO/receipt must not also be scored as missing.
+    # This can't be tested end-to-end without a live model call, but a
+    # future edit accidentally dropping this clause should fail loudly here.
+    assert "missing_po and missing_receipt apply only when" in SYSTEM_PROMPT
+    assert "never additionally as missing_po/missing_receipt" in SYSTEM_PROMPT
