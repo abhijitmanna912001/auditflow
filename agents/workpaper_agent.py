@@ -34,7 +34,7 @@ from __future__ import annotations
 import json
 import sys
 
-from observability import configure_neatlogs, workflow
+from observability import configure_neatlogs, shutdown_neatlogs
 
 configure_neatlogs()
 
@@ -261,7 +261,7 @@ def run_workpaper_agent(
     )
     estimated_minutes_saved = auto_cleared * assumed_minutes_per_item
 
-    return {
+    result = {
         "case_id": case_id,
         "rows": rows,
         "summary": {
@@ -274,8 +274,11 @@ def run_workpaper_agent(
         },
     }
 
+    shutdown_neatlogs()
 
-@workflow("auditflow.run_case")
+    return result
+
+
 def run_full_pipeline(
     case_folder: str,
     assumed_minutes_per_item: float = DEFAULT_ASSUMED_MINUTES_PER_ITEM,

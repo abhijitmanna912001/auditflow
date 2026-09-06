@@ -20,7 +20,7 @@ import json
 import re
 import sys
 
-from observability import configure_neatlogs
+from observability import configure_neatlogs, shutdown_neatlogs
 
 configure_neatlogs()
 
@@ -150,6 +150,8 @@ def run_evidence_agent(
     # already know rather than trust the model's echo of them.
     transaction["case_id"] = case_id
     transaction["transaction_id"] = transaction_id
+
+    shutdown_neatlogs()
 
     return transaction
 

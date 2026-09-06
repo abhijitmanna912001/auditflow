@@ -42,7 +42,7 @@ from __future__ import annotations
 import json
 import sys
 
-from observability import configure_neatlogs
+from observability import configure_neatlogs, shutdown_neatlogs
 
 configure_neatlogs()
 
@@ -259,7 +259,7 @@ def run_decision_agent(
             f"one transaction per case), got {len(reason_entries)}"
         )
 
-    return {
+    result = {
         "transaction_id": transaction_id,
         "case_id": case_id,
         "action": action,
@@ -268,6 +268,10 @@ def run_decision_agent(
         "thresholds_used": thresholds_used,
         "findings": carried_findings,
     }
+
+    shutdown_neatlogs()
+
+    return result
 
 
 def run_intake_evidence_anomaly_decision(

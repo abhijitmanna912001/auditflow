@@ -14,7 +14,7 @@ import json
 import sys
 from pathlib import Path
 
-from observability import configure_neatlogs
+from observability import configure_neatlogs, shutdown_neatlogs
 
 configure_neatlogs()
 
@@ -125,6 +125,8 @@ def run_intake_agent(
 
     text = next(block.text for block in response.content if block.type == "text")
     parsed = json.loads(text)
+
+    shutdown_neatlogs()
 
     return parsed["documents"]
 
