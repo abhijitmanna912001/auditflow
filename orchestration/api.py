@@ -25,6 +25,7 @@ import sys
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -35,6 +36,15 @@ sys.path.insert(0, str(REPO_ROOT / "agents"))
 from workpaper_agent import run_full_pipeline  # noqa: E402 (needs sys.path set first)
 
 app = FastAPI(title="AuditFlow Orchestration API")
+
+# Allows the Next.js frontend (running on either hostname a dev server might
+# bind to) to call this API directly from the browser.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_methods=["POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
+)
 
 
 class RunCaseRequest(BaseModel):
