@@ -46,7 +46,7 @@ import anthropic
 
 from anomaly_agent import run_intake_evidence_anomaly
 
-MODEL = "claude-opus-5"
+MODEL = "claude-sonnet-5"
 
 # Copied verbatim from docs/agent-spec.md section 4 ("System prompt:").
 SYSTEM_PROMPT = (

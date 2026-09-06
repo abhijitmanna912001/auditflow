@@ -27,7 +27,7 @@ import anthropic
 from evidence_agent import run_evidence_agent
 from intake_agent import run_intake_agent
 
-MODEL = "claude-opus-5"
+MODEL = "claude-sonnet-5"
 
 # Copied verbatim from docs/agent-spec.md section 3 ("System prompt:").
 SYSTEM_PROMPT = (
