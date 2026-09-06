@@ -21,6 +21,7 @@ Call:
 
 from __future__ import annotations
 
+import os
 import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -49,11 +50,21 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(title="AuditFlow Orchestration API", lifespan=lifespan)
 
-# Allows the Next.js frontend (running on either hostname a dev server might
-# bind to) to call this API directly from the browser.
+# Allows the Next.js frontend to call this API directly from the browser.
+# ALLOWED_ORIGINS (comma-separated) lets a deployment add its real frontend
+# URL via an environment variable, with no code change - falls back to the
+# local dev server's two possible hostnames when unset.
+_DEFAULT_ALLOWED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
+_allowed_origins_env = os.environ.get("ALLOWED_ORIGINS")
+allowed_origins = (
+    [origin.strip() for origin in _allowed_origins_env.split(",") if origin.strip()]
+    if _allowed_origins_env
+    else _DEFAULT_ALLOWED_ORIGINS
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=allowed_origins,
     allow_methods=["POST", "OPTIONS"],
     allow_headers=["Content-Type"],
 )
