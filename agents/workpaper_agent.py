@@ -34,6 +34,10 @@ from __future__ import annotations
 import json
 import sys
 
+from observability import configure_neatlogs, workflow
+
+configure_neatlogs()
+
 import anthropic
 
 from anomaly_agent import run_anomaly_agent
@@ -271,6 +275,7 @@ def run_workpaper_agent(
     }
 
 
+@workflow("auditflow.run_case")
 def run_full_pipeline(
     case_folder: str,
     assumed_minutes_per_item: float = DEFAULT_ASSUMED_MINUTES_PER_ITEM,

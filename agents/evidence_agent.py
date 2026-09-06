@@ -20,6 +20,10 @@ import json
 import re
 import sys
 
+from observability import configure_neatlogs
+
+configure_neatlogs()
+
 import anthropic
 
 from intake_agent import run_intake_agent

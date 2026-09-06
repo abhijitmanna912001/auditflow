@@ -11,47 +11,14 @@ Usage:
 from __future__ import annotations
 
 import json
-import os
 import sys
 from pathlib import Path
 
+from observability import configure_neatlogs
+
+configure_neatlogs()
+
 import anthropic
-import neatlogs
-
-# Tracing is opt-in via env var so no secret is ever committed to this
-# public repo - set NEATLOGS_API_KEY to enable. instrument_all() (called
-# inside neatlogs.init()) auto-patches any already-imported provider SDK
-# found in SUPPORTED_PROVIDERS (which includes "anthropic"), so this runs
-# before any Anthropic API call regardless of import order.
-#
-# neatlogs.init() returns the LLMTracker it creates - capture that return
-# value directly rather than re-fetching it later via neatlogs.get_tracker().
-# The latter has been observed to raise AttributeError ("module 'neatlogs'
-# has no attribute 'get_tracker'") in some environments, seemingly from an
-# interaction between neatlogs' own import-hook self-patching and other
-# import hooks (e.g. pytest's assertion rewriter) - capturing the reference
-# up front avoids depending on that attribute resolving later at all.
-_NEATLOGS_API_KEY = os.environ.get("NEATLOGS_API_KEY")
-_neatlogs_tracker = None
-if _NEATLOGS_API_KEY:
-    _neatlogs_tracker = neatlogs.init(
-        api_key=_NEATLOGS_API_KEY,
-        tags=["agent:intake", "project:auditflow"],
-    )
-
-
-def _flush_neatlogs() -> None:
-    """Block until any in-flight Neatlogs trace uploads finish.
-
-    neatlogs 1.1.8 has no public flush() function - each span is POSTed to
-    the Neatlogs backend on a background thread as soon as it completes
-    (LLMTracker.log_llm_call -> _send_data_to_server), not buffered for a
-    later flush. LLMTracker.shutdown() (the same call neatlogs' own
-    atexit hook makes) is what actually blocks until those in-flight
-    sends finish, so it's the real equivalent of "flush" here.
-    """
-    if _neatlogs_tracker is not None:
-        _neatlogs_tracker.shutdown()
 
 
 MODEL = "claude-sonnet-5"
@@ -158,8 +125,6 @@ def run_intake_agent(
 
     text = next(block.text for block in response.content if block.type == "text")
     parsed = json.loads(text)
-
-    _flush_neatlogs()
 
     return parsed["documents"]
 

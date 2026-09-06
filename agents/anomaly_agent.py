@@ -22,6 +22,10 @@ from __future__ import annotations
 import json
 import sys
 
+from observability import configure_neatlogs
+
+configure_neatlogs()
+
 import anthropic
 
 from evidence_agent import run_evidence_agent
