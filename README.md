@@ -99,8 +99,11 @@ Prerequisites: Python 3.13.5, Node.js, and `ANTHROPIC_API_KEY`. Set `NEATLOGS_AP
 ```bash
 git clone https://github.com/abhijitmanna912001/auditflow.git
 cd auditflow
+python3.13 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 ```
+
+If `pip install` fails with `externally-managed-environment`, you're on a system Python (e.g. Homebrew) that blocks global installs by design — the `venv` step above avoids this.
 
 ```bash
 # Backend
