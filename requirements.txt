@@ -1,5 +1,11 @@
 anthropic>=1.4.0,<2
-neatlogs>=1.1.8,<2
+# neatlogs 1.1.8 posted to a retired backend route (app.neatlogs.com) and
+# every release from 1.1.9 through 1.4.21 required Python <3.14, so 1.1.8
+# was pinned as a workaround while this project runs Python 3.14. Neatlogs
+# has since relaxed the Python constraint and confirmed the backend-route
+# fix directly (neatlogs/neatlogs#91) - 1.4.13+ posts to
+# ingest.neatlogs.com by default and installs cleanly here.
+neatlogs>=1.4.13,<2
 # neatlogs imports requests at module load but doesn't declare it as an
 # install dependency in its PyPI metadata (its bundled internal
 # requirements.txt lists it, but that's not wired into the wheel's
