@@ -15,12 +15,15 @@ The deployed demo runs the real five-agent pipeline rather than a static fronten
 Audit review is often slowed less by the final judgment than by collecting evidence, checking whether records agree, and documenting exceptions.
 
 - **5 specialized AI agents** with bounded responsibilities
-- **12 controlled benchmark cases** spanning clean, missing, conflicting, and multi-issue evidence
+- **14 controlled benchmark cases** spanning clean, missing, conflicting, and multi-issue evidence
 - **Evidence-backed human review** instead of silently accepting exceptions
+- **Real document upload** with Claude's native PDF/image understanding, alongside the benchmark suite
+- **Second-pass evidence resolution** on ambiguous cases, with disagreement surfaced rather than silently resolved
+- **Persistent reviewer decisions**, building a record of confirmed vs. overturned findings
 
 ### Verified benchmark
 
-**12 cases · 100% case-level routing accuracy on the verified benchmark run**
+**14 cases · 100% case-level routing accuracy on the verified benchmark run**
 
 ## Product Preview
 
@@ -54,11 +57,15 @@ Intake → Evidence → Anomaly → Decision → Workpaper
 | Decision Agent | Routes any finding to `human_review`; routes no findings to `auto_clear`. |
 | Workpaper Agent | Produces the evidence-backed, review-ready workpaper. |
 
-The bounded exception types are duplicate invoice, amount mismatch, missing PO, missing receipt, vendor mismatch, and date inconsistency.
+The bounded exception types are duplicate invoice, amount mismatch, missing PO, missing receipt, vendor mismatch, date inconsistency, currency mismatch, and tax mismatch.
+
+### Evidence Resolver
+
+On transactions where the Evidence Agent's first pass lands below a confidence threshold, a second independent pass runs and the two are compared. If they agree, the higher-confidence result is kept. If they disagree, both sets of findings are unioned rather than one being silently picked, and the disagreement is surfaced in the UI. This targets the CASE_06-style ambiguity noted below.
 
 ## Architecture and model strategy
 
-AO (Agent Orchestrator) coordinates the pipeline; a FastAPI endpoint exposes a full run at `POST /run-case`; Neatlogs provides LLM tracing for workflow execution, model usage, latency, token consumption, and cost. Anthropic Claude is used with a focused mixed-model strategy:
+AO (Agent Orchestrator) coordinates the pipeline; a FastAPI backend exposes the full run via `POST /run-case` (benchmark cases) and `POST /run-case-upload` (real documents); Neatlogs provides LLM tracing for workflow execution, model usage, latency, token consumption, and cost. Anthropic Claude is used with a focused mixed-model strategy:
 
 | Agent | Model |
 |---|---|
@@ -72,15 +79,15 @@ The Anomaly Agent uses the stronger model because exception classification is th
 
 ## Benchmark and review controls
 
-The benchmark contains 12 controlled scenarios: clean cases, duplicate invoices, amount mismatches, missing POs and receipts, vendor mismatches, date inconsistencies, multi-issue cases, and incomplete or conflicting evidence. These are evaluation fixtures—not customer audits.
+The benchmark contains 14 controlled scenarios: clean cases, duplicate invoices, amount and currency mismatches, tax calculation errors, missing POs and receipts, vendor mismatches, date inconsistencies, multi-issue cases, and incomplete or conflicting evidence. These are evaluation fixtures—not customer audits.
 
-**Known limitation:** `CASE_06` is an intentionally more ambiguous mixed goods/service scenario and has residual variance in full-sequence LLM runs. A future improvement is confidence-based retry with disagreement flagging.
+**Known limitation:** `CASE_06` is an intentionally more ambiguous mixed goods/service scenario and has shown residual variance in full-sequence LLM runs even with the Evidence Resolver's second pass — documented honestly rather than hidden, since a single test run can land differently even when the resolver correctly agrees or disagrees on repeat runs.
 
-Detected exceptions are routed to a reviewer, who can inspect the finding, evidence, confidence, rationale, and workpaper context. The current UI supports **Clear exception**, **Request evidence**, and **Escalate** actions.
+Detected exceptions are routed to a reviewer, who can inspect the finding, evidence, confidence, rationale, and workpaper context. The current UI supports **Clear exception**, **Request evidence**, and **Escalate** actions, and every decision is persisted server-side (`POST /feedback`) and viewable in a decision history dashboard (`GET /feedback/history`).
 
 ### Upload Documents
 
-The hackathon demo runs controlled benchmark bundles for reproducible evaluation. **Upload Documents** is the intended production ingestion surface; uploaded files are currently staged locally and are not sent through the backend five-agent pipeline.
+Real PDF and image documents can be uploaded and run through the full five-agent pipeline via `POST /run-case-upload`, using Claude's native document understanding for extraction — no separate OCR step. The 14-case benchmark remains available separately for reproducible evaluation.
 
 ## Stack and deployment
 
@@ -126,14 +133,38 @@ Content-Type: application/json
 { "case_id": "CASE_09" }
 ```
 
-The response is the Workpaper Agent’s review-ready JSON output.
+The response is the Workpaper Agent's review-ready JSON output.
+
+```http
+POST /run-case-upload?case_id=<label>&use_resolver=true
+Content-Type: multipart/form-data
+
+files: one or more PDF/PNG/JPG/JPEG/WEBP files
+```
+
+Same response shape as `/run-case`, run against real uploaded documents. `use_resolver=true` routes Evidence through the second-pass resolver.
+
+```http
+POST /feedback
+Content-Type: application/json
+
+{ "case_id": "CASE_09", "document": "INV-1009-A", "finding": "...", "agent_action": "human_review", "decision": "confirmed" }
+```
+
+Persists a reviewer decision (`confirmed`, `overturned`, or `evidence_requested`) tied to a specific finding.
+
+```http
+GET /feedback/history
+```
+
+Returns every persisted reviewer decision, oldest first.
 
 ## Repository map
 
 ```text
 agents/         Five agent implementations and unit tests
 orchestration/  FastAPI pipeline endpoint
-dataset/        12 ground-truth cases and text document fixtures
+dataset/        14 ground-truth cases and text document fixtures
 evaluation/     Benchmark scoring and report comparison
 frontend/       Next.js reviewer workspace
 docs/           Agent contract and product screenshots
@@ -141,10 +172,9 @@ docs/           Agent contract and product screenshots
 
 ## Next steps
 
-- Confidence-based retries and independent-pass disagreement detection
-- Persistent reviewer decisions and audit trail
-- Full arbitrary-document ingestion
+- Automated regression testing using the persisted reviewer feedback (overturned findings as a regression set)
 - Workpaper export and broader audit-domain coverage
+- Additional anomaly types beyond the current eight
 
 ## Team
 
