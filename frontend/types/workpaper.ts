@@ -41,9 +41,23 @@ export interface Summary {
   estimated_minutes_saved: number;
 }
 
+/**
+ * Record of the Evidence Resolver's second-pass run, surfaced at the top level
+ * of the workpaper (not per-row) by the backend when use_resolver is enabled.
+ * The pass_*_missing_evidence fields are present only on a disagreement.
+ */
+export interface EvidenceResolution {
+  second_pass_run: boolean;
+  agreement: boolean | null;
+  reason: string;
+  pass_1_missing_evidence?: string[];
+  pass_2_missing_evidence?: string[];
+}
+
 /** Exact top-level Workpaper Agent payload rendered by the frontend. */
 export interface Workpaper {
   case_id: string;
   rows: WorkpaperRow[];
   summary: Summary;
+  evidence_resolution?: EvidenceResolution | null;
 }

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type KeyboardEvent, type ReactNode } from "react";
 import { fetchWorkpaper, fetchWorkpaperFromUpload, workpaperPayloadFallback } from "../lib/mock-workpaper";
 import { persistFeedback } from "../lib/feedback";
-import type { Action, Confidence, Workpaper, WorkpaperRow } from "../types/workpaper";
+import type { Action, Confidence, EvidenceResolution, Workpaper, WorkpaperRow } from "../types/workpaper";
 import type { FeedbackDecision, FeedbackRecord } from "../types/feedback";
 import { Icon } from "./icons";
 import { FeedbackHistoryPanel } from "./feedback-history";
@@ -73,6 +73,7 @@ const actionLabel = (action: Action) => action === "auto_clear" ? "Auto-cleared"
 export function AuditFlowApp() {
   const [selectedCase, setSelectedCase] = useState<CaseId>(cases[0].id);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [useResolver, setUseResolver] = useState(false);
   const [runState, setRunState] = useState<RunState>("ready");
   const [activeStage, setActiveStage] = useState(-1);
   const [selectedRow, setSelectedRow] = useState<WorkpaperRow | null>(null);
@@ -103,7 +104,7 @@ export function AuditFlowApp() {
     setRunState("running");
     setActiveStage(0);
 
-    const payload = selectedCase === "UPLOAD" ? await fetchWorkpaperFromUpload(uploadedFiles) : await fetchWorkpaper(selectedCase);
+    const payload = selectedCase === "UPLOAD" ? await fetchWorkpaperFromUpload(uploadedFiles, useResolver) : await fetchWorkpaper(selectedCase);
     if (payload) {
       setWorkpaper(payload);
       setBackendLoaded(true);
@@ -168,6 +169,12 @@ export function AuditFlowApp() {
           <label className="upload-button"><Icon name="upload" size={17} /><span>Upload documents</span><input type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.webp" onChange={handleUpload} /></label>
           <button className="primary-button" onClick={beginReview} disabled={runState === "running"}>{runState === "running" ? <><span className="spinner" />Processing</> : <><Icon name="play" size={15} /> Run AuditFlow</>}</button>
         </div>
+        {uploadedFiles.length > 0 && (
+          <label className="resolver-toggle">
+            <input type="checkbox" checked={useResolver} onChange={(e) => setUseResolver(e.target.checked)} />
+            <span>Use Evidence Resolver (second pass on ambiguous findings)</span>
+          </label>
+        )}
         {uploadedFiles.length > 0 && <p className="upload-note"><Icon name="check" size={15} /> {uploadedFiles.map((file) => file.name).join(", ")} ready. This demo does not upload data to a server.</p>}
       </section>
 
@@ -186,7 +193,7 @@ export function AuditFlowApp() {
         <div className="metrics" aria-label="Workpaper summary"><Metric value={activeWorkpaper.summary.items_reviewed} label="Reviewed" tone="dark" /><Metric value={activeWorkpaper.summary.auto_cleared} label="Auto-cleared" tone="mint" /><Metric value={activeWorkpaper.summary.human_review} label="Human review" tone="amber" /><Metric value={activeWorkpaper.summary.critical} label="Critical" tone="coral" /><Metric value={`${activeWorkpaper.summary.assumed_minutes_per_item} min`} label="Time assumption / item" tone="plain" /><Metric value={`${activeWorkpaper.summary.estimated_minutes_saved} min`} label="Estimated minutes saved" tone="dark" /></div>
         <div className="workpaper-layout">
           <div className="table-card"><div className="table-intro"><div><h3>Workpaper table</h3><p>Select any row to inspect its decision rationale.</p></div><span>{humanQueue.length} awaiting review</span></div><div className="table-scroll"><table><thead><tr><th>Document</th><th>Finding</th><th>Evidence</th><th>Confidence</th><th>Action</th></tr></thead><tbody>{activeWorkpaper.rows.map((row) => <WorkpaperTableRow key={row.document} row={row} isSelected={selectedRow?.document === row.document} reviewerDecision={reviewDecisions[row.document]} selectedCase={selectedCase} onSelect={setSelectedRow} />)}</tbody></table></div></div>
-          <ExceptionPanel row={selectedRow} decision={selectedRow ? reviewDecisions[selectedRow.document] : undefined} reviewNote={reviewNote} onClose={() => setSelectedRow(null)} onDecision={chooseDecision} onNoteChange={setReviewNote} />
+          <ExceptionPanel row={selectedRow} decision={selectedRow ? reviewDecisions[selectedRow.document] : undefined} reviewNote={reviewNote} resolution={activeWorkpaper.evidence_resolution} onClose={() => setSelectedRow(null)} onDecision={chooseDecision} onNoteChange={setReviewNote} />
         </div>
         <p className="assumption"><Icon name="clock" size={16} /> Estimated minutes saved uses the explicit assumption of <strong>{activeWorkpaper.summary.assumed_minutes_per_item} minutes per auto-cleared item</strong>: {activeWorkpaper.summary.auto_cleared} × {activeWorkpaper.summary.assumed_minutes_per_item} = {activeWorkpaper.summary.estimated_minutes_saved} minutes.</p>
       </section>}
@@ -201,13 +208,19 @@ function WorkpaperTableRow({ row, isSelected, reviewerDecision, selectedCase, on
   return <tr className={isSelected ? "selected" : ""} onClick={() => onSelect(row)} tabIndex={0} onKeyDown={handleKeyDown}><td><strong>{row.document}</strong><small>{selectedCase === "UPLOAD" ? "Uploaded bundle" : "Demo document"}</small></td><td><span className={`finding ${row.finding === "Clean" ? "clean" : "exception"}`}>{row.finding}</span></td><td><div className="evidence-list">{row.evidence.slice(0, 3).map((item) => <span key={item}>{item}</span>)}{row.evidence.length > 3 && <span>+{row.evidence.length - 3}</span>}</div></td><td><div className="confidence"><b>{formatConfidence(row.confidence)}</b><span><i style={{ width: `${row.confidence * 100}%` }} /></span></div></td><td><span className={`action ${row.action}`}>{reviewerDecision ? reviewerDecisionCopy[reviewerDecision] : actionLabel(row.action)}</span></td></tr>;
 }
 
-function ExceptionPanel({ row, decision, reviewNote, onClose, onDecision, onNoteChange }: { row: WorkpaperRow | null; decision?: FeedbackDecision; reviewNote: string; onClose: () => void; onDecision: (decision: FeedbackDecision) => void; onNoteChange: (value: string) => void }) {
+function resolverSummary(resolution: EvidenceResolution) {
+  if (!resolution.second_pass_run) return `No second pass — ${resolution.reason}`;
+  const verdict = resolution.agreement ? "Two passes agreed" : "Two passes disagreed (both sets unioned)";
+  return `${verdict}. ${resolution.reason}`;
+}
+
+function ExceptionPanel({ row, decision, reviewNote, resolution, onClose, onDecision, onNoteChange }: { row: WorkpaperRow | null; decision?: FeedbackDecision; reviewNote: string; resolution?: EvidenceResolution | null; onClose: () => void; onDecision: (decision: FeedbackDecision) => void; onNoteChange: (value: string) => void }) {
   if (!row) return <aside className="decision-panel" aria-live="polite"><div className="empty-detail"><span className="empty-icon"><Icon name="note" size={23} /></span><h3>Open an exception</h3><p>Select a workpaper row to see the finding, evidence, confidence, action, and decision rationale.</p></div></aside>;
   const detail = detailByDocument[row.document] ?? {
     reason: "No additional exception narrative is available. Review the linked evidence and the agent action before recording a decision.",
     severity: row.finding === "Clean" ? "None" : "High",
   };
-  return <aside className="decision-panel" aria-live="polite"><button className="panel-close" onClick={onClose} aria-label="Close detail"><Icon name="close" size={18} /></button><p className="eyebrow">EXCEPTION DETAIL</p><h3>{row.finding}</h3><p className="detail-doc">{row.document} <span>· {detail.severity} priority</span></p><Detail label="Finding" value={row.finding} /><Detail label="Evidence" value={<div className="detail-evidence">{row.evidence.map((item) => <span key={item}>{item}</span>)}</div>} /><Detail label="Confidence" value={`${formatConfidence(row.confidence)} (${row.confidence.toFixed(2)} internally)`} /><Detail label="Agent action" value={actionLabel(row.action)} /><Detail label="Reason" value={detail.reason} /><Detail label="Involved documents" value={row.evidence.join(" · ")} /><div className="review-actions"><p>Reviewer decision</p><div><button className={decision === "confirmed" ? "active-decision" : ""} onClick={() => onDecision("confirmed")}>Confirm finding</button><button className={decision === "evidence_requested" ? "active-decision" : ""} onClick={() => onDecision("evidence_requested")}>Request evidence</button><button className={decision === "overturned" ? "active-decision danger" : "danger"} onClick={() => onDecision("overturned")}>Overturn decision</button></div><label className="note-field"><span>Reviewer note <em>optional</em></span><textarea value={reviewNote} onChange={(event) => onNoteChange(event.target.value)} placeholder="Add context for the review trail…" rows={2} /></label></div></aside>;
+  return <aside className="decision-panel" aria-live="polite"><button className="panel-close" onClick={onClose} aria-label="Close detail"><Icon name="close" size={18} /></button><p className="eyebrow">EXCEPTION DETAIL</p><h3>{row.finding}</h3><p className="detail-doc">{row.document} <span>· {detail.severity} priority</span></p><Detail label="Finding" value={row.finding} /><Detail label="Evidence" value={<div className="detail-evidence">{row.evidence.map((item) => <span key={item}>{item}</span>)}</div>} /><Detail label="Confidence" value={`${formatConfidence(row.confidence)} (${row.confidence.toFixed(2)} internally)`} /><Detail label="Agent action" value={actionLabel(row.action)} /><Detail label="Reason" value={detail.reason} /><Detail label="Involved documents" value={row.evidence.join(" · ")} />{resolution && <Detail label="Resolver" value={resolverSummary(resolution)} />}<div className="review-actions"><p>Reviewer decision</p><div><button className={decision === "confirmed" ? "active-decision" : ""} onClick={() => onDecision("confirmed")}>Confirm finding</button><button className={decision === "evidence_requested" ? "active-decision" : ""} onClick={() => onDecision("evidence_requested")}>Request evidence</button><button className={decision === "overturned" ? "active-decision danger" : "danger"} onClick={() => onDecision("overturned")}>Overturn decision</button></div><label className="note-field"><span>Reviewer note <em>optional</em></span><textarea value={reviewNote} onChange={(event) => onNoteChange(event.target.value)} placeholder="Add context for the review trail…" rows={2} /></label></div></aside>;
 }
 
 function Metric({ value, label, tone }: { value: string | number; label: string; tone: "dark" | "mint" | "amber" | "coral" | "plain" }) {

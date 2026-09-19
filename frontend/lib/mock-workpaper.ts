@@ -31,16 +31,19 @@ export async function fetchWorkpaper(caseId: string): Promise<MaybeWorkpaper> {
   }
 }
 
-export async function fetchWorkpaperFromUpload(files: File[]): Promise<MaybeWorkpaper> {
+export async function fetchWorkpaperFromUpload(files: File[], useResolver: boolean): Promise<MaybeWorkpaper> {
   if (files.length === 0) return null;
   try {
     const caseId = `UPLOADED_${Date.now()}`;
     const form = new FormData();
     files.forEach((file) => form.append("files", file, file.name));
 
-    const resp = await fetch(`${API_BASE}/run-case-upload?case_id=${encodeURIComponent(caseId)}`, {
+    const params = new URLSearchParams({ case_id: caseId });
+    if (useResolver) params.set("use_resolver", "true");
+
+    const resp = await fetch(`${API_BASE}/run-case-upload?${params.toString()}`, {
       method: "POST",
-      body: form, // no Content-Type header - browser sets the multipart boundary
+      body: form,
     });
     if (!resp.ok) {
       return null;
