@@ -1,0 +1,12 @@
+{
+  "case_id": "CASE_13",
+  "transaction_id": "TXN_13",
+  "expected_findings": [
+    {
+      "type": "currency_mismatch",
+      "documents": ["PO-1013", "INV-1013", "BNK-1013", "LED-1013"],
+      "severity": "high"
+    }
+  ],
+  "expected_action": "human_review"
+}

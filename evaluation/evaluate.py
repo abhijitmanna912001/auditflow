@@ -30,6 +30,8 @@ ALLOWED_FINDING_TYPES = {
     "missing_receipt",
     "vendor_mismatch",
     "date_inconsistency",
+    "currency_mismatch",
+    "tax_mismatch",
 }
 ALLOWED_ACTIONS = {"auto_clear", "human_review"}
 

@@ -1,0 +1,12 @@
+GENERAL LEDGER ENTRY
+Document ID: LED-1014
+Entry Date: 2026-08-14
+Account: Packaging Supplies Expense
+Vendor: Sunrise Packaging Solutions Pvt. Ltd.
+Reference: INV-1014 / PO-1014
+
+Debit: INR 246,000.00
+Credit: Bank - Operating Account
+Currency: INR
+
+Description: Custom corrugated shipping cartons, bulk order

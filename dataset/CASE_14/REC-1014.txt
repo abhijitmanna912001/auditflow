@@ -1,0 +1,11 @@
+GOODS RECEIPT NOTE
+Document ID: REC-1014
+Receipt Date: 2026-08-11
+Vendor: Sunrise Packaging Solutions Pvt. Ltd.
+Invoice Reference: INV-1014
+PO Reference: PO-1014
+
+Confirmed: 5,000 units of custom corrugated shipping cartons received in
+good condition, matching quantity on PO-1014.
+
+Accepted By: Warehouse Operations

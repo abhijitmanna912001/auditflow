@@ -1,0 +1,15 @@
+TAX INVOICE
+Document ID: INV-1014
+Supplier Invoice No: SPS/2026/2208
+Invoice Date: 2026-08-09
+Vendor: Sunrise Packaging Solutions Pvt. Ltd.
+Bill To: AuditFlow Operations, Bengaluru
+PO Reference: PO-1014
+
+Description: Custom corrugated shipping cartons, bulk order
+Quantity: 5,000 units
+Subtotal: INR 200,000.00
+GST @ 18%: INR 36,000.00
+Invoice Total: INR 246,000.00
+
+Payment Terms: Net 30 days from invoice date.

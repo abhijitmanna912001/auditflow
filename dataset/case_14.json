@@ -1,0 +1,12 @@
+{
+  "case_id": "CASE_14",
+  "transaction_id": "TXN_14",
+  "expected_findings": [
+    {
+      "type": "tax_mismatch",
+      "documents": ["INV-1014"],
+      "severity": "medium"
+    }
+  ],
+  "expected_action": "human_review"
+}

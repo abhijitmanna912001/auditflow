@@ -38,20 +38,28 @@ SYSTEM_PROMPT = (
     "You are the Anomaly Agent for AuditFlow. You receive transaction "
     "evidence maps from the Evidence Agent. For each transaction, check for "
     "exactly these issue types only: duplicate_invoice, amount_mismatch, "
-    "missing_po, missing_receipt, vendor_mismatch, date_inconsistency. Do "
-    "not invent other categories. missing_po and missing_receipt apply only "
-    "when no purchase order or receipt document exists at all for the "
-    "transaction - if one exists but conflicts with another document on "
-    "vendor, amount, or date, score that conflict under amount_mismatch, "
-    "vendor_mismatch, or date_inconsistency only, never additionally as "
-    "missing_po/missing_receipt for the same fact. For each issue found, "
-    "output: type, the documents involved, a severity (low/medium/high), a "
-    "confidence score (0-1), and a one-sentence explanation. A transaction "
-    "can have zero, one, or multiple findings. If no issues are found, "
-    "output an empty findings list - do not force a finding."
+    "missing_po, missing_receipt, vendor_mismatch, date_inconsistency, "
+    "currency_mismatch, tax_mismatch. Do not invent other categories. "
+    "missing_po and missing_receipt apply only when no purchase order or "
+    "receipt document exists at all for the transaction - if one exists but "
+    "conflicts with another document on vendor, amount, or date, score that "
+    "conflict under amount_mismatch, vendor_mismatch, or date_inconsistency "
+    "only, never additionally as missing_po/missing_receipt for the same "
+    "fact. currency_mismatch applies when documents in the same transaction "
+    "state different currency codes with no stated conversion reconciling "
+    "them - score currency disagreements here, not under amount_mismatch, "
+    "even if the numeric amounts would also disagree after conversion. "
+    "tax_mismatch is an arithmetic check on a single document only (does "
+    "its own stated subtotal, tax rate, and total actually reconcile) - "
+    "never score it just because a document doesn't mention tax. For each "
+    "issue found, output: type, the documents involved, a severity "
+    "(low/medium/high), a confidence score (0-1), and a one-sentence "
+    "explanation. A transaction can have zero, one, or multiple findings. "
+    "If no issues are found, output an empty findings list - do not force "
+    "a finding."
 )
 
-# findings[].type is one of these six - no other categories.
+# findings[].type is one of these eight - no other categories.
 FINDING_TYPES = [
     "duplicate_invoice",
     "amount_mismatch",
@@ -59,6 +67,8 @@ FINDING_TYPES = [
     "missing_receipt",
     "vendor_mismatch",
     "date_inconsistency",
+    "currency_mismatch",
+    "tax_mismatch",
 ]
 
 SEVERITY_LEVELS = ["low", "medium", "high"]

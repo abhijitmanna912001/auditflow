@@ -1,0 +1,11 @@
+BANK STATEMENT EXTRACT
+Document ID: BNK-1013
+Account: AuditFlow Operations - Operating Account
+Statement Period: 2026-07-01 to 2026-07-31
+
+Transaction Date: 2026-07-18
+Description: Wire transfer - Meridian Cloud Services Inc. - Invoice INV-1013
+Amount: INR 415,000.00
+Reference: MCS-2026-4471
+
+Balance carried forward per statement.

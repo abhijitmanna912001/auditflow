@@ -28,18 +28,21 @@ SYSTEM_PROMPT = (
     "You are the Intake Agent for AuditFlow. You receive raw financial documents "
     "(invoices, receipts, purchase orders, bank statements, ledger entries) for one "
     "audit case. For each document, extract: document ID, document type, vendor "
-    "name, amount, currency, date, and any reference IDs to other documents (e.g., "
-    "a PO number cited on an invoice). Output one JSON object per document "
-    "following the schema above. If a field cannot be determined, set it to null "
-    "and note why in an extraction_notes field. Do not guess amounts or dates - "
-    "flag uncertainty rather than fabricate."
+    "name, amount, tax amount (if the document states one explicitly, e.g. a "
+    "GST/VAT line item - null if it doesn't break out tax separately; never derive "
+    "or estimate a tax amount that isn't explicitly stated), currency, date, and "
+    "any reference IDs to other documents (e.g., a PO number cited on an invoice). "
+    "Output one JSON object per document following the schema above. If a field "
+    "cannot be determined, set it to null and note why in an extraction_notes "
+    "field. Do not guess amounts or dates - flag uncertainty rather than fabricate."
 )
 
 # type is one of: invoice, receipt, purchase_order, bank_statement, ledger_entry
 DOCUMENT_TYPES = ["invoice", "receipt", "purchase_order", "bank_statement", "ledger_entry"]
 
 # One object per document, per the Intake Agent output schema in the spec:
-# doc_id, type, vendor, amount, currency, date, references, case_id, extraction_notes
+# doc_id, type, vendor, amount, tax_amount, currency, date, references, case_id,
+# extraction_notes
 _DOCUMENT_SCHEMA = {
     "type": "object",
     "properties": {
@@ -47,6 +50,7 @@ _DOCUMENT_SCHEMA = {
         "type": {"type": "string", "enum": DOCUMENT_TYPES},
         "vendor": {"type": ["string", "null"]},
         "amount": {"type": ["number", "null"]},
+        "tax_amount": {"type": ["number", "null"]},
         "currency": {"type": ["string", "null"]},
         "date": {"type": ["string", "null"]},
         "references": {"type": "array", "items": {"type": "string"}},
@@ -58,6 +62,7 @@ _DOCUMENT_SCHEMA = {
         "type",
         "vendor",
         "amount",
+        "tax_amount",
         "currency",
         "date",
         "references",

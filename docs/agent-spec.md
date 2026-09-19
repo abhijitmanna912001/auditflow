@@ -18,6 +18,7 @@ Output schema - one object per document:
     type: "invoice"
     vendor: "Acme Supplies"
     amount: 85000
+    tax_amount: 12966
     currency: "INR"
     date: "2026-08-12"
     references: ["PO-104"]
@@ -25,9 +26,10 @@ Output schema - one object per document:
     extraction_notes: null
 
 type is one of: invoice, receipt, purchase_order, bank_statement, ledger_entry
+tax_amount is the tax portion of amount if the document states one explicitly (e.g. a GST/VAT line item) - null if the document doesn't break out tax separately. amount is always the document's stated total, tax_amount is never subtracted from it.
 
 System prompt:
-You are the Intake Agent for AuditFlow. You receive raw financial documents (invoices, receipts, purchase orders, bank statements, ledger entries) for one audit case. For each document, extract: document ID, document type, vendor name, amount, currency, date, and any reference IDs to other documents (e.g., a PO number cited on an invoice). Output one JSON object per document following the schema above. If a field cannot be determined, set it to null and note why in an extraction_notes field. Do not guess amounts or dates - flag uncertainty rather than fabricate.
+You are the Intake Agent for AuditFlow. You receive raw financial documents (invoices, receipts, purchase orders, bank statements, ledger entries) for one audit case. For each document, extract: document ID, document type, vendor name, amount, tax amount (if the document states one explicitly, e.g. a GST/VAT line item - null if it doesn't break out tax separately; never derive or estimate a tax amount that isn't explicitly stated), currency, date, and any reference IDs to other documents (e.g., a PO number cited on an invoice). Output one JSON object per document following the schema above. If a field cannot be determined, set it to null and note why in an extraction_notes field. Do not guess amounts or dates - flag uncertainty rather than fabricate.
 
 ---
 
@@ -72,7 +74,7 @@ Output schema - one object per transaction:
         confidence: 0.81
         explanation: "Vendor name on invoice differs from PO vendor field"
 
-findings[].type is one of: duplicate_invoice, amount_mismatch, missing_po, missing_receipt, vendor_mismatch, date_inconsistency - no other categories.
+findings[].type is one of: duplicate_invoice, amount_mismatch, missing_po, missing_receipt, vendor_mismatch, date_inconsistency, currency_mismatch, tax_mismatch - no other categories.
 findings[].severity is one of: low, medium, high
 findings may be an empty list (clean transaction).
 
@@ -80,8 +82,12 @@ Type boundary: missing_po and missing_receipt apply only when the purchase order
 
 Note - this boundary was added after an implementation review found the same discrepancy getting double-counted under two finding types across two separate benchmark runs: a receipt that existed but didn't cover the actually-paid amount was tagged as both amount_mismatch and missing_receipt in one run (CASE_11), and a PO that existed but named the wrong vendor was tagged as both vendor_mismatch and missing_po in another run (CASE_10), on a different case. Both extra findings were the lowest-confidence finding in their case (0.6) and each one's own explanation acknowledged the document was present ("Although a purchase order is physically present...") while still applying a functional reading of "missing" on top of the structural one. The rule above removes that ambiguity: missing_* is structural presence/absence only.
 
+Type boundary: currency_mismatch vs amount_mismatch. currency_mismatch applies when two documents in the same transaction state different currency codes with no stated conversion rate or converted-equivalent figure reconciling them - the currency codes themselves disagree, independent of whether the numeric amounts would match after conversion. amount_mismatch applies when documents share the same currency but the numeric amounts disagree. If documents state different currencies AND, even after an explicit stated conversion, the converted amounts still disagree, that is still one finding (currency_mismatch, since the currency disagreement is the root issue) - never both currency_mismatch and amount_mismatch for the same pair of documents.
+
+Type boundary: tax_mismatch is an arithmetic check on a single invoice document, not a cross-document comparison - only score it when a document's own stated subtotal, tax rate, and total are inconsistent with each other (e.g. subtotal + (subtotal x tax rate) != stated total), or a stated tax amount doesn't match subtotal x tax rate. Do not score tax_mismatch merely because a document doesn't mention tax at all - null/absent tax fields are not evidence of a mismatch, only an explicit internal inconsistency is.
+
 System prompt:
-You are the Anomaly Agent for AuditFlow. You receive transaction evidence maps from the Evidence Agent. For each transaction, check for exactly these issue types only: duplicate_invoice, amount_mismatch, missing_po, missing_receipt, vendor_mismatch, date_inconsistency. Do not invent other categories. missing_po and missing_receipt apply only when no purchase order or receipt document exists at all for the transaction - if one exists but conflicts with another document on vendor, amount, or date, score that conflict under amount_mismatch, vendor_mismatch, or date_inconsistency only, never additionally as missing_po/missing_receipt for the same fact. For each issue found, output: type, the documents involved, a severity (low/medium/high), a confidence score (0-1), and a one-sentence explanation. A transaction can have zero, one, or multiple findings. If no issues are found, output an empty findings list - do not force a finding.
+You are the Anomaly Agent for AuditFlow. You receive transaction evidence maps from the Evidence Agent. For each transaction, check for exactly these issue types only: duplicate_invoice, amount_mismatch, missing_po, missing_receipt, vendor_mismatch, date_inconsistency, currency_mismatch, tax_mismatch. Do not invent other categories. missing_po and missing_receipt apply only when no purchase order or receipt document exists at all for the transaction - if one exists but conflicts with another document on vendor, amount, or date, score that conflict under amount_mismatch, vendor_mismatch, or date_inconsistency only, never additionally as missing_po/missing_receipt for the same fact. currency_mismatch applies when documents in the same transaction state different currency codes with no stated conversion reconciling them - score currency disagreements here, not under amount_mismatch, even if the numeric amounts would also disagree after conversion. tax_mismatch is an arithmetic check on a single document only (does its own stated subtotal, tax rate, and total actually reconcile) - never score it just because a document doesn't mention tax. For each issue found, output: type, the documents involved, a severity (low/medium/high), a confidence score (0-1), and a one-sentence explanation. A transaction can have zero, one, or multiple findings. If no issues are found, output an empty findings list - do not force a finding.
 
 ---
 
@@ -190,7 +196,7 @@ Missing evidence (an expected document that isn't present at all) is never repre
 
 ### Clean cases (no issues)
 
-A clean case is represented with an empty findings list, NOT an invented "clean" finding type ("clean" is not one of the six allowed types):
+A clean case is represented with an empty findings list, NOT an invented "clean" finding type ("clean" is not one of the allowed types):
 
     case_id: "CASE_01"
     expected_findings: []
@@ -202,7 +208,7 @@ Every case JSON must satisfy all of the following before it's committed. All of 
 - case_id is present and unique across the dataset
 - transaction_id is present (deterministic CASE_NN -> TXN_NN mapping)
 - expected_action is exactly one of: auto_clear, human_review (no other values)
-- every expected_findings[].type is one of the six allowed types: duplicate_invoice, amount_mismatch, missing_po, missing_receipt, vendor_mismatch, date_inconsistency
+- every expected_findings[].type is one of the eight allowed types: duplicate_invoice, amount_mismatch, missing_po, missing_receipt, vendor_mismatch, date_inconsistency, currency_mismatch, tax_mismatch
 - every document ID referenced in expected_findings[].documents actually exists in that case's document fixtures (dataset/CASE_NN/, matching case_id exactly)
 - a case with expected_findings: [] always has expected_action: "auto_clear" (never human_review with zero findings)
 - no duplicate document IDs within a single finding's documents list

@@ -1,0 +1,11 @@
+SERVICE ACCEPTANCE RECEIPT
+Document ID: REC-1013
+Receipt Date: 2026-07-15
+Vendor: Meridian Cloud Services Inc.
+Invoice Reference: INV-1013
+PO Reference: PO-1013
+
+Confirmed: Cloud infrastructure subscription renewal activated and accepted
+for the billing period beginning 2026-07-15.
+
+Accepted By: IT Operations
