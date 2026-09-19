@@ -104,7 +104,19 @@ export function AuditFlowApp() {
     setRunState("running");
     setActiveStage(0);
 
-    const payload = selectedCase === "UPLOAD" ? await fetchWorkpaperFromUpload(uploadedFiles, useResolver) : await fetchWorkpaper(selectedCase);
+    const holdAtIndex = stages.length - 1;
+    for (let index = 1; index <= holdAtIndex; index++) {
+      timers.current.push(window.setTimeout(() => setActiveStage(index), index * 650));
+    }
+
+    const payload =
+      selectedCase === "UPLOAD"
+        ? await fetchWorkpaperFromUpload(uploadedFiles, useResolver)
+        : await fetchWorkpaper(selectedCase);
+
+    timers.current.forEach((timer) => window.clearTimeout(timer));
+    timers.current = [];
+
     if (payload) {
       setWorkpaper(payload);
       setBackendLoaded(true);
@@ -113,13 +125,8 @@ export function AuditFlowApp() {
       setBackendLoaded(false);
     }
 
-    stages.forEach((_, index) => {
-      timers.current.push(window.setTimeout(() => setActiveStage(index), index * 650));
-    });
-    timers.current.push(window.setTimeout(() => {
-      setActiveStage(stages.length);
-      setRunState("complete");
-    }, stages.length * 650));
+    setActiveStage(stages.length);
+    setRunState("complete");
   };
 
   const handleUpload = (event: ChangeEvent<HTMLInputElement>) => {
@@ -175,7 +182,7 @@ export function AuditFlowApp() {
             <span>Use Evidence Resolver (second pass on ambiguous findings)</span>
           </label>
         )}
-        {uploadedFiles.length > 0 && <p className="upload-note"><Icon name="check" size={15} /> {uploadedFiles.map((file) => file.name).join(", ")} ready. This demo does not upload data to a server.</p>}
+        {uploadedFiles.length > 0 && <p className="upload-note"><Icon name="check" size={15} /> {uploadedFiles.map((file) => file.name).join(", ")} ready. Run AuditFlow to send this bundle to the pipeline.</p>}
       </section>
 
       <section className="pipeline" aria-label="AuditFlow agent pipeline">
