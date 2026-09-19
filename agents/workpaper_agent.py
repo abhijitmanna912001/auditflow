@@ -179,6 +179,86 @@ def _generate_finding_labels(
     return {row["transaction_id"]: row["finding_summary"] for row in parsed["rows"]}
 
 
+def _build_rows(
+    decision_transactions: list[dict],
+    evidence_by_transaction_id: dict[str, dict],
+    client: anthropic.Anthropic | None,
+) -> list[dict]:
+    """One row per decision transaction, with `finding` labels filled in
+    for any row that has findings (a single batched call to the model, not
+    one per row - see _generate_finding_labels)."""
+    rows: list[dict] = []
+    row_transaction_ids: list[str] = []
+    row_findings: list[list[dict]] = []
+    transactions_needing_labels: list[dict] = []
+
+    for decision in decision_transactions:
+        transaction_id = decision["transaction_id"]
+        findings = decision["findings"]
+        evidence_docs = _row_evidence_docs(
+            decision, evidence_by_transaction_id.get(transaction_id)
+        )
+        if findings:
+            transactions_needing_labels.append(decision)
+
+        rows.append(
+            {
+                "document": evidence_docs[0] if evidence_docs else None,
+                "finding": None,  # filled in below, once labels are known
+                "evidence": evidence_docs,
+                "confidence": decision["confidence"],
+                "action": decision["action"],
+            }
+        )
+        row_transaction_ids.append(transaction_id)
+        row_findings.append(findings)
+
+    finding_labels = (
+        _generate_finding_labels(transactions_needing_labels, client=client)
+        if transactions_needing_labels
+        else {}
+    )
+    for row, transaction_id, findings in zip(rows, row_transaction_ids, row_findings):
+        row["finding"] = finding_labels.get(transaction_id, "Clean") if findings else "Clean"
+
+    return rows
+
+
+def _row_evidence_docs(decision: dict, evidence_transaction: dict | None) -> list[str]:
+    """A row's evidence document IDs: every document any finding cites, for
+    a transaction with findings; the transaction's full document list (from
+    Evidence Agent, the only place it survives for a clean transaction) if
+    not - see module docstring for why Decision's output alone isn't
+    enough for a clean row."""
+    findings = decision["findings"]
+    if findings:
+        return _union_finding_documents(findings)
+    return list(evidence_transaction["documents"]) if evidence_transaction else []
+
+
+def _summarize(
+    decision_transactions: list[dict], assumed_minutes_per_item: float
+) -> dict:
+    """The workpaper's summary block: counts by action, a critical-findings
+    count, and the minutes-saved estimate the spec requires be stated
+    explicitly alongside the assumption it's based on."""
+    auto_cleared = sum(1 for t in decision_transactions if t["action"] == "auto_clear")
+    human_review = sum(1 for t in decision_transactions if t["action"] == "human_review")
+    critical = sum(
+        1
+        for t in decision_transactions
+        if any(f["severity"] == "high" for f in t["findings"])
+    )
+    return {
+        "items_reviewed": len(decision_transactions),
+        "auto_cleared": auto_cleared,
+        "human_review": human_review,
+        "critical": critical,
+        "assumed_minutes_per_item": assumed_minutes_per_item,
+        "estimated_minutes_saved": auto_cleared * assumed_minutes_per_item,
+    }
+
+
 def run_workpaper_agent(
     decision_transactions: list[dict],
     evidence_transactions: list[dict] | None = None,
@@ -214,64 +294,10 @@ def run_workpaper_agent(
         t["transaction_id"]: t for t in (evidence_transactions or [])
     }
 
-    rows: list[dict] = []
-    row_transaction_ids: list[str] = []
-    row_findings: list[list[dict]] = []
-    transactions_needing_labels: list[dict] = []
-
-    for decision in decision_transactions:
-        transaction_id = decision["transaction_id"]
-        findings = decision["findings"]
-
-        if findings:
-            evidence_docs = _union_finding_documents(findings)
-            transactions_needing_labels.append(decision)
-        else:
-            evidence_transaction = evidence_by_transaction_id.get(transaction_id)
-            evidence_docs = list(evidence_transaction["documents"]) if evidence_transaction else []
-
-        rows.append(
-            {
-                "document": evidence_docs[0] if evidence_docs else None,
-                "finding": None,  # filled in below, once labels are known
-                "evidence": evidence_docs,
-                "confidence": decision["confidence"],
-                "action": decision["action"],
-            }
-        )
-        row_transaction_ids.append(transaction_id)
-        row_findings.append(findings)
-
-    finding_labels = (
-        _generate_finding_labels(transactions_needing_labels, client=client)
-        if transactions_needing_labels
-        else {}
-    )
-
-    for row, transaction_id, findings in zip(rows, row_transaction_ids, row_findings):
-        row["finding"] = finding_labels.get(transaction_id, "Clean") if findings else "Clean"
-
-    items_reviewed = len(decision_transactions)
-    auto_cleared = sum(1 for t in decision_transactions if t["action"] == "auto_clear")
-    human_review = sum(1 for t in decision_transactions if t["action"] == "human_review")
-    critical = sum(
-        1
-        for t in decision_transactions
-        if any(f["severity"] == "high" for f in t["findings"])
-    )
-    estimated_minutes_saved = auto_cleared * assumed_minutes_per_item
-
     result = {
         "case_id": case_id,
-        "rows": rows,
-        "summary": {
-            "items_reviewed": items_reviewed,
-            "auto_cleared": auto_cleared,
-            "human_review": human_review,
-            "critical": critical,
-            "assumed_minutes_per_item": assumed_minutes_per_item,
-            "estimated_minutes_saved": estimated_minutes_saved,
-        },
+        "rows": _build_rows(decision_transactions, evidence_by_transaction_id, client),
+        "summary": _summarize(decision_transactions, assumed_minutes_per_item),
     }
 
     shutdown_neatlogs()

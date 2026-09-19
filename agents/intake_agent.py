@@ -114,7 +114,7 @@ def run_intake_agent(
     documents = _read_case_documents(case_path)
     user_message = _build_user_message(case_id, documents)
 
-    return _call_intake(case_id, user_message, client=client)
+    return _call_intake(user_message, client=client)
 
 
 # One real uploaded file: raw bytes plus enough metadata to build the right
@@ -185,11 +185,10 @@ def run_intake_agent_from_documents(
         raise ValueError("No files provided for intake")
 
     content_blocks = _build_upload_content_blocks(case_id, files)
-    return _call_intake(case_id, content_blocks, client=client)
+    return _call_intake(content_blocks, client=client)
 
 
 def _call_intake(
-    case_id: str,
     user_content: str | list[dict],
     client: anthropic.Anthropic | None = None,
 ) -> list[dict]:
