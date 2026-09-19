@@ -189,7 +189,7 @@ export function AuditFlowApp() {
       </section>
 
       {isComplete && <section className="results" aria-labelledby="workpaper-heading">
-        <div className="workpaper-header"><div><p className="eyebrow">03 · WORKPAPER OUTPUT</p><h2 id="workpaper-heading">{activeWorkpaper.case_id} <span>· review register</span></h2></div><p className="contract-note">{backendLoaded ? "Live Backend Data" : "Fallback Demo Data"}</p></div>
+        <div className="workpaper-header"><div><p className="eyebrow">03 · WORKPAPER OUTPUT</p><h2 id="workpaper-heading">{activeWorkpaper.case_id} <span>· review register</span></h2></div><div className="workpaper-meta"><ResolverBadge resolution={activeWorkpaper.evidence_resolution} /><p className="contract-note">{backendLoaded ? "Live Backend Data" : "Fallback Demo Data"}</p></div></div>
         <div className="metrics" aria-label="Workpaper summary"><Metric value={activeWorkpaper.summary.items_reviewed} label="Reviewed" tone="dark" /><Metric value={activeWorkpaper.summary.auto_cleared} label="Auto-cleared" tone="mint" /><Metric value={activeWorkpaper.summary.human_review} label="Human review" tone="amber" /><Metric value={activeWorkpaper.summary.critical} label="Critical" tone="coral" /><Metric value={`${activeWorkpaper.summary.assumed_minutes_per_item} min`} label="Time assumption / item" tone="plain" /><Metric value={`${activeWorkpaper.summary.estimated_minutes_saved} min`} label="Estimated minutes saved" tone="dark" /></div>
         <div className="workpaper-layout">
           <div className="table-card"><div className="table-intro"><div><h3>Workpaper table</h3><p>Select any row to inspect its decision rationale.</p></div><span>{humanQueue.length} awaiting review</span></div><div className="table-scroll"><table><thead><tr><th>Document</th><th>Finding</th><th>Evidence</th><th>Confidence</th><th>Action</th></tr></thead><tbody>{activeWorkpaper.rows.map((row) => <WorkpaperTableRow key={row.document} row={row} isSelected={selectedRow?.document === row.document} reviewerDecision={reviewDecisions[row.document]} selectedCase={selectedCase} onSelect={setSelectedRow} />)}</tbody></table></div></div>
@@ -225,6 +225,14 @@ function ExceptionPanel({ row, decision, reviewNote, resolution, onClose, onDeci
 
 function Metric({ value, label, tone }: { value: string | number; label: string; tone: "dark" | "mint" | "amber" | "coral" | "plain" }) {
   return <div className={`metric ${tone}`}><strong>{value}</strong><span>{label}</span></div>;
+}
+
+function ResolverBadge({ resolution }: { resolution?: EvidenceResolution | null }) {
+  if (!resolution) return null; // resolver wasn't used for this run
+  if (!resolution.second_pass_run) return <span className="resolver-badge none">Resolver: no second pass needed</span>;
+  return resolution.agreement
+    ? <span className="resolver-badge confirmed">Resolver: second pass confirmed</span>
+    : <span className="resolver-badge disagreement">Resolver: second pass — disagreement flagged</span>;
 }
 
 function Detail({ label, value }: { label: string; value: ReactNode }) {
