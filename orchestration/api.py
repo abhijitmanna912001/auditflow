@@ -21,14 +21,17 @@ Call:
 
 from __future__ import annotations
 
+import json
 import os
 import sys
+import threading
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DATASET_DIR = REPO_ROOT / "dataset"
@@ -78,6 +81,48 @@ app.add_middleware(
 # cycle while Claude processes it.
 _MAX_UPLOAD_BYTES = 20 * 1024 * 1024  # 20 MB per file
 _MAX_FILES_PER_REQUEST = 10
+
+# Reviewer feedback persistence: a single JSON file, append-only. Chosen
+# over a real database for today's timeframe - zero setup, survives a
+# server restart (unlike pure in-memory), and the data volume (one record
+# per reviewer click, for one day's demo) is trivially small. A write lock
+# guards against two concurrent requests corrupting the file; FastAPI can
+# serve requests concurrently even though this app has no other shared
+# mutable state today.
+_FEEDBACK_FILE = REPO_ROOT / "orchestration" / "feedback_log.json"
+_FEEDBACK_LOCK = threading.Lock()
+
+FEEDBACK_DECISIONS = ["confirmed", "overturned", "evidence_requested"]
+
+
+class FeedbackRequest(BaseModel):
+    case_id: str
+    document: str
+    finding: str
+    agent_action: str
+    decision: str
+    note: str | None = None
+    # Caller-supplied timestamp is accepted (e.g. the moment the reviewer
+    # clicked, if the frontend wants to own that) but never trusted for
+    # ordering - the server also stamps its own received_at, which
+    # GET /feedback/history sorts by, so clock skew or a missing/malformed
+    # client timestamp can't corrupt the history order.
+    timestamp: str | None = None
+
+
+def _read_feedback_records() -> list[dict]:
+    if not _FEEDBACK_FILE.exists():
+        return []
+    with _FEEDBACK_FILE.open("r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _append_feedback_record(record: dict) -> None:
+    with _FEEDBACK_LOCK:
+        records = _read_feedback_records()
+        records.append(record)
+        with _FEEDBACK_FILE.open("w", encoding="utf-8") as f:
+            json.dump(records, f, indent=2)
 
 
 class RunCaseRequest(BaseModel):
@@ -148,3 +193,33 @@ async def run_case_upload(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/feedback", status_code=201)
+def submit_feedback(request: FeedbackRequest) -> dict:
+    """Persist one reviewer decision against a specific finding.
+
+    Not tied to how the case was run (folder-based /run-case or uploaded
+    via /run-case-upload) - case_id and document/finding are enough to
+    identify what was reviewed, matching the frontend's decision-history
+    dashboard, which doesn't need to re-run a case to show its own log.
+    """
+    if request.decision not in FEEDBACK_DECISIONS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"decision must be one of {FEEDBACK_DECISIONS}, got {request.decision!r}",
+        )
+
+    record = request.model_dump()
+    record["received_at"] = datetime.now(timezone.utc).isoformat()
+    _append_feedback_record(record)
+    return record
+
+
+@app.get("/feedback/history")
+def feedback_history() -> list[dict]:
+    """All persisted reviewer decisions, oldest first by when the server
+    received them (see FeedbackRequest.timestamp for why received_at, not
+    the caller-supplied timestamp, is what's sorted on)."""
+    records = _read_feedback_records()
+    return sorted(records, key=lambda r: r.get("received_at", ""))

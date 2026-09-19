@@ -11,3 +11,11 @@ build/
 runs/*.json
 evaluation/runs/*.json
 venv/
+
+# Generated at runtime, not source - orchestration/api.py's reviewer
+# feedback persistence store.
+orchestration/feedback_log.json
+
+# TypeScript incremental build cache - environment-specific, regenerated
+# automatically, shouldn't be committed.
+frontend/tsconfig.tsbuildinfo
