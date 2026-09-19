@@ -42,6 +42,7 @@ configure_neatlogs()
 from workpaper_agent import (  # noqa: E402 (needs sys.path set first)
     run_full_pipeline,
     run_full_pipeline_from_documents,
+    run_full_pipeline_from_documents_with_resolver,
 )
 
 
@@ -104,11 +105,18 @@ def run_case(request: RunCaseRequest) -> dict:
 async def run_case_upload(
     case_id: str,
     files: list[UploadFile] = File(...),
+    use_resolver: bool = False,
 ) -> dict:
     """Run the full pipeline against real uploaded documents (PDF/image)
     instead of a fixed benchmark case folder. `case_id` is caller-supplied
     (e.g. a generated ID or a user-facing label) - it's only used to label
     the case in the pipeline output, not to look anything up on disk.
+
+    use_resolver=true routes the Evidence Agent step through the resolver
+    (a second independent pass on low-confidence transactions, per
+    evidence_agent.RESOLVER_CONFIDENCE_THRESHOLD) - the CASE_06 fix. Left
+    off by default so the plain upload path stays a single, predictable
+    Evidence call; callers that want the resolver ask for it explicitly.
     """
     if not files:
         raise HTTPException(status_code=400, detail="No files uploaded")
@@ -132,6 +140,8 @@ async def run_case_upload(
         read_files.append((upload.filename or "unnamed", content))
 
     try:
+        if use_resolver:
+            return run_full_pipeline_from_documents_with_resolver(case_id, read_files)
         return run_full_pipeline_from_documents(case_id, read_files)
     except ValueError as exc:
         # Unsupported file type, etc. - the caller's fault, not a server error.

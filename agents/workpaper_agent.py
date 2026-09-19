@@ -42,7 +42,7 @@ import anthropic
 
 from anomaly_agent import run_anomaly_agent
 from decision_agent import run_decision_agent
-from evidence_agent import run_evidence_agent
+from evidence_agent import run_evidence_agent, run_evidence_agent_with_resolver
 from intake_agent import run_intake_agent, run_intake_agent_from_documents
 
 MODEL = "claude-sonnet-5"
@@ -353,6 +353,63 @@ def _synthetic_case_id() -> str:
     import time
 
     return f"CASE_{900000 + (int(time.time() * 1000) % 100000)}"
+
+
+def run_full_pipeline_from_documents_with_resolver(
+    case_id: str,
+    files: list[tuple[str, bytes]],
+    resolver_threshold: float = None,
+    assumed_minutes_per_item: float = DEFAULT_ASSUMED_MINUTES_PER_ITEM,
+    intake_client: anthropic.Anthropic | None = None,
+    evidence_client: anthropic.Anthropic | None = None,
+    evidence_second_pass_client: anthropic.Anthropic | None = None,
+    anomaly_client: anthropic.Anthropic | None = None,
+    decision_client: anthropic.Anthropic | None = None,
+    workpaper_client: anthropic.Anthropic | None = None,
+) -> dict:
+    """Same as run_full_pipeline_from_documents(), but runs Evidence through
+    the resolver (run_evidence_agent_with_resolver) instead of a single
+    pass - the CASE_06 fix, for real uploaded documents.
+
+    Kept as a separate function from run_full_pipeline_from_documents()
+    rather than a flag on it, so the plain upload path (matching Garvit's
+    upload UI contract already shared) and this resolver-enabled path can
+    each be called explicitly and unambiguously from the API layer.
+    """
+    from evidence_agent import RESOLVER_CONFIDENCE_THRESHOLD
+
+    threshold = (
+        resolver_threshold if resolver_threshold is not None else RESOLVER_CONFIDENCE_THRESHOLD
+    )
+
+    internal_case_id = _synthetic_case_id()
+    intake_documents = run_intake_agent_from_documents(
+        case_id, files, client=intake_client
+    )
+    for doc in intake_documents:
+        doc["case_id"] = internal_case_id
+    evidence_transaction = run_evidence_agent_with_resolver(
+        intake_documents,
+        threshold=threshold,
+        client=evidence_client,
+        second_pass_client=evidence_second_pass_client,
+    )
+    anomaly_transaction = run_anomaly_agent(
+        evidence_transaction, intake_documents, client=anomaly_client
+    )
+    decision_transaction = run_decision_agent(anomaly_transaction, client=decision_client)
+    workpaper = run_workpaper_agent(
+        [decision_transaction],
+        [evidence_transaction],
+        assumed_minutes_per_item=assumed_minutes_per_item,
+        client=workpaper_client,
+    )
+    # Surface the resolver's own record (ran? agreed? threshold used?) on
+    # the workpaper output too, not just buried inside the evidence
+    # transaction - this is the visible "Model: Claude, Reasoning passes: 2"
+    # detail Garvit wanted shown in the product, not just logged internally.
+    workpaper["evidence_resolution"] = evidence_transaction.get("resolution")
+    return workpaper
 
 
 if __name__ == "__main__":

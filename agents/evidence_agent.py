@@ -171,6 +171,161 @@ def run_intake_and_evidence(
     return run_evidence_agent(intake_documents, client=evidence_client)
 
 
+# Evidence Resolver: below this evidence_confidence, a single pass is
+# treated as potentially ambiguous and gets a second, independent opinion
+# rather than being trusted on its own. Chosen as a starting point - low
+# enough that clearly well-supported transactions (the large majority of
+# the benchmark) never pay for a second call, high enough to catch genuine
+# borderline cases like CASE_06's mixed goods/service transaction.
+RESOLVER_CONFIDENCE_THRESHOLD = 0.7
+
+
+def _missing_evidence_roughly_matches(a: list[str], b: list[str]) -> bool:
+    """True if two missing_evidence lists say the same thing, allowing for
+    wording differences between two independent model calls (e.g. "signed
+    goods/service receipt (explicitly required by...)" vs "signed
+    goods/service receipt (required by...)" describing the same gap).
+
+    Exact set equality is too strict here - the model is asked for a
+    natural-language description per missing item, not a fixed enum, so two
+    correct, substantively-agreeing passes can still differ string-for-
+    string. Compared on count and first-significant-word overlap instead:
+    same number of missing items, and each item in one list has a
+    reasonably close match in the other by shared leading words. This is a
+    heuristic, not a semantic diff - it's deliberately conservative (biased
+    toward calling two entries a match) since a false "agreement" here only
+    means we skip flagging a difference that turns out not to matter (both
+    entries already survive into the unioned unmatched entries in the
+    disagreement path if this heuristic is wrong), whereas a false
+    "disagreement" would incorrectly union near-duplicate phrasing of the
+    same one missing item into two.
+    """
+    if len(a) != len(b):
+        return False
+    if not a:  # both empty
+        return True
+
+    def _key(item: str) -> set[str]:
+        # First few words, lowercased, alnum only - enough to identify
+        # "signed goods/service receipt" as the same subject regardless of
+        # how the parenthetical justification is phrased.
+        words = "".join(c if c.isalnum() or c.isspace() else " " for c in item.lower()).split()
+        return set(words[:4])
+
+    a_keys = [_key(item) for item in a]
+    b_keys = [_key(item) for item in b]
+
+    # Each item in a must have some b item sharing at least half its
+    # leading-word key (and vice versa isn't checked separately since the
+    # lengths already match) - a greedy, order-independent match.
+    remaining_b = list(b_keys)
+    for a_key in a_keys:
+        match_idx = next(
+            (i for i, b_key in enumerate(remaining_b) if len(a_key & b_key) >= max(1, len(a_key) // 2)),
+            None,
+        )
+        if match_idx is None:
+            return False
+        remaining_b.pop(match_idx)
+    return True
+
+
+def run_evidence_agent_with_resolver(
+    intake_documents: list[dict],
+    threshold: float = RESOLVER_CONFIDENCE_THRESHOLD,
+    client: anthropic.Anthropic | None = None,
+    second_pass_client: anthropic.Anthropic | None = None,
+) -> dict:
+    """Run the Evidence Agent once; if its evidence_confidence is below
+    `threshold`, run it again independently and compare.
+
+    This targets the CASE_06-style failure mode: on a genuinely ambiguous
+    transaction, a single reasoning pass can land on a plausible-looking but
+    wrong answer (e.g. missing_evidence: [] on a case that actually needed
+    a receipt). One low-confidence pass alone doesn't know it might be
+    wrong; two independent passes that disagree are a much stronger signal
+    that a human should look, and one that doesn't require any change to
+    the confidence threshold - the case can even end up above it after
+    resolution, once the disagreement itself is folded into the record.
+
+    Whichever transaction is returned is in the exact same shape
+    run_evidence_agent() already produces (Anomaly/Decision/Workpaper are
+    unchanged), plus one added field: `resolution`, recording whether a
+    second pass ran, whether the two passes agreed, and which fields
+    differed if not - visible in the final workpaper for transparency
+    rather than buried in an internal retry a reviewer can't see.
+
+    On disagreement, the two `missing_evidence` lists are UNIONED rather
+    than either pass's list picked on its own - the safer default for an
+    audit tool, so a real gap one pass caught and the other missed is never
+    silently dropped. The lower of the two evidence_confidence scores is
+    kept, reflecting the genuine uncertainty a disagreement demonstrates.
+    """
+    first = run_evidence_agent(intake_documents, client=client)
+
+    if first["evidence_confidence"] >= threshold:
+        first["resolution"] = {
+            "second_pass_run": False,
+            "agreement": None,
+            "reason": (
+                f"First-pass evidence_confidence {first['evidence_confidence']} "
+                f">= threshold {threshold}; no second pass needed."
+            ),
+        }
+        return first
+
+    second = run_evidence_agent(
+        intake_documents, client=second_pass_client or client
+    )
+
+    agree = _missing_evidence_roughly_matches(
+        first["missing_evidence"], second["missing_evidence"]
+    )
+
+    if agree:
+        # Both independent passes landed on the same missing_evidence -
+        # genuine agreement, not just one low-confidence guess. Keep the
+        # higher-confidence pass's transaction as the result.
+        resolved = first if first["evidence_confidence"] >= second["evidence_confidence"] else second
+        resolved["resolution"] = {
+            "second_pass_run": True,
+            "agreement": True,
+            "reason": (
+                "Two independent passes agreed on missing_evidence "
+                f"({sorted(resolved['missing_evidence'])})."
+            ),
+        }
+        return resolved
+
+    # Genuine disagreement: union the two missing_evidence lists (never
+    # silently drop a gap either pass found), keep the lower confidence,
+    # and carry both passes' notes forward so a reviewer can see why.
+    unioned_missing = sorted(set(first["missing_evidence"]) | set(second["missing_evidence"]))
+    resolved = dict(first)
+    resolved["missing_evidence"] = unioned_missing
+    resolved["evidence_confidence"] = min(
+        first["evidence_confidence"], second["evidence_confidence"]
+    )
+    resolved["notes"] = (
+        f"{first['notes']} | Second-pass disagreement: pass 1 flagged "
+        f"{sorted(first['missing_evidence'])} missing, pass 2 flagged "
+        f"{sorted(second['missing_evidence'])} missing; union kept below. "
+        f"Pass 2 notes: {second['notes']}"
+    )
+    resolved["resolution"] = {
+        "second_pass_run": True,
+        "agreement": False,
+        "pass_1_missing_evidence": sorted(first["missing_evidence"]),
+        "pass_2_missing_evidence": sorted(second["missing_evidence"]),
+        "reason": (
+            "Two independent passes disagreed on missing_evidence; both "
+            "sets were unioned into the result rather than picking one, "
+            "so nothing either pass found is silently dropped."
+        ),
+    }
+    return resolved
+
+
 if __name__ == "__main__":
     targets = sys.argv[1:] if len(sys.argv) > 1 else ["dataset/CASE_01/", "dataset/CASE_05/"]
 
