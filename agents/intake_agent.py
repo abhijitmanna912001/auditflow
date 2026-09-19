@@ -114,12 +114,93 @@ def run_intake_agent(
     documents = _read_case_documents(case_path)
     user_message = _build_user_message(case_id, documents)
 
+    return _call_intake(case_id, user_message, client=client)
+
+
+# One real uploaded file: raw bytes plus enough metadata to build the right
+# Anthropic content block for it (a "document" block for PDFs, an "image"
+# block for images - the two supported source types for this).
+_UPLOAD_MEDIA_TYPES = {
+    ".pdf": ("document", "application/pdf"),
+    ".png": ("image", "image/png"),
+    ".jpg": ("image", "image/jpeg"),
+    ".jpeg": ("image", "image/jpeg"),
+    ".webp": ("image", "image/webp"),
+}
+
+
+def _build_upload_content_blocks(
+    case_id: str, files: list[tuple[str, bytes]]
+) -> list[dict]:
+    """Build the Anthropic message content: one intro text block, then one
+    document/image block per uploaded file, letting Claude's own document
+    understanding do the extraction - no separate OCR step."""
+    import base64
+
+    intro = (
+        f"Case ID: {case_id}\n"
+        f"The following {len(files)} uploaded document(s) belong to this audit "
+        "case. Classify and extract fields for every document. Where a file "
+        "contains more than one logical document (e.g. a scanned bundle), "
+        "extract each as a separate entry in the output."
+    )
+    blocks: list[dict] = [{"type": "text", "text": intro}]
+
+    for filename, file_bytes in files:
+        ext = Path(filename).suffix.lower()
+        if ext not in _UPLOAD_MEDIA_TYPES:
+            raise ValueError(
+                f"Unsupported upload type '{ext}' for {filename!r} - "
+                f"supported: {', '.join(sorted(_UPLOAD_MEDIA_TYPES))}"
+            )
+        block_type, media_type = _UPLOAD_MEDIA_TYPES[ext]
+        blocks.append(
+            {
+                "type": block_type,
+                "source": {
+                    "type": "base64",
+                    "media_type": media_type,
+                    "data": base64.b64encode(file_bytes).decode("ascii"),
+                },
+            }
+        )
+        blocks.append({"type": "text", "text": f"(Source file: {filename})"})
+
+    return blocks
+
+
+def run_intake_agent_from_documents(
+    case_id: str,
+    files: list[tuple[str, bytes]],
+    client: anthropic.Anthropic | None = None,
+) -> list[dict]:
+    """Run the Intake Agent against real uploaded files (PDF/image) instead
+    of the fixed .txt benchmark fixtures.
+
+    `files` is a list of (filename, raw_bytes) tuples. Returns the same
+    shape as run_intake_agent() - downstream agents (Evidence, Anomaly,
+    Decision, Workpaper) don't know or care which path produced it.
+    """
+    if not files:
+        raise ValueError("No files provided for intake")
+
+    content_blocks = _build_upload_content_blocks(case_id, files)
+    return _call_intake(case_id, content_blocks, client=client)
+
+
+def _call_intake(
+    case_id: str,
+    user_content: str | list[dict],
+    client: anthropic.Anthropic | None = None,
+) -> list[dict]:
+    """Shared Claude call for both the folder-based and upload-based paths -
+    same system prompt, same schema, only the message content differs."""
     client = client or anthropic.Anthropic()
     response = client.messages.create(
         model=MODEL,
         max_tokens=16000,
         system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": user_message}],
+        messages=[{"role": "user", "content": user_content}],
         output_config={"format": {"type": "json_schema", "schema": OUTPUT_SCHEMA}},
     )
 

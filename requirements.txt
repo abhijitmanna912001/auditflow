@@ -16,3 +16,6 @@ requests>=2.31
 # orchestration/api.py - minimal local HTTP wrapper around the pipeline
 fastapi>=0.115
 uvicorn>=0.34
+# Required by FastAPI/Starlette to parse multipart/form-data (file uploads)
+# on /run-case-upload - not pulled in automatically by fastapi itself.
+python-multipart>=0.0.9

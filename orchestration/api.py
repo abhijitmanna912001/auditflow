@@ -26,7 +26,7 @@ import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -39,7 +39,10 @@ from observability import configure_neatlogs, shutdown_neatlogs  # noqa: E402
 
 configure_neatlogs()
 
-from workpaper_agent import run_full_pipeline  # noqa: E402 (needs sys.path set first)
+from workpaper_agent import (  # noqa: E402 (needs sys.path set first)
+    run_full_pipeline,
+    run_full_pipeline_from_documents,
+)
 
 
 @asynccontextmanager
@@ -66,8 +69,14 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_methods=["POST", "OPTIONS"],
-    allow_headers=["Content-Type"],
+    allow_headers=["Content-Type"],  # multipart/form-data uploads set this too
 )
+
+# Uploads are capped well above any real audit document (typically a few MB)
+# but far below anything that would stall a synchronous request/response
+# cycle while Claude processes it.
+_MAX_UPLOAD_BYTES = 20 * 1024 * 1024  # 20 MB per file
+_MAX_FILES_PER_REQUEST = 10
 
 
 class RunCaseRequest(BaseModel):
@@ -87,5 +96,45 @@ def run_case(request: RunCaseRequest) -> dict:
 
     try:
         return run_full_pipeline(str(case_folder) + "/")
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/run-case-upload")
+async def run_case_upload(
+    case_id: str,
+    files: list[UploadFile] = File(...),
+) -> dict:
+    """Run the full pipeline against real uploaded documents (PDF/image)
+    instead of a fixed benchmark case folder. `case_id` is caller-supplied
+    (e.g. a generated ID or a user-facing label) - it's only used to label
+    the case in the pipeline output, not to look anything up on disk.
+    """
+    if not files:
+        raise HTTPException(status_code=400, detail="No files uploaded")
+    if len(files) > _MAX_FILES_PER_REQUEST:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Too many files: {len(files)} (max {_MAX_FILES_PER_REQUEST})",
+        )
+
+    read_files: list[tuple[str, bytes]] = []
+    for upload in files:
+        content = await upload.read()
+        if len(content) > _MAX_UPLOAD_BYTES:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"{upload.filename} exceeds the "
+                    f"{_MAX_UPLOAD_BYTES // (1024 * 1024)} MB per-file limit"
+                ),
+            )
+        read_files.append((upload.filename or "unnamed", content))
+
+    try:
+        return run_full_pipeline_from_documents(case_id, read_files)
+    except ValueError as exc:
+        # Unsupported file type, etc. - the caller's fault, not a server error.
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc

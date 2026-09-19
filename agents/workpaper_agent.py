@@ -43,7 +43,7 @@ import anthropic
 from anomaly_agent import run_anomaly_agent
 from decision_agent import run_decision_agent
 from evidence_agent import run_evidence_agent
-from intake_agent import run_intake_agent
+from intake_agent import run_intake_agent, run_intake_agent_from_documents
 
 MODEL = "claude-sonnet-5"
 
@@ -302,6 +302,57 @@ def run_full_pipeline(
         assumed_minutes_per_item=assumed_minutes_per_item,
         client=workpaper_client,
     )
+
+
+def run_full_pipeline_from_documents(
+    case_id: str,
+    files: list[tuple[str, bytes]],
+    assumed_minutes_per_item: float = DEFAULT_ASSUMED_MINUTES_PER_ITEM,
+    intake_client: anthropic.Anthropic | None = None,
+    evidence_client: anthropic.Anthropic | None = None,
+    anomaly_client: anthropic.Anthropic | None = None,
+    decision_client: anthropic.Anthropic | None = None,
+    workpaper_client: anthropic.Anthropic | None = None,
+) -> dict:
+    """Same as run_full_pipeline(), but for real uploaded documents (PDF/
+    image) instead of a fixed benchmark case folder. Everything past Intake
+    is identical - Evidence/Anomaly/Decision/Workpaper only ever see the
+    parsed document dicts, never the original files.
+
+    `case_id` is caller-supplied (any human-readable label) and used to tag
+    the extracted documents (visible in the Intake output). Internally the
+    pipeline runs under a synthetic CASE_<digits> id, since Evidence Agent's
+    transaction-id derivation (docs/agent-spec.md's CASE_04 -> TXN_04
+    mapping) is a strict format check built for the fixed benchmark set and
+    real uploads have no such number - the caller-supplied case_id is never
+    exposed past Intake, so this substitution is invisible downstream.
+    """
+    internal_case_id = _synthetic_case_id()
+    intake_documents = run_intake_agent_from_documents(
+        case_id, files, client=intake_client
+    )
+    for doc in intake_documents:
+        doc["case_id"] = internal_case_id
+    evidence_transaction = run_evidence_agent(intake_documents, client=evidence_client)
+    anomaly_transaction = run_anomaly_agent(
+        evidence_transaction, intake_documents, client=anomaly_client
+    )
+    decision_transaction = run_decision_agent(anomaly_transaction, client=decision_client)
+    return run_workpaper_agent(
+        [decision_transaction],
+        [evidence_transaction],
+        assumed_minutes_per_item=assumed_minutes_per_item,
+        client=workpaper_client,
+    )
+
+
+def _synthetic_case_id() -> str:
+    """A CASE_<digits> id for an upload-path run, satisfying Evidence
+    Agent's format check without colliding with the fixed CASE_01-CASE_12
+    benchmark ids. Uses a large, unambiguous number range for that."""
+    import time
+
+    return f"CASE_{900000 + (int(time.time() * 1000) % 100000)}"
 
 
 if __name__ == "__main__":
