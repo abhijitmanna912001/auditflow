@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type KeyboardEvent, type ReactNode } from "react";
-import { fetchWorkpaper, workpaperPayloadFallback } from "../lib/mock-workpaper";
+import { fetchWorkpaper, fetchWorkpaperFromUpload, workpaperPayloadFallback } from "../lib/mock-workpaper";
+import { persistFeedback } from "../lib/feedback";
 import type { Action, Confidence, Workpaper, WorkpaperRow } from "../types/workpaper";
+import type { FeedbackDecision, FeedbackRecord } from "../types/feedback";
 import { Icon } from "./icons";
+import { FeedbackHistoryPanel } from "./feedback-history";
 
 type RunState = "ready" | "running" | "complete";
 type StageState = "idle" | "active" | "complete";
-type ReviewerDecision = "cleared" | "escalated" | "evidence_requested";
 
 interface AuditCase {
   id: `CASE_${string}`;
@@ -59,9 +61,9 @@ const detailByDocument: Record<string, ExceptionDetail> = {
   "INV-1007": { reason: "Supplier naming differs between the purchase order and invoice; supporting records do not resolve the entity mismatch.", severity: "High" },
 };
 
-const reviewerDecisionCopy: Record<ReviewerDecision, string> = {
-  cleared: "Cleared by reviewer",
-  escalated: "Escalated",
+const reviewerDecisionCopy: Record<FeedbackDecision, string> = {
+  confirmed: "Confirmed",
+  overturned: "Overturned",
   evidence_requested: "Evidence requested",
 };
 
@@ -74,8 +76,9 @@ export function AuditFlowApp() {
   const [runState, setRunState] = useState<RunState>("ready");
   const [activeStage, setActiveStage] = useState(-1);
   const [selectedRow, setSelectedRow] = useState<WorkpaperRow | null>(null);
-  const [reviewDecisions, setReviewDecisions] = useState<Partial<Record<string, ReviewerDecision>>>({});
+  const [reviewDecisions, setReviewDecisions] = useState<Partial<Record<string, FeedbackDecision>>>({});
   const [reviewNote, setReviewNote] = useState("");
+  const [feedbackLog, setFeedbackLog] = useState<FeedbackRecord[]>([]);
   const timers = useRef<number[]>([]);
 
   const selectedCaseInfo = cases.find((item) => item.id === selectedCase) ?? cases[0];
@@ -100,7 +103,7 @@ export function AuditFlowApp() {
     setRunState("running");
     setActiveStage(0);
 
-    const payload = await fetchWorkpaper(selectedCase);
+    const payload = selectedCase === "UPLOAD" ? await fetchWorkpaperFromUpload(uploadedFiles) : await fetchWorkpaper(selectedCase);
     if (payload) {
       setWorkpaper(payload);
       setBackendLoaded(true);
@@ -129,9 +132,20 @@ export function AuditFlowApp() {
     setUploadedFiles([]);
   };
 
-  const chooseDecision = (decision: ReviewerDecision) => {
+  const chooseDecision = (decision: FeedbackDecision) => {
     if (!selectedRow) return;
+    const record: FeedbackRecord = {
+      case_id: activeWorkpaper.case_id,
+      document: selectedRow.document,
+      finding: selectedRow.finding,
+      agent_action: selectedRow.action,
+      decision,
+      note: reviewNote.trim() || undefined,
+      timestamp: new Date().toISOString(),
+    };
     setReviewDecisions((current) => ({ ...current, [selectedRow.document]: decision }));
+    setFeedbackLog((current) => [...current, record]);
+    void persistFeedback(record);
   };
 
   return (
@@ -147,18 +161,18 @@ export function AuditFlowApp() {
       </section>
 
       <section className="control-card" aria-labelledby="case-heading">
-        <div className="control-heading"><div><p className="eyebrow">01 · SELECT A BUNDLE</p><h2 id="case-heading">Start an audit run</h2></div><span className="simulated-badge">SIMULATED LOCAL FLOW</span></div>
+        <div className="control-heading"><div><p className="eyebrow">01 · SELECT A BUNDLE</p><h2 id="case-heading">Start an audit run</h2></div><span className="simulated-badge">LIVE AGENT PIPELINE</span></div>
         <div className="case-picker">
           <label className="select-wrap"><span>Audit case</span><select value={selectedCase} onChange={(event) => selectCase(event.target.value as CaseId)}>{cases.map((item) => <option key={item.id} value={item.id}>{item.id} — {item.name}</option>)}{uploadedFiles.length > 0 && <option value="UPLOAD">Uploaded document bundle</option>}</select></label>
-          <div className="case-description"><strong>{selectedCase === "UPLOAD" ? "Uploaded document bundle" : selectedCaseInfo.name}</strong><span>{selectedCase === "UPLOAD" ? `${uploadedFiles.length} file${uploadedFiles.length === 1 ? "" : "s"} staged for a simulated run` : selectedCaseInfo.detail}</span></div>
-          <label className="upload-button"><Icon name="upload" size={17} /><span>Upload documents</span><input type="file" multiple accept=".pdf,.txt,.csv,.xlsx,.png,.jpg,.jpeg" onChange={handleUpload} /></label>
+          <div className="case-description"><strong>{selectedCase === "UPLOAD" ? "Uploaded document bundle" : selectedCaseInfo.name}</strong><span>{selectedCase === "UPLOAD" ? `${uploadedFiles.length} file${uploadedFiles.length === 1 ? "" : "s"} staged for this run` : selectedCaseInfo.detail}</span></div>
+          <label className="upload-button"><Icon name="upload" size={17} /><span>Upload documents</span><input type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.webp" onChange={handleUpload} /></label>
           <button className="primary-button" onClick={beginReview} disabled={runState === "running"}>{runState === "running" ? <><span className="spinner" />Processing</> : <><Icon name="play" size={15} /> Run AuditFlow</>}</button>
         </div>
         {uploadedFiles.length > 0 && <p className="upload-note"><Icon name="check" size={15} /> {uploadedFiles.map((file) => file.name).join(", ")} ready. This demo does not upload data to a server.</p>}
       </section>
 
-      <section className="pipeline" aria-label="Simulated AuditFlow agent pipeline">
-        <div className="pipeline-heading"><p className="eyebrow">02 · AGENT PIPELINE</p><span>Clearly marked simulation</span></div>
+      <section className="pipeline" aria-label="AuditFlow agent pipeline">
+        <div className="pipeline-heading"><p className="eyebrow">02 · AGENT PIPELINE</p><span>Intake → Evidence → Anomaly → Decision → Workpaper</span></div>
         <div className="stage-grid">
           {stages.map((stage, index) => {
             const stageState: StageState = runState === "ready" ? "idle" : index < activeStage ? "complete" : index === activeStage && runState === "running" ? "active" : isComplete ? "complete" : "idle";
@@ -176,22 +190,24 @@ export function AuditFlowApp() {
         </div>
         <p className="assumption"><Icon name="clock" size={16} /> Estimated minutes saved uses the explicit assumption of <strong>{activeWorkpaper.summary.assumed_minutes_per_item} minutes per auto-cleared item</strong>: {activeWorkpaper.summary.auto_cleared} × {activeWorkpaper.summary.assumed_minutes_per_item} = {activeWorkpaper.summary.estimated_minutes_saved} minutes.</p>
       </section>}
+
+      <FeedbackHistoryPanel sessionLog={feedbackLog} />
     </main>
   );
 }
 
-function WorkpaperTableRow({ row, isSelected, reviewerDecision, selectedCase, onSelect }: { row: WorkpaperRow; isSelected: boolean; reviewerDecision?: ReviewerDecision; selectedCase: CaseId; onSelect: (row: WorkpaperRow) => void }) {
+function WorkpaperTableRow({ row, isSelected, reviewerDecision, selectedCase, onSelect }: { row: WorkpaperRow; isSelected: boolean; reviewerDecision?: FeedbackDecision; selectedCase: CaseId; onSelect: (row: WorkpaperRow) => void }) {
   const handleKeyDown = (event: KeyboardEvent<HTMLTableRowElement>) => { if (event.key === "Enter") onSelect(row); };
   return <tr className={isSelected ? "selected" : ""} onClick={() => onSelect(row)} tabIndex={0} onKeyDown={handleKeyDown}><td><strong>{row.document}</strong><small>{selectedCase === "UPLOAD" ? "Uploaded bundle" : "Demo document"}</small></td><td><span className={`finding ${row.finding === "Clean" ? "clean" : "exception"}`}>{row.finding}</span></td><td><div className="evidence-list">{row.evidence.slice(0, 3).map((item) => <span key={item}>{item}</span>)}{row.evidence.length > 3 && <span>+{row.evidence.length - 3}</span>}</div></td><td><div className="confidence"><b>{formatConfidence(row.confidence)}</b><span><i style={{ width: `${row.confidence * 100}%` }} /></span></div></td><td><span className={`action ${row.action}`}>{reviewerDecision ? reviewerDecisionCopy[reviewerDecision] : actionLabel(row.action)}</span></td></tr>;
 }
 
-function ExceptionPanel({ row, decision, reviewNote, onClose, onDecision, onNoteChange }: { row: WorkpaperRow | null; decision?: ReviewerDecision; reviewNote: string; onClose: () => void; onDecision: (decision: ReviewerDecision) => void; onNoteChange: (value: string) => void }) {
+function ExceptionPanel({ row, decision, reviewNote, onClose, onDecision, onNoteChange }: { row: WorkpaperRow | null; decision?: FeedbackDecision; reviewNote: string; onClose: () => void; onDecision: (decision: FeedbackDecision) => void; onNoteChange: (value: string) => void }) {
   if (!row) return <aside className="decision-panel" aria-live="polite"><div className="empty-detail"><span className="empty-icon"><Icon name="note" size={23} /></span><h3>Open an exception</h3><p>Select a workpaper row to see the finding, evidence, confidence, action, and decision rationale.</p></div></aside>;
   const detail = detailByDocument[row.document] ?? {
     reason: "No additional exception narrative is available. Review the linked evidence and the agent action before recording a decision.",
     severity: row.finding === "Clean" ? "None" : "High",
   };
-  return <aside className="decision-panel" aria-live="polite"><button className="panel-close" onClick={onClose} aria-label="Close detail"><Icon name="close" size={18} /></button><p className="eyebrow">EXCEPTION DETAIL</p><h3>{row.finding}</h3><p className="detail-doc">{row.document} <span>· {detail.severity} priority</span></p><Detail label="Finding" value={row.finding} /><Detail label="Evidence" value={<div className="detail-evidence">{row.evidence.map((item) => <span key={item}>{item}</span>)}</div>} /><Detail label="Confidence" value={`${formatConfidence(row.confidence)} (${row.confidence.toFixed(2)} internally)`} /><Detail label="Agent action" value={actionLabel(row.action)} /><Detail label="Reason" value={detail.reason} /><Detail label="Involved documents" value={row.evidence.join(" · ")} /><div className="review-actions"><p>Reviewer decision</p><div><button className={decision === "cleared" ? "active-decision" : ""} onClick={() => onDecision("cleared")}>Clear exception</button><button className={decision === "evidence_requested" ? "active-decision" : ""} onClick={() => onDecision("evidence_requested")}>Request evidence</button><button className={decision === "escalated" ? "active-decision danger" : "danger"} onClick={() => onDecision("escalated")}>Escalate</button></div><label className="note-field"><span>Reviewer note <em>optional</em></span><textarea value={reviewNote} onChange={(event) => onNoteChange(event.target.value)} placeholder="Add context for the review trail…" rows={2} /></label></div></aside>;
+  return <aside className="decision-panel" aria-live="polite"><button className="panel-close" onClick={onClose} aria-label="Close detail"><Icon name="close" size={18} /></button><p className="eyebrow">EXCEPTION DETAIL</p><h3>{row.finding}</h3><p className="detail-doc">{row.document} <span>· {detail.severity} priority</span></p><Detail label="Finding" value={row.finding} /><Detail label="Evidence" value={<div className="detail-evidence">{row.evidence.map((item) => <span key={item}>{item}</span>)}</div>} /><Detail label="Confidence" value={`${formatConfidence(row.confidence)} (${row.confidence.toFixed(2)} internally)`} /><Detail label="Agent action" value={actionLabel(row.action)} /><Detail label="Reason" value={detail.reason} /><Detail label="Involved documents" value={row.evidence.join(" · ")} /><div className="review-actions"><p>Reviewer decision</p><div><button className={decision === "confirmed" ? "active-decision" : ""} onClick={() => onDecision("confirmed")}>Confirm finding</button><button className={decision === "evidence_requested" ? "active-decision" : ""} onClick={() => onDecision("evidence_requested")}>Request evidence</button><button className={decision === "overturned" ? "active-decision danger" : "danger"} onClick={() => onDecision("overturned")}>Overturn decision</button></div><label className="note-field"><span>Reviewer note <em>optional</em></span><textarea value={reviewNote} onChange={(event) => onNoteChange(event.target.value)} placeholder="Add context for the review trail…" rows={2} /></label></div></aside>;
 }
 
 function Metric({ value, label, tone }: { value: string | number; label: string; tone: "dark" | "mint" | "amber" | "coral" | "plain" }) {

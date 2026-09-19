@@ -31,6 +31,30 @@ export async function fetchWorkpaper(caseId: string): Promise<MaybeWorkpaper> {
   }
 }
 
+export async function fetchWorkpaperFromUpload(files: File[]): Promise<MaybeWorkpaper> {
+  if (files.length === 0) return null;
+  try {
+    const caseId = `UPLOADED_${Date.now()}`;
+    const form = new FormData();
+    files.forEach((file) => form.append("files", file, file.name));
+
+    const resp = await fetch(`${API_BASE}/run-case-upload?case_id=${encodeURIComponent(caseId)}`, {
+      method: "POST",
+      body: form, // no Content-Type header - browser sets the multipart boundary
+    });
+    if (!resp.ok) {
+      return null;
+    }
+    const data = await resp.json();
+    if (data?.case_id && Array.isArray(data?.rows) && data?.summary) {
+      return data as Workpaper;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 // Fallback mock payload kept for environments without backend. This will be unused once backend is available.
 export const workpaperPayloadFallback: Workpaper = {
   case_id: "CASE_04",
