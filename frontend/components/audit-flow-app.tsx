@@ -304,7 +304,7 @@ export function AuditFlowApp() {
           <span>AuditFlow</span>
         </a>
         <div className="topbar-status">
-          <span className="live-dot" /> Local demo · reviewer workspace
+          <span className="live-dot" /> Live agent pipeline · reviewer workspace
         </div>
       </header>
 
