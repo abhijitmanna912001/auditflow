@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "BNK-1005",
+    "INV-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005 referenced by INV-1005 and REC-1005 but no corresponding PO document was provided)"
+  ],
+  "evidence_confidence": 0.65,
+  "notes": "Invoice, receipt, ledger entry, and bank statement all agree on vendor (GreenRoute Logistics Pvt. Ltd.), amount (59000.0 INR), and reference chain via INV-1005, giving strong internal consistency. However, PO-1005 is explicitly referenced by both the invoice and the receipt yet no purchase order document itself was supplied in the case file, so its existence and terms cannot be verified - this is treated as missing evidence rather than an exemption, since no vendor pattern in this case suggests GreenRoute is PO-exempt. Additionally, the receipt (REC-1005) is dated 2026-07-18, three days before the invoice date of 2026-07-21, which is an unusual sequence worth flagging for review, though it does not by itself invalidate the transaction. The successful bank payment and matching ledger entry confirm the payment occurred but do not retroactively confirm that PO terms or approval conditions were met, since the PO document is absent."
+}

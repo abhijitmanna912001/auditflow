@@ -1,0 +1,80 @@
+Case ID: CASE_05
+Transaction ID: TXN_05
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "BNK-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005)"
+  ],
+  "evidence_confidence": 0.68,
+  "notes": "Invoice INV-1005 and receipt REC-1005 both cite PO-1005, but no purchase order document was provided for this case, so the PO referenced cannot be verified as existing or matching. Amounts (59000.0 INR) are consistent across invoice, bank statement, ledger entry, and receipt, and the bank statement/ledger both reference INV-1005, supporting a coherent payment trail. However, REC-1005 is dated 2026-07-18, three days before the invoice date of 2026-07-21, which is an unusual sequence (receipt predating invoice) that internal consistency of amounts cannot resolve or excuse. Tax amount is not separately broken out on the ledger entry or receipt (both note GST is bundled/inclusive), so tax reconciliation relies solely on the invoice's stated tax_amount of 9000.0 and cannot be independently corroborated. The bank statement confirms a successful settlement matching the invoice amount, but this alone does not verify that any payment-terms condition (e.g., receipt-before-payment) was actually satisfied - only the receipt document, whose date is anomalous here, can speak to that, and its early date undermines rather than confirms fulfillment of such a condition."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "INV-1005",
+    "type": "invoice",
+    "vendor": "GreenRoute Logistics Pvt. Ltd.",
+    "amount": 59000.0,
+    "tax_amount": 9000.0,
+    "currency": "INR",
+    "date": "2026-07-21",
+    "references": [
+      "PO-1005"
+    ],
+    "case_id": "CASE_05",
+    "extraction_notes": "Document also cites Supplier Invoice No GRS/2026/071 as an internal vendor reference number, distinct from the AuditFlow-assigned Document ID INV-1005 used here."
+  },
+  {
+    "doc_id": "BNK-1005",
+    "type": "bank_statement",
+    "vendor": "GreenRoute Logistics Pvt. Ltd.",
+    "amount": 59000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-18",
+    "references": [
+      "INV-1005"
+    ],
+    "case_id": "CASE_05",
+    "extraction_notes": "No tax amount stated on bank statement; narration references settlement of INV-1005."
+  },
+  {
+    "doc_id": "LED-1005",
+    "type": "ledger_entry",
+    "vendor": "GreenRoute Logistics Pvt. Ltd.",
+    "amount": 59000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-18",
+    "references": [
+      "INV-1005"
+    ],
+    "case_id": "CASE_05",
+    "extraction_notes": "Account line combines Freight and Logistics Expense with Input GST but does not break out the tax portion separately, so tax_amount left null."
+  },
+  {
+    "doc_id": "REC-1005",
+    "type": "receipt",
+    "vendor": "GreenRoute Logistics Pvt. Ltd.",
+    "amount": 59000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-18",
+    "references": [
+      "INV-1005",
+      "PO-1005"
+    ],
+    "case_id": "CASE_05",
+    "extraction_notes": "Accepted value stated as 'including GST' but no explicit tax line amount is broken out, so tax_amount left null."
+  }
+]

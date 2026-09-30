@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "BNK-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "PO-1005 (purchase order referenced by both INV-1005 and REC-1005 but not provided in case file)"
+  ],
+  "evidence_confidence": 0.6,
+  "notes": "Invoice, bank statement, ledger entry, and receipt all agree on vendor (GreenRoute Logistics Pvt. Ltd.) and total amount (INR 59,000.00), with the invoice being the only document to break out tax (INR 9,000.00 GST on a INR 50,000.00 subtotal); the other documents post the combined gross amount without separate tax figures, which is consistent but not independently confirmatory of the tax split. The purchase order PO-1005, explicitly referenced by both INV-1005 and REC-1005, is absent from the case file, so the transaction's underlying authorization cannot be verified from primary evidence - internal consistency of the other documents does not establish that a PO was not required or that one existed. Additionally, REC-1005 is dated 2026-07-18, three days before the invoice date of 2026-07-21, an unexplained chronological inversion that raises questions about the sequence of goods/service acceptance versus invoicing, though this alone does not confirm any document was falsified or omitted. The successful bank settlement on 2026-08-18 confirms payment occurred but does not by itself establish that receipt/acceptance conditions tied to payment terms were satisfied prior to disbursement - only REC-1005 speaks to that, and its early date is itself anomalous. Given the missing PO and the unresolved date inconsistency, confidence is moderate rather than high."
+}

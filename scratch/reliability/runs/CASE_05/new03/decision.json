@@ -1,0 +1,31 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "action": "human_review",
+  "confidence": 0.75,
+  "reason": "Flagged for human review because TXN_05 has a missing purchase order (PO-1005 is referenced on both INV-1005 and REC-1005 but not found in the evidence) and a date inconsistency where REC-1005 is dated 2026-07-18, three days before the INV-1005 invoice date of 2026-07-21.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "explanation": "PO-1005 is explicitly cited as a reference on both INV-1005 and REC-1005, yet no purchase order document exists anywhere in the transaction evidence, leaving the INR 59,000 payment without procurement authorization."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "REC-1005",
+        "INV-1005"
+      ],
+      "severity": "medium",
+      "explanation": "REC-1005 is dated 2026-07-18, three days before the invoice it acknowledges (INV-1005, dated 2026-07-21), an illogical sequence for a receipt covering the invoiced amount."
+    }
+  ]
+}

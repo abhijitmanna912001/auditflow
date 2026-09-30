@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "BNK-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005 referenced by both INV-1005 and REC-1005 but never provided)"
+  ],
+  "evidence_confidence": 0.55,
+  "notes": "Invoice, bank statement, ledger entry, and receipt all reference INV-1005 and agree on vendor (GreenRoute Logistics Pvt. Ltd.) and total amount (INR 59,000), giving reasonable amount/vendor consistency. However, PO-1005 is explicitly cited as a reference on both INV-1005 and REC-1005 yet no purchase order document was supplied for this case, so its absence cannot be assumed to be an expected PO-exempt pattern (only one transaction is present, giving no basis to infer such a vendor pattern). Additionally, REC-1005 is dated 2026-07-18, three days before the invoice date (2026-07-21), an illogical date sequence for a receipt acknowledging an invoiced amount; this internal inconsistency is noted but does not by itself confirm any document is fraudulent or missing - it simply lowers confidence. Only INV-1005 states an explicit tax breakdown (INR 9,000 GST); the bank statement, ledger, and receipt all cite the gross 59,000 figure without an independent tax breakdown, so the invoice's tax figure is not independently corroborated. The successful bank settlement (BNK-1005) confirms payment occurred but does not by itself validate that receipt terms or PO conditions were properly satisfied, per standard evidentiary rules."
+}

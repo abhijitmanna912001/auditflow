@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "BNK-1005",
+    "INV-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005 referenced by INV-1005 and REC-1005 but not provided)"
+  ],
+  "evidence_confidence": 0.72,
+  "notes": "Invoice INV-1005 and receipt REC-1005 both explicitly reference PO-1005, indicating a purchase order should exist for this transaction, yet no purchase_order document was supplied - this is a genuine gap, not evidence of PO-exemption, since the referencing documents themselves point to its existence. Bank statement (settlement), ledger entry, and receipt all align on vendor and amount (59,000 INR) for INV-1005, giving strong internal consistency, but this consistency cannot substitute for the missing PO. Additionally, the receipt is dated 2026-07-18, three days before the invoice date (2026-07-21), an unusual sequence that should be verified rather than assumed correct. The successful bank settlement confirms payment occurred but does not independently confirm that the underlying PO or its terms were satisfied. Confidence reflects solid documentation of invoice-to-payment flow but a real evidentiary gap for the referenced purchase order."
+}

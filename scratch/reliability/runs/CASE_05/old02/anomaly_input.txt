@@ -1,0 +1,77 @@
+Case ID: CASE_05
+Transaction ID: TXN_05
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "BNK-1005",
+    "INV-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005 referenced by INV-1005 and REC-1005 but not provided)"
+  ],
+  "evidence_confidence": 0.7,
+  "notes": "Invoice, receipt, ledger entry, and bank statement all agree on vendor (GreenRoute Logistics Pvt. Ltd.), amount (59000.0 INR), and reference chain (INV-1005), and the payment date sequence is logically consistent (receipt 2026-07-18, invoice 2026-07-21, bank/ledger settlement 2026-08-18). However, both INV-1005 and REC-1005 explicitly reference a PO-1005 that was never supplied in this document set, so the purchase order itself cannot be verified - its absence is not excused by the otherwise-consistent amounts/vendor/dates among the documents that are present. No pattern in this single-transaction case supports inferring the vendor is PO-exempt, since a PO number is explicitly cited by two documents. The presence of a receipt document does substantiate that a receipt condition was met, but the successful bank settlement alone would not have been sufficient proof of that condition absent the receipt itself."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "BNK-1005",
+    "type": "bank_statement",
+    "vendor": "GreenRoute Logistics Pvt. Ltd.",
+    "amount": 59000.0,
+    "currency": "INR",
+    "date": "2026-08-18",
+    "references": [
+      "INV-1005"
+    ],
+    "case_id": "CASE_05",
+    "extraction_notes": null
+  },
+  {
+    "doc_id": "INV-1005",
+    "type": "invoice",
+    "vendor": "GreenRoute Logistics Pvt. Ltd.",
+    "amount": 59000.0,
+    "currency": "INR",
+    "date": "2026-07-21",
+    "references": [
+      "PO-1005",
+      "GRS/2026/071"
+    ],
+    "case_id": "CASE_05",
+    "extraction_notes": "Supplier's own invoice number (GRS/2026/071) included as an additional reference alongside the PO reference."
+  },
+  {
+    "doc_id": "LED-1005",
+    "type": "ledger_entry",
+    "vendor": "GreenRoute Logistics Pvt. Ltd.",
+    "amount": 59000.0,
+    "currency": "INR",
+    "date": "2026-08-18",
+    "references": [
+      "INV-1005"
+    ],
+    "case_id": "CASE_05",
+    "extraction_notes": null
+  },
+  {
+    "doc_id": "REC-1005",
+    "type": "receipt",
+    "vendor": "GreenRoute Logistics Pvt. Ltd.",
+    "amount": 59000.0,
+    "currency": "INR",
+    "date": "2026-07-18",
+    "references": [
+      "INV-1005",
+      "PO-1005"
+    ],
+    "case_id": "CASE_05",
+    "extraction_notes": null
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "BNK-1005",
+    "INV-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005 referenced by INV-1005 and REC-1005 but not provided)"
+  ],
+  "evidence_confidence": 0.55,
+  "notes": "Invoice, ledger entry, bank statement, and receipt all cross-reference INV-1005, and amounts (59000.0 INR) and vendor name (GreenRoute Logistics Pvt. Ltd.) are consistent across all four documents, with bank settlement and ledger posting both dated 2026-08-18. However, PO-1005 is referenced by both the invoice and the receipt but no purchase order document was supplied for this case, so its existence cannot be confirmed; with only one transaction in this case there is no pattern evidence to infer the vendor is PO-exempt, so the PO is treated as missing rather than expectedly absent. Additionally, REC-1005 is dated 2026-07-18, three days before the invoice date of 2026-07-21, an illogical sequence (receipt preceding invoice) that is not explained by any document and undermines the reliability of the receipt as sequential proof. The successful bank settlement confirms payment occurred but does not by itself establish that any payment-term condition (e.g., receipt-before-payment) was properly satisfied; only the receipt document, taken at face value despite its date anomaly, speaks to that. Internal consistency of amounts and vendor across present documents does not substitute for the missing PO."
+}

@@ -1,0 +1,26 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "confidence": 0.92,
+      "explanation": "No purchase order document exists in the evidence set even though PO-1005 is explicitly cited as a reference by both INV-1005 and REC-1005, so the authorized PO terms cannot be verified."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "REC-1005",
+        "INV-1005"
+      ],
+      "severity": "low",
+      "confidence": 0.68,
+      "explanation": "REC-1005 is dated 2026-07-18, three days before its referenced invoice INV-1005 (2026-07-21), an out-of-sequence ordering that warrants review though it may reflect early goods acceptance."
+    }
+  ]
+}

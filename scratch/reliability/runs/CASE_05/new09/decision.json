@@ -1,0 +1,22 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "action": "human_review",
+  "confidence": 0.9,
+  "reason": "This transaction requires human review because the invoice and receipt both reference PO-1005, but no matching purchase order document exists in the case file, making it impossible to verify the authorized terms for the 59,000 INR payment.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "explanation": "Both the invoice and the receipt explicitly cite PO-1005, yet no purchase order document exists anywhere in the case file, so the authorizing PO terms cannot be verified against the 59,000 INR paid."
+    }
+  ]
+}

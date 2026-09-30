@@ -1,0 +1,26 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "confidence": 0.88,
+      "explanation": "No purchase order document exists in the evidence set even though both INV-1005 and REC-1005 explicitly reference PO-1005, leaving the authorization for this 59,000.00 INR payment unverified."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "REC-1005",
+        "INV-1005"
+      ],
+      "severity": "low",
+      "confidence": 0.22,
+      "explanation": "The receipt completion date (2026-07-18) precedes the invoice date (2026-07-21), which is flagged only as a minor sequencing note since delivery/completion before invoicing is a normal business pattern and all vendor, amount, and settlement details align."
+    }
+  ]
+}

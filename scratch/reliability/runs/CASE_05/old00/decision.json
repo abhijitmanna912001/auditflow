@@ -1,0 +1,22 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "action": "human_review",
+  "confidence": 0.9,
+  "reason": "This transaction requires human review because a missing purchase order finding was identified: both INV-1005 and REC-1005 reference PO-1005, but no corresponding purchase order document exists, leaving the authorization of the order terms unverified (medium severity, confidence 0.9).",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "explanation": "No purchase order document exists for this transaction even though both INV-1005 and REC-1005 explicitly cite PO-1005 as the governing purchase order, leaving the authorization of the order terms unverified."
+    }
+  ]
+}

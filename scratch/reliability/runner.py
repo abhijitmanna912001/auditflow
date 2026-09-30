@@ -2,11 +2,12 @@
 import json, sys, os, time
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.environ.get("AUDITFLOW_ROOT") or Path(__file__).resolve().parents[2])
+HERE = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "agents")); sys.path.insert(0, str(ROOT / "evaluation"))
 import intake_agent, evidence_agent, anomaly_agent, decision_agent
 import evaluate  # reused: load_ground_truth / scoring semantics
-OUT = ROOT / "scratch" / "reliability"
+OUT = HERE / "scratch" / "reliability"
 
 def run_stages(case_id, tag):
     d = OUT / "runs" / case_id / tag; d.mkdir(parents=True, exist_ok=True)
@@ -36,6 +37,8 @@ if __name__ == "__main__":
         jobs = [("CASE_14", "probe")]
     elif mode == "case":  # case n
         jobs = [(sys.argv[2], f"run{i:02d}") for i in range(int(sys.argv[3]))]
+    elif mode == "tagged":  # tagged case n prefix
+        jobs = [(sys.argv[2], f"{sys.argv[4]}{i:02d}") for i in range(int(sys.argv[3]))]
     elif mode == "bench":
         jobs = [(c, f"bench{i}") for i in range(3) for c in sorted(gts)]
     def go(j):
@@ -50,5 +53,5 @@ if __name__ == "__main__":
         print("401 - STOP"); sys.exit(2)
     with ThreadPoolExecutor(4) as ex: rest = list(ex.map(go, jobs[1:]))
     res = [first] + rest
-    (OUT / f"results_{mode}_{jobs[0][0] if mode=='case' else ''}.json").write_text(json.dumps(res, indent=2))
+    (OUT / f"results_{mode}_{jobs[0][0] if mode in ('case','tagged') else ''}{sys.argv[4] if mode=='tagged' else ''}.json").write_text(json.dumps(res, indent=2))
     print(sum(1 for r in res if "error" in r), "errors of", len(res))

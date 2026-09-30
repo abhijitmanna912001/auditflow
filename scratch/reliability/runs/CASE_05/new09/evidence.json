@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "BNK-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005) - explicitly referenced by both INV-1005 and REC-1005 but no PO document was provided in the case file"
+  ],
+  "evidence_confidence": 0.68,
+  "notes": "Invoice, bank settlement, ledger entry, and receipt all share consistent vendor (GreenRoute Logistics Pvt. Ltd.), amount (59,000 INR), and reference INV-1005, giving reasonable internal consistency. However, both the invoice and the receipt explicitly cite PO-1005 as a reference, indicating a PO was created for this purchase, yet no purchase order document is present in the case - this is a genuine gap rather than an inferred PO-exemption, since the PO reference exists. Additionally, the receipt (REC-1005) is dated 2026-07-18, three days before the invoice date (2026-07-21), which is an unusual sequence for goods/services receipt preceding invoicing and warrants review. Tax treatment is only explicitly broken out on the invoice (9,000 INR GST); the bank statement, ledger entry, and receipt all bundle or omit the tax amount, so the invoice's tax breakdown cannot be independently corroborated by these other documents. The successful bank settlement confirms payment occurred but does not by itself validate that all underlying purchase conditions (e.g., PO terms) were met - only the PO document itself, if present, could establish that."
+}

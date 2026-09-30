@@ -1,0 +1,26 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "high",
+      "confidence": 0.92,
+      "explanation": "Both INV-1005 and REC-1005 explicitly reference PO-1005, but no purchase order document was supplied for this transaction at all, leaving the authorization of the 59,000 INR spend unverified."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "REC-1005",
+        "INV-1005"
+      ],
+      "severity": "low",
+      "confidence": 0.45,
+      "explanation": "Receipt REC-1005 is dated 2026-07-18, three days before invoice INV-1005 (2026-07-21), an out-of-sequence ordering that is plausible for a goods-receipt note but warrants verification."
+    }
+  ]
+}

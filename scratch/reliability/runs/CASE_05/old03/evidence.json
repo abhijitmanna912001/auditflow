@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "BNK-1005",
+    "INV-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005 referenced by INV-1005 and REC-1005 but not provided)"
+  ],
+  "evidence_confidence": 0.72,
+  "notes": "Invoice INV-1005, receipt REC-1005, ledger entry LED-1005, and bank statement BNK-1005 all agree on vendor (GreenRoute Logistics Pvt. Ltd.), amount (59000.0 INR), and reference chain, and the bank settlement/ledger posting on 2026-08-18 aligns with a payment following the 2026-07-21 invoice. However, PO-1005 is explicitly cited as a reference on both the invoice and the receipt yet no purchase order document was supplied, so the underlying authorization for this transaction cannot be independently verified - internal consistency among the other documents does not substitute for the missing PO. Additionally, the receipt is dated 2026-07-18, three days before the invoice date of 2026-07-21, which is an unusual sequence worth flagging for manual review even though it does not by itself indicate missing evidence. The successful bank settlement confirms payment occurred but does not confirm that any PO-based approval condition was met, since only the PO itself could establish that."
+}

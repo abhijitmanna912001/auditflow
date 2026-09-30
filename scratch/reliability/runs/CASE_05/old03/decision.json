@@ -1,0 +1,31 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "action": "human_review",
+  "confidence": 0.93,
+  "reason": "This transaction is flagged for human review because a missing purchase order (PO-1005) referenced by both INV-1005 and REC-1005 could not be located, preventing independent verification of the 59,000 INR payment authorization (high severity, confidence 0.93); additionally, a lower-severity date inconsistency was noted where REC-1005 is dated three days before INV-1005.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "high",
+      "explanation": "PO-1005 is explicitly referenced by both the invoice and the receipt but no purchase order document exists in the evidence set, so the authorization for this 59,000 INR payment cannot be independently verified."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "REC-1005",
+        "INV-1005"
+      ],
+      "severity": "low",
+      "explanation": "The receipt REC-1005 is dated 2026-07-18, three days before the invoice INV-1005 dated 2026-07-21, an out-of-sequence ordering that warrants manual review though it can occur with goods-received-before-invoicing."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "BNK-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "PO-1005 (purchase order document itself - referenced by both INV-1005 and REC-1005 but never supplied)"
+  ],
+  "evidence_confidence": 0.62,
+  "notes": "Invoice, bank settlement, ledger entry, and receipt are all present and share consistent amounts (59000 INR) and vendor name (GreenRoute Logistics Pvt. Ltd.), and all reference INV-1005. However, PO-1005 is cited as a reference on both INV-1005 and REC-1005 but the purchase order document itself was never provided, so it cannot be confirmed to exist or to match the invoiced/received amounts - internal consistency among the other documents does not establish the PO's existence or terms. Additionally, REC-1005 is dated 2026-07-18, three days before INV-1005 (2026-07-21), meaning the receipt appears to predate the invoice it references - an illogical sequence that raises questions about the transaction's documented timeline (possibly a backdated invoice or a receipt tied to a different PO revision). The successful bank debit (BNK-1005) on 2026-08-18 confirms payment occurred but does not by itself verify that any payment-terms condition (e.g., prior receipt of goods) was properly satisfied - only REC-1005's own content can speak to that, and its date being earlier than the invoice is inconsistent rather than confirmatory. None of the documents contain a tax breakdown consistent across all records; only INV-1005 provides a tax_amount (9000), while BNK-1005, LED-1005, and REC-1005 omit tax figures entirely, which is plausible but unverified as company practice. Confidence is moderate given the core payment chain is traceable but the underlying PO is unverified and the date sequence is anomalous."
+}

@@ -1,0 +1,59 @@
+[
+  {
+    "doc_id": "BNK-1005",
+    "type": "bank_statement",
+    "vendor": "GreenRoute Logistics Pvt. Ltd.",
+    "amount": 59000,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-18",
+    "references": [
+      "INV-1005"
+    ],
+    "case_id": "CASE_05",
+    "extraction_notes": "Narration references settlement of INV-1005; no tax breakdown provided on bank statement."
+  },
+  {
+    "doc_id": "INV-1005",
+    "type": "invoice",
+    "vendor": "GreenRoute Logistics Pvt. Ltd.",
+    "amount": 59000,
+    "tax_amount": 9000,
+    "currency": "INR",
+    "date": "2026-07-21",
+    "references": [
+      "PO-1005"
+    ],
+    "case_id": "CASE_05",
+    "extraction_notes": "Supplier's internal invoice number GRS/2026/071 noted but not treated as a cross-document reference since it identifies this same invoice."
+  },
+  {
+    "doc_id": "LED-1005",
+    "type": "ledger_entry",
+    "vendor": "GreenRoute Logistics Pvt. Ltd.",
+    "amount": 59000,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-18",
+    "references": [
+      "INV-1005"
+    ],
+    "case_id": "CASE_05",
+    "extraction_notes": "Ledger entry lists combined 'Freight and Logistics Expense and Input GST' account without a separately stated tax amount."
+  },
+  {
+    "doc_id": "REC-1005",
+    "type": "receipt",
+    "vendor": "GreenRoute Logistics Pvt. Ltd.",
+    "amount": 59000,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-18",
+    "references": [
+      "INV-1005",
+      "PO-1005"
+    ],
+    "case_id": "CASE_05",
+    "extraction_notes": "Accepted value stated as 'including GST' but no separate tax figure is given, so tax_amount left null."
+  }
+]

@@ -1,0 +1,31 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "action": "human_review",
+  "confidence": 0.92,
+  "reason": "Flagged for human review because the transaction references PO-1005 in both the invoice (INV-1005) and receipt (REC-1005), yet no purchase order document was provided to verify authorization for the 59,000.00 INR spend (high severity, confidence 0.92). Additionally, the receipt is dated three days before the invoice it references, an out-of-order sequence that remains unconfirmed without the missing PO (low severity, confidence 0.55).",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "high",
+      "explanation": "PO-1005 is explicitly cited as a reference by both the invoice and the receipt but no purchase order document was provided for the transaction, leaving the authorization for this 59,000.00 INR spend unverifiable."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "REC-1005",
+        "INV-1005"
+      ],
+      "severity": "low",
+      "explanation": "The receipt REC-1005 is dated 2026-07-18, three days before the invoice INV-1005 it references (2026-07-21), an out-of-order sequence that may reflect legitimate goods-received-before-billing timing but is unconfirmed without the purchase order."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "BNK-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "Purchase Order (PO-1005) - explicitly referenced by both INV-1005 and REC-1005 as the governing PO, but no PO document was provided for this case, so it cannot be considered PO-exempt; the absence appears to be a genuine gap rather than an inferred vendor exemption"
+  ],
+  "evidence_confidence": 0.72,
+  "notes": "Invoice (INV-1005), goods/service receipt (REC-1005), ledger posting (LED-1005), and bank settlement (BNK-1005) all agree on vendor (GreenRoute Logistics Pvt. Ltd.), amount (59,000.00 INR), and reference chain back to INV-1005, and the date sequence (receipt 2026-07-18 -> invoice 2026-07-21 -> ledger/bank settlement 2026-08-18) is logically consistent. However, both the invoice and the receipt cite PO-1005 as a governing reference, and no such purchase order document was supplied, so the transaction lacks confirmation that the underlying order was authorized on the terms reflected downstream. This internal consistency among the present documents does not establish that the PO was unnecessary or that any implicit payment-terms condition tied to the PO was satisfied; only the PO document itself, if produced, could confirm that. The successful bank settlement likewise only confirms payment occurred, not that all upstream procurement conditions were met."
+}

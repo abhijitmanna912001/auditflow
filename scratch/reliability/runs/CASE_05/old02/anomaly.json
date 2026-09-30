@@ -1,0 +1,16 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "confidence": 0.88,
+      "explanation": "No purchase order document exists in the evidence set even though both INV-1005 and REC-1005 explicitly cite PO-1005, so the authorization for this 59,000.00 INR spend cannot be verified."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "BNK-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005) - referenced by both INV-1005 and REC-1005 but not provided"
+  ],
+  "evidence_confidence": 0.55,
+  "notes": "Invoice, bank statement, ledger entry, and receipt all show consistent vendor (GreenRoute Logistics Pvt. Ltd.) and amount (59000.0 INR), and the payment date sequence (invoice 2026-07-21 -> bank/ledger 2026-08-18) is plausible. However, PO-1005 is explicitly referenced by both INV-1005 and REC-1005 but was never supplied, so the underlying purchase order cannot be verified - this cannot be inferred as PO-exempt since the invoice itself cites a PO number, indicating one should exist. Additionally, REC-1005 is dated 2026-07-18, three days before the invoice date (2026-07-21), an inconsistent sequence for a receipt tied to that invoice; this anomaly is noted but not resolved by the successful bank/ledger postings, since a matching payment does not itself confirm the receipt's validity or timing. Confidence is moderate, reflecting strong internal consistency on amounts/vendor but unresolved gaps on the PO and receipt timing."
+}

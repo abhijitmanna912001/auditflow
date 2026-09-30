@@ -1,0 +1,16 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "BNK-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "Purchase Order document (PO-1005) itself \u2014 only referenced by the invoice and receipt, never supplied as a standalone document",
+    "Separate tax breakdown on bank statement, ledger entry, and receipt (all show combined/no tax_amount, so GST portion cannot be independently verified beyond the invoice)"
+  ],
+  "evidence_confidence": 0.68,
+  "notes": "Invoice, bank statement, ledger entry, and receipt all cross-reference INV-1005/PO-1005 and agree on vendor and total amount (INR 59,000), giving reasonable internal consistency. However, the PO itself (PO-1005) is never provided as a document, only cited as a reference on the invoice and receipt, so its existence and terms cannot be independently confirmed. Additionally, the receipt is dated 2026-07-18, three days before the invoice date of 2026-07-21, an unusual sequence that internal consistency alone cannot resolve. The bank statement confirming successful settlement does not itself establish that any payment-terms condition (e.g., receipt requirement) was satisfied prior to payment; only the receipt document, which is present, can speak to that, and its early date raises rather than resolves questions. No tax amount is separately stated on the bank, ledger, or receipt records, so tax reconciliation relies solely on the invoice."
+}

@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "BNK-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005 referenced by INV-1005 and REC-1005 but not provided)"
+  ],
+  "evidence_confidence": 0.72,
+  "notes": "Invoice, bank statement, ledger entry, and receipt all share consistent vendor (GreenRoute Logistics Pvt. Ltd.), amount (59000.0 INR), and cross-references to INV-1005. Bank settlement (2026-08-18) and ledger entry (same date) align with the invoice payment. However, both the invoice and receipt reference PO-1005, which was never supplied - its absence cannot be assumed to be expected/PO-exempt since the documents themselves point to its existence, so it is flagged as missing. Additionally, the receipt's completion date (2026-07-18) precedes the invoice date (2026-07-21), an unusual sequence that internal consistency of amounts/vendor does not resolve or excuse. Successful bank settlement confirms payment occurred but does not itself substitute for the missing PO or validate the order-to-receipt timing."
+}

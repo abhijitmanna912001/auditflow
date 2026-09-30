@@ -1,0 +1,16 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "confidence": 0.9,
+      "explanation": "Both the invoice and the receipt explicitly cite PO-1005, yet no purchase order document exists anywhere in the case file, so the authorizing PO terms cannot be verified against the 59,000 INR paid."
+    }
+  ]
+}

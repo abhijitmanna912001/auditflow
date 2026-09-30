@@ -1,0 +1,31 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "action": "human_review",
+  "confidence": 0.88,
+  "reason": "This transaction was flagged for human review because it references a purchase order (PO-1005) on both the invoice and receipt that was never actually supplied, preventing verification of its existence and terms (medium severity, confidence 0.88). Additionally, the receipt is dated three days before the invoice it references, an out-of-sequence timing that remains unexplained (low severity, confidence 0.72).",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "explanation": "PO-1005 is cited as a reference on both the invoice and the receipt but no purchase order document was ever supplied for this transaction, so its existence and terms cannot be independently verified."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "REC-1005",
+        "INV-1005"
+      ],
+      "severity": "low",
+      "explanation": "The receipt is dated 2026-07-18, three days before the invoice date of 2026-07-21, yet it references INV-1005, an out-of-sequence ordering that the remaining documents do not resolve."
+    }
+  ]
+}

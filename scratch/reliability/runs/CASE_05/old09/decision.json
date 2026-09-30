@@ -1,0 +1,31 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "action": "human_review",
+  "confidence": 0.92,
+  "reason": "This transaction requires human review because two anomalies were found: a missing purchase order (PO-1005 is referenced by both INV-1005 and REC-1005 but not present in the evidence set, confidence 0.92) and a date inconsistency where REC-1005 is dated three days before its referenced invoice INV-1005 (confidence 0.68). The missing PO issue in particular means authorized terms cannot be verified, warranting closer inspection.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "explanation": "No purchase order document exists in the evidence set even though PO-1005 is explicitly cited as a reference by both INV-1005 and REC-1005, so the authorized PO terms cannot be verified."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "REC-1005",
+        "INV-1005"
+      ],
+      "severity": "low",
+      "explanation": "REC-1005 is dated 2026-07-18, three days before its referenced invoice INV-1005 (2026-07-21), an out-of-sequence ordering that warrants review though it may reflect early goods acceptance."
+    }
+  ]
+}

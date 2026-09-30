@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "BNK-1005",
+    "INV-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005) - explicitly referenced by both INV-1005 and REC-1005 but no PO document was provided for this case"
+  ],
+  "evidence_confidence": 0.58,
+  "notes": "All four provided documents (invoice, receipt, ledger entry, bank statement) share the same vendor, amount, and settle via INV-1005, giving strong amount/vendor consistency. However, both the invoice and receipt reference PO-1005, which is never supplied, so the purchase order cannot be confirmed as existing or matching. Additionally, REC-1005 is dated 2026-07-18, three days before the invoice date of 2026-07-21, an illogical sequence for a receipt tied to that invoice/PO - this raises doubt about whether REC-1005 truly corresponds to this invoice or whether dates were misrecorded, but it does not by itself confirm or rule out the missing PO. The successful bank settlement (BNK-1005) and ledger posting (LED-1005) confirm payment occurred but do not substitute for the missing PO or validate the receipt's date anomaly. Tax amounts are only stated on the invoice (9000) and not broken out on the ledger, receipt, or bank statement, which is plausible but unverifiable without a GST-specific document."
+}

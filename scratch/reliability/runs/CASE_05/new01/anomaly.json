@@ -1,0 +1,26 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "confidence": 0.92,
+      "explanation": "No purchase order document exists in the transaction at all: PO-1005 is cited as a reference on both INV-1005 and REC-1005 but was never supplied, so the authorized amount and terms cannot be verified."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "REC-1005",
+        "INV-1005"
+      ],
+      "severity": "low",
+      "confidence": 0.55,
+      "explanation": "REC-1005 is dated 2026-07-18, three days before the INV-1005 invoice date of 2026-07-21 that it explicitly references, so the receipt appears to predate the document it acknowledges, though goods-receipt-before-invoicing can be legitimate practice."
+    }
+  ]
+}
