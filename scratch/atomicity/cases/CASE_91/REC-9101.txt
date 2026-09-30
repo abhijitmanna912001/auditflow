@@ -1,0 +1,11 @@
+GOODS RECEIPT NOTE
+Receipt No: REC-9101
+Receipt Date: 2026-07-09
+Vendor: Horizon Office Systems Pvt. Ltd.
+PO Reference: PO-9101
+Invoice Reference: INV-9101
+
+Received: 10 ergonomic visitor chairs, black mesh back
+Condition: All units accepted in good condition.
+Accepted Value: INR 47,200.00 including GST
+Received By: Facilities Team, AuditFlow Operations

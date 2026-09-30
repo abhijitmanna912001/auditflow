@@ -1,0 +1,557 @@
+{
+ "CASE_91": [
+  {
+   "run": 1,
+   "workpaper": {
+    "case_id": "CASE_91",
+    "rows": [
+     {
+      "document": "INV-9101",
+      "finding": "Missing PO",
+      "evidence": [
+       "INV-9101",
+       "BNK-9101",
+       "REC-9101",
+       "LED-9101"
+      ],
+      "confidence": 0.9,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 2,
+   "workpaper": {
+    "case_id": "CASE_91",
+    "rows": [
+     {
+      "document": "INV-9101",
+      "finding": "Missing PO",
+      "evidence": [
+       "INV-9101",
+       "REC-9101",
+       "BNK-9101"
+      ],
+      "confidence": 0.92,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 3,
+   "workpaper": {
+    "case_id": "CASE_91",
+    "rows": [
+     {
+      "document": "INV-9101",
+      "finding": "Missing PO document",
+      "evidence": [
+       "INV-9101",
+       "REC-9101",
+       "LED-9101",
+       "BNK-9101"
+      ],
+      "confidence": 0.93,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 4,
+   "workpaper": {
+    "case_id": "CASE_91",
+    "rows": [
+     {
+      "document": "INV-9101",
+      "finding": "Missing PO document",
+      "evidence": [
+       "INV-9101",
+       "REC-9101",
+       "BNK-9101"
+      ],
+      "confidence": 0.9,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 5,
+   "workpaper": {
+    "case_id": "CASE_91",
+    "rows": [
+     {
+      "document": "INV-9101",
+      "finding": "Missing PO",
+      "evidence": [
+       "INV-9101",
+       "REC-9101",
+       "BNK-9101"
+      ],
+      "confidence": 0.95,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  }
+ ],
+ "CASE_92": [
+  {
+   "run": 1,
+   "workpaper": {
+    "case_id": "CASE_92",
+    "rows": [
+     {
+      "document": "PO-9102",
+      "finding": "Missing receipt/delivery confirmation",
+      "evidence": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "confidence": 0.83,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 2,
+   "workpaper": {
+    "case_id": "CASE_92",
+    "rows": [
+     {
+      "document": "PO-9102",
+      "finding": "Missing receipt/delivery confirmation",
+      "evidence": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "confidence": 0.85,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 3,
+   "workpaper": {
+    "case_id": "CASE_92",
+    "rows": [
+     {
+      "document": "PO-9102",
+      "finding": "Clean",
+      "evidence": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "confidence": 1.0,
+      "action": "auto_clear"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 1,
+     "human_review": 0,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 3
+    }
+   }
+  },
+  {
+   "run": 4,
+   "workpaper": {
+    "case_id": "CASE_92",
+    "rows": [
+     {
+      "document": "PO-9102",
+      "finding": "Missing receipt",
+      "evidence": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "confidence": 0.88,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 5,
+   "workpaper": {
+    "case_id": "CASE_92",
+    "rows": [
+     {
+      "document": "PO-9102",
+      "finding": "Missing goods receipt",
+      "evidence": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "confidence": 0.8,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  }
+ ],
+ "CASE_93": [
+  {
+   "run": 1,
+   "workpaper": {
+    "case_id": "CASE_93",
+    "rows": [
+     {
+      "document": "PO-9103",
+      "finding": "Clean",
+      "evidence": [
+       "PO-9103",
+       "INV-9103",
+       "REC-9103",
+       "LED-9103"
+      ],
+      "confidence": 1.0,
+      "action": "auto_clear"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 1,
+     "human_review": 0,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 3
+    }
+   }
+  },
+  {
+   "run": 2,
+   "workpaper": {
+    "case_id": "CASE_93",
+    "rows": [
+     {
+      "document": "PO-9103",
+      "finding": "Clean",
+      "evidence": [
+       "PO-9103",
+       "INV-9103",
+       "REC-9103",
+       "LED-9103"
+      ],
+      "confidence": 1.0,
+      "action": "auto_clear"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 1,
+     "human_review": 0,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 3
+    }
+   }
+  },
+  {
+   "run": 3,
+   "workpaper": {
+    "case_id": "CASE_93",
+    "rows": [
+     {
+      "document": "INV-9103",
+      "finding": "Clean",
+      "evidence": [
+       "INV-9103",
+       "LED-9103",
+       "PO-9103",
+       "REC-9103"
+      ],
+      "confidence": 1.0,
+      "action": "auto_clear"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 1,
+     "human_review": 0,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 3
+    }
+   }
+  },
+  {
+   "run": 4,
+   "workpaper": {
+    "case_id": "CASE_93",
+    "rows": [
+     {
+      "document": "PO-9103",
+      "finding": "Clean",
+      "evidence": [
+       "PO-9103",
+       "INV-9103",
+       "REC-9103",
+       "LED-9103"
+      ],
+      "confidence": 1.0,
+      "action": "auto_clear"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 1,
+     "human_review": 0,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 3
+    }
+   }
+  },
+  {
+   "run": 5,
+   "workpaper": {
+    "case_id": "CASE_93",
+    "rows": [
+     {
+      "document": "PO-9103",
+      "finding": "Clean",
+      "evidence": [
+       "PO-9103",
+       "INV-9103",
+       "REC-9103",
+       "LED-9103"
+      ],
+      "confidence": 1.0,
+      "action": "auto_clear"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 1,
+     "human_review": 0,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 3
+    }
+   }
+  }
+ ],
+ "CASE_94": [
+  {
+   "run": 1,
+   "workpaper": {
+    "case_id": "CASE_94",
+    "rows": [
+     {
+      "document": "INV-9104",
+      "finding": "Missing PO; missing receipt",
+      "evidence": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "confidence": 0.9,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 1,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 2,
+   "workpaper": {
+    "case_id": "CASE_94",
+    "rows": [
+     {
+      "document": "INV-9104",
+      "finding": "Missing PO; missing receipt",
+      "evidence": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "confidence": 0.9,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 1,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 3,
+   "workpaper": {
+    "case_id": "CASE_94",
+    "rows": [
+     {
+      "document": "INV-9104",
+      "finding": "Missing PO; no receipt/payment evidence",
+      "evidence": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "confidence": 0.92,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 1,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 4,
+   "workpaper": {
+    "case_id": "CASE_94",
+    "rows": [
+     {
+      "document": "INV-9104",
+      "finding": "Missing PO; missing receipt",
+      "evidence": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "confidence": 0.82,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 5,
+   "workpaper": {
+    "case_id": "CASE_94",
+    "rows": [
+     {
+      "document": "INV-9104",
+      "finding": "Missing PO; no receipt",
+      "evidence": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "confidence": 0.9,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 1,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  }
+ ]
+}

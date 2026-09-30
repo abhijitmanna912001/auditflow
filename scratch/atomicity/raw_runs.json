@@ -1,0 +1,1350 @@
+{
+ "CASE_91": [
+  {
+   "run": 1,
+   "anomaly": {
+    "transaction_id": "TXN_91",
+    "case_id": "CASE_91",
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "BNK-9101",
+       "INV-9101",
+       "REC-9101"
+      ],
+      "severity": "medium",
+      "confidence": 0.9,
+      "explanation": "No purchase order document exists for this transaction at all, even though PO-9101 is referenced by the bank statement, invoice, and receipt, so the originating authorization and its terms cannot be verified."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_91",
+    "case_id": "CASE_91",
+    "action": "human_review",
+    "confidence": 0.9,
+    "reason": "This transaction is flagged for human review because no purchase order document exists despite PO-9101 being referenced by the bank statement, invoice, and receipt (BNK-9101, INV-9101, REC-9101), making it impossible to verify the originating authorization and its terms. This medium-severity missing_po finding was detected with 0.9 confidence.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "BNK-9101",
+       "INV-9101",
+       "REC-9101"
+      ],
+      "severity": "medium",
+      "explanation": "No purchase order document exists for this transaction at all, even though PO-9101 is referenced by the bank statement, invoice, and receipt, so the originating authorization and its terms cannot be verified."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_91",
+    "rows": [
+     {
+      "document": "BNK-9101",
+      "finding": "Missing PO",
+      "evidence": [
+       "BNK-9101",
+       "INV-9101",
+       "REC-9101"
+      ],
+      "confidence": 0.9,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 2,
+   "anomaly": {
+    "transaction_id": "TXN_91",
+    "case_id": "CASE_91",
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9101",
+       "REC-9101",
+       "BNK-9101"
+      ],
+      "severity": "medium",
+      "confidence": 0.9,
+      "explanation": "PO-9101 is referenced by the invoice, receipt, and bank statement, but no purchase order document exists in the evidence set, so the agreed price and authorization terms cannot be independently verified."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_91",
+    "case_id": "CASE_91",
+    "action": "human_review",
+    "confidence": 0.9,
+    "reason": "This transaction requires human review because a missing purchase order was flagged: PO-9101 is referenced by the invoice, receipt, and bank statement (INV-9101, REC-9101, BNK-9101), but the actual PO document is absent, making it impossible to verify the agreed price and authorization terms. This medium-severity finding (confidence 0.9) is enough to route the transaction for manual verification.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9101",
+       "REC-9101",
+       "BNK-9101"
+      ],
+      "severity": "medium",
+      "explanation": "PO-9101 is referenced by the invoice, receipt, and bank statement, but no purchase order document exists in the evidence set, so the agreed price and authorization terms cannot be independently verified."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_91",
+    "rows": [
+     {
+      "document": "INV-9101",
+      "finding": "Missing PO",
+      "evidence": [
+       "INV-9101",
+       "REC-9101",
+       "BNK-9101"
+      ],
+      "confidence": 0.9,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 3,
+   "anomaly": {
+    "transaction_id": "TXN_91",
+    "case_id": "CASE_91",
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9101",
+       "REC-9101",
+       "BNK-9101",
+       "LED-9101"
+      ],
+      "severity": "medium",
+      "confidence": 0.88,
+      "explanation": "No purchase order document exists in the record at all, even though PO-9101 is explicitly cited by the invoice, receipt, and bank statement, so the authorized PO terms cannot be verified."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_91",
+    "case_id": "CASE_91",
+    "action": "human_review",
+    "confidence": 0.88,
+    "reason": "This transaction requires human review because a missing_po finding (medium severity, confidence 0.88) shows that no purchase order document exists in the record, despite PO-9101 being explicitly referenced by the invoice (INV-9101), receipt (REC-9101), and bank statement (BNK-9101), preventing verification of authorized PO terms.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9101",
+       "REC-9101",
+       "BNK-9101",
+       "LED-9101"
+      ],
+      "severity": "medium",
+      "explanation": "No purchase order document exists in the record at all, even though PO-9101 is explicitly cited by the invoice, receipt, and bank statement, so the authorized PO terms cannot be verified."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_91",
+    "rows": [
+     {
+      "document": "INV-9101",
+      "finding": "Missing PO document",
+      "evidence": [
+       "INV-9101",
+       "REC-9101",
+       "BNK-9101",
+       "LED-9101"
+      ],
+      "confidence": 0.88,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 4,
+   "anomaly": {
+    "transaction_id": "TXN_91",
+    "case_id": "CASE_91",
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9101",
+       "BNK-9101",
+       "REC-9101"
+      ],
+      "severity": "medium",
+      "confidence": 0.9,
+      "explanation": "No purchase order document exists in the evidence set even though PO-9101 is referenced as the originating authorization by the invoice, bank statement, and goods receipt note, so the PO's terms cannot be independently verified."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_91",
+    "case_id": "CASE_91",
+    "action": "human_review",
+    "confidence": 0.9,
+    "reason": "Flagged for human review because a missing_po finding (medium severity, confidence 0.9) indicates no purchase order document exists to substantiate PO-9101, which is referenced by the invoice, bank statement, and goods receipt note (INV-9101, BNK-9101, REC-9101), so the PO's terms cannot be independently verified.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9101",
+       "BNK-9101",
+       "REC-9101"
+      ],
+      "severity": "medium",
+      "explanation": "No purchase order document exists in the evidence set even though PO-9101 is referenced as the originating authorization by the invoice, bank statement, and goods receipt note, so the PO's terms cannot be independently verified."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_91",
+    "rows": [
+     {
+      "document": "INV-9101",
+      "finding": "Missing PO document",
+      "evidence": [
+       "INV-9101",
+       "BNK-9101",
+       "REC-9101"
+      ],
+      "confidence": 0.9,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 5,
+   "anomaly": {
+    "transaction_id": "TXN_91",
+    "case_id": "CASE_91",
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9101",
+       "REC-9101",
+       "BNK-9101",
+       "LED-9101"
+      ],
+      "severity": "medium",
+      "confidence": 0.93,
+      "explanation": "All four documents reference PO-9101, but no purchase order document exists in the transaction evidence, so the underlying purchase authorization cannot be independently verified."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_91",
+    "case_id": "CASE_91",
+    "action": "human_review",
+    "confidence": 0.93,
+    "reason": "This transaction requires human review because documents INV-9101, REC-9101, BNK-9101, and LED-9101 all reference purchase order PO-9101, yet no actual purchase order document was found in the evidence, preventing independent verification of the purchase authorization (medium severity, confidence 0.93).",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9101",
+       "REC-9101",
+       "BNK-9101",
+       "LED-9101"
+      ],
+      "severity": "medium",
+      "explanation": "All four documents reference PO-9101, but no purchase order document exists in the transaction evidence, so the underlying purchase authorization cannot be independently verified."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_91",
+    "rows": [
+     {
+      "document": "INV-9101",
+      "finding": "Missing PO",
+      "evidence": [
+       "INV-9101",
+       "REC-9101",
+       "BNK-9101",
+       "LED-9101"
+      ],
+      "confidence": 0.93,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  }
+ ],
+ "CASE_92": [
+  {
+   "run": 1,
+   "anomaly": {
+    "transaction_id": "TXN_92",
+    "case_id": "CASE_92",
+    "findings": [
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "severity": "medium",
+      "confidence": 0.82,
+      "explanation": "No goods receipt note or delivery confirmation document exists anywhere in the transaction to establish that the ordered office systems were actually received, even though payment was made."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_92",
+    "case_id": "CASE_92",
+    "action": "human_review",
+    "confidence": 0.82,
+    "reason": "This transaction is flagged for human review because a medium-severity finding indicates missing receipt documentation\u2014no goods receipt note or delivery confirmation (across PO-9102, INV-9102, BNK-9102, LED-9102) exists to confirm the ordered office systems were actually received, despite payment having been made (confidence 0.82).",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "severity": "medium",
+      "explanation": "No goods receipt note or delivery confirmation document exists anywhere in the transaction to establish that the ordered office systems were actually received, even though payment was made."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_92",
+    "rows": [
+     {
+      "document": "PO-9102",
+      "finding": "Missing goods receipt",
+      "evidence": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "confidence": 0.82,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 2,
+   "anomaly": {
+    "transaction_id": "TXN_92",
+    "case_id": "CASE_92",
+    "findings": [
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "severity": "medium",
+      "confidence": 0.8,
+      "explanation": "No goods receipt note or delivery/acceptance confirmation exists anywhere in the transaction chain to prove the office furniture was actually received, even though the PO, invoice, bank debit, and ledger entry are all present and internally consistent."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_92",
+    "case_id": "CASE_92",
+    "action": "human_review",
+    "confidence": 0.8,
+    "reason": "Flagged for human review because there is a missing_receipt finding (medium severity, confidence 0.8): despite consistent PO, invoice, bank debit, and ledger entries (PO-9102, INV-9102, BNK-9102, LED-9102), no goods receipt or delivery/acceptance confirmation exists to prove the office furniture was actually received.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "severity": "medium",
+      "explanation": "No goods receipt note or delivery/acceptance confirmation exists anywhere in the transaction chain to prove the office furniture was actually received, even though the PO, invoice, bank debit, and ledger entry are all present and internally consistent."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_92",
+    "rows": [
+     {
+      "document": "PO-9102",
+      "finding": "Missing receipt confirmation",
+      "evidence": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "confidence": 0.8,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 3,
+   "anomaly": {
+    "transaction_id": "TXN_92",
+    "case_id": "CASE_92",
+    "findings": [
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "severity": "medium",
+      "confidence": 0.8,
+      "explanation": "No goods receipt note or delivery/acceptance confirmation exists anywhere in the transaction record, so payment of 47,200.00 INR was completed without documentary proof that the goods or services were actually received."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_92",
+    "case_id": "CASE_92",
+    "action": "human_review",
+    "confidence": 0.8,
+    "reason": "Flagged for human review because a missing_receipt finding (medium severity, confidence 0.8) shows that the 47,200.00 INR payment was completed without any goods receipt note or delivery/acceptance confirmation across the PO, invoice, bank, or ledger documents (PO-9102, INV-9102, BNK-9102, LED-9102).",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "severity": "medium",
+      "explanation": "No goods receipt note or delivery/acceptance confirmation exists anywhere in the transaction record, so payment of 47,200.00 INR was completed without documentary proof that the goods or services were actually received."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_92",
+    "rows": [
+     {
+      "document": "PO-9102",
+      "finding": "Missing goods receipt",
+      "evidence": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "confidence": 0.8,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 4,
+   "anomaly": {
+    "transaction_id": "TXN_92",
+    "case_id": "CASE_92",
+    "findings": [
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "severity": "medium",
+      "confidence": 0.85,
+      "explanation": "No goods receipt or delivery note exists anywhere in the transaction for this office equipment purchase, so receipt of goods is unverified even though the PO, invoice, bank statement, and ledger all agree."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_92",
+    "case_id": "CASE_92",
+    "action": "human_review",
+    "confidence": 0.85,
+    "reason": "This transaction is flagged for human review because a missing_receipt finding (medium severity, confidence 0.85) indicates there is no goods receipt or delivery note for this office equipment purchase, even though the PO, invoice, bank statement, and ledger all agree with each other. Since receipt of goods cannot be verified, a human reviewer needs to confirm the goods were actually delivered.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "severity": "medium",
+      "explanation": "No goods receipt or delivery note exists anywhere in the transaction for this office equipment purchase, so receipt of goods is unverified even though the PO, invoice, bank statement, and ledger all agree."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_92",
+    "rows": [
+     {
+      "document": "PO-9102",
+      "finding": "Missing goods receipt",
+      "evidence": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "confidence": 0.85,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 5,
+   "anomaly": {
+    "transaction_id": "TXN_92",
+    "case_id": "CASE_92",
+    "findings": [
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "severity": "medium",
+      "confidence": 0.82,
+      "explanation": "No goods receipt or delivery confirmation document exists anywhere in the transaction chain, so there is no evidence that the ordered office furniture/equipment was actually received despite payment being completed."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_92",
+    "case_id": "CASE_92",
+    "action": "human_review",
+    "confidence": 0.82,
+    "reason": "This transaction is flagged for human review because a missing_receipt finding (medium severity, confidence 0.82) indicates there is no goods receipt or delivery confirmation across the related documents (PO-9102, INV-9102, BNK-9102, LED-9102), meaning payment was completed without proof the office furniture/equipment was actually received.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "severity": "medium",
+      "explanation": "No goods receipt or delivery confirmation document exists anywhere in the transaction chain, so there is no evidence that the ordered office furniture/equipment was actually received despite payment being completed."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_92",
+    "rows": [
+     {
+      "document": "PO-9102",
+      "finding": "Missing receipt",
+      "evidence": [
+       "PO-9102",
+       "INV-9102",
+       "BNK-9102",
+       "LED-9102"
+      ],
+      "confidence": 0.82,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  }
+ ],
+ "CASE_93": [
+  {
+   "run": 1,
+   "anomaly": {
+    "transaction_id": "TXN_93",
+    "case_id": "CASE_93",
+    "findings": []
+   },
+   "decision": {
+    "transaction_id": "TXN_93",
+    "case_id": "CASE_93",
+    "action": "auto_clear",
+    "confidence": 1.0,
+    "reason": "No anomalies were detected for TXN_93; the transaction appears clean, so it is auto-cleared with a confidence of 1.0.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": []
+   },
+   "workpaper": {
+    "case_id": "CASE_93",
+    "rows": [
+     {
+      "document": "PO-9103",
+      "finding": "Clean",
+      "evidence": [
+       "PO-9103",
+       "INV-9103",
+       "REC-9103",
+       "LED-9103"
+      ],
+      "confidence": 1.0,
+      "action": "auto_clear"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 1,
+     "human_review": 0,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 3
+    }
+   }
+  },
+  {
+   "run": 2,
+   "anomaly": {
+    "transaction_id": "TXN_93",
+    "case_id": "CASE_93",
+    "findings": []
+   },
+   "decision": {
+    "transaction_id": "TXN_93",
+    "case_id": "CASE_93",
+    "action": "auto_clear",
+    "confidence": 1.0,
+    "reason": "No anomaly findings were detected for TXN_93, indicating the transaction is clean. It has been auto-cleared with a confidence of 1.0.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": []
+   },
+   "workpaper": {
+    "case_id": "CASE_93",
+    "rows": [
+     {
+      "document": "PO-9103",
+      "finding": "Clean",
+      "evidence": [
+       "PO-9103",
+       "INV-9103",
+       "REC-9103",
+       "LED-9103"
+      ],
+      "confidence": 1.0,
+      "action": "auto_clear"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 1,
+     "human_review": 0,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 3
+    }
+   }
+  },
+  {
+   "run": 3,
+   "anomaly": {
+    "transaction_id": "TXN_93",
+    "case_id": "CASE_93",
+    "findings": []
+   },
+   "decision": {
+    "transaction_id": "TXN_93",
+    "case_id": "CASE_93",
+    "action": "auto_clear",
+    "confidence": 1.0,
+    "reason": "No anomaly findings were detected for TXN_93, indicating the transaction is clean. It has been auto-cleared with full confidence (1.0).",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": []
+   },
+   "workpaper": {
+    "case_id": "CASE_93",
+    "rows": [
+     {
+      "document": "INV-9103",
+      "finding": "Clean",
+      "evidence": [
+       "INV-9103",
+       "LED-9103",
+       "PO-9103",
+       "REC-9103"
+      ],
+      "confidence": 1.0,
+      "action": "auto_clear"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 1,
+     "human_review": 0,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 3
+    }
+   }
+  },
+  {
+   "run": 4,
+   "anomaly": {
+    "transaction_id": "TXN_93",
+    "case_id": "CASE_93",
+    "findings": []
+   },
+   "decision": {
+    "transaction_id": "TXN_93",
+    "case_id": "CASE_93",
+    "action": "auto_clear",
+    "confidence": 1.0,
+    "reason": "No anomaly findings were detected for TXN_93, indicating the transaction is clean. It has been auto-cleared with a confidence of 1.0.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": []
+   },
+   "workpaper": {
+    "case_id": "CASE_93",
+    "rows": [
+     {
+      "document": "INV-9103",
+      "finding": "Clean",
+      "evidence": [
+       "INV-9103",
+       "LED-9103",
+       "PO-9103",
+       "REC-9103"
+      ],
+      "confidence": 1.0,
+      "action": "auto_clear"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 1,
+     "human_review": 0,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 3
+    }
+   }
+  },
+  {
+   "run": 5,
+   "anomaly": {
+    "transaction_id": "TXN_93",
+    "case_id": "CASE_93",
+    "findings": []
+   },
+   "decision": {
+    "transaction_id": "TXN_93",
+    "case_id": "CASE_93",
+    "action": "auto_clear",
+    "confidence": 1.0,
+    "reason": "No anomalies were detected for TXN_93; the transaction appears clean, so it is auto-cleared with a confidence of 1.0.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": []
+   },
+   "workpaper": {
+    "case_id": "CASE_93",
+    "rows": [
+     {
+      "document": "PO-9103",
+      "finding": "Clean",
+      "evidence": [
+       "PO-9103",
+       "INV-9103",
+       "REC-9103",
+       "LED-9103"
+      ],
+      "confidence": 1.0,
+      "action": "auto_clear"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 1,
+     "human_review": 0,
+     "critical": 0,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 3
+    }
+   }
+  }
+ ],
+ "CASE_94": [
+  {
+   "run": 1,
+   "anomaly": {
+    "transaction_id": "TXN_94",
+    "case_id": "CASE_94",
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9104"
+      ],
+      "severity": "high",
+      "confidence": 0.92,
+      "explanation": "No purchase order document exists in the transaction at all, even though INV-9104 explicitly references PO-9104, leaving the invoice's authorization unverified."
+     },
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "severity": "medium",
+      "confidence": 0.8,
+      "explanation": "No receipt or payment confirmation document exists for this transaction; the internal ledger posting LED-9104 is an accounting record and does not evidence actual settlement."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_94",
+    "case_id": "CASE_94",
+    "action": "human_review",
+    "confidence": 0.92,
+    "reason": "Flagged for human review because invoice INV-9104 references PO-9104 but no purchase order document is present (high severity, confidence 0.92), and additionally there's no receipt or payment confirmation to evidence settlement, as the ledger entry LED-9104 alone doesn't suffice (medium severity, confidence 0.80).",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9104"
+      ],
+      "severity": "high",
+      "explanation": "No purchase order document exists in the transaction at all, even though INV-9104 explicitly references PO-9104, leaving the invoice's authorization unverified."
+     },
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "severity": "medium",
+      "explanation": "No receipt or payment confirmation document exists for this transaction; the internal ledger posting LED-9104 is an accounting record and does not evidence actual settlement."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_94",
+    "rows": [
+     {
+      "document": "INV-9104",
+      "finding": "Missing PO; missing receipt",
+      "evidence": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "confidence": 0.92,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 1,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 2,
+   "anomaly": {
+    "transaction_id": "TXN_94",
+    "case_id": "CASE_94",
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9104"
+      ],
+      "severity": "high",
+      "confidence": 0.9,
+      "explanation": "Invoice INV-9104 explicitly references PO-9104 but no purchase order document exists anywhere in the transaction evidence, leaving the 47,200 INR charge unauthorized by any procurement approval."
+     },
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "severity": "medium",
+      "confidence": 0.85,
+      "explanation": "No delivery or goods receipt document exists for this transaction, so fulfillment of the invoiced office furniture cannot be confirmed before the ledger debit was posted."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_94",
+    "case_id": "CASE_94",
+    "action": "human_review",
+    "confidence": 0.9,
+    "reason": "Flagged for human review because invoice INV-9104 cites PO-9104 but no matching purchase order exists, leaving a 47,200 INR charge unauthorized, and there's also no delivery or goods receipt document to confirm the office furniture was actually received.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9104"
+      ],
+      "severity": "high",
+      "explanation": "Invoice INV-9104 explicitly references PO-9104 but no purchase order document exists anywhere in the transaction evidence, leaving the 47,200 INR charge unauthorized by any procurement approval."
+     },
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "severity": "medium",
+      "explanation": "No delivery or goods receipt document exists for this transaction, so fulfillment of the invoiced office furniture cannot be confirmed before the ledger debit was posted."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_94",
+    "rows": [
+     {
+      "document": "INV-9104",
+      "finding": "Missing PO; missing receipt",
+      "evidence": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "confidence": 0.9,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 1,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 3,
+   "anomaly": {
+    "transaction_id": "TXN_94",
+    "case_id": "CASE_94",
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9104"
+      ],
+      "severity": "high",
+      "confidence": 0.9,
+      "explanation": "INV-9104 explicitly references PO-9104, but no purchase order document exists anywhere in the transaction evidence, leaving the purchase unauthorized by any supplied PO."
+     },
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "severity": "medium",
+      "confidence": 0.85,
+      "explanation": "No goods receipt or delivery/service completion document exists for this transaction, so delivery of the invoiced goods or services cannot be confirmed."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_94",
+    "case_id": "CASE_94",
+    "action": "human_review",
+    "confidence": 0.9,
+    "reason": "Flagged for human review because invoice INV-9104 references PO-9104 but no matching purchase order document was found (high severity, confidence 0.9), and additionally no goods receipt or delivery confirmation exists for INV-9104/LED-9104 (medium severity, confidence 0.85), so the purchase cannot be verified as authorized or fulfilled.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9104"
+      ],
+      "severity": "high",
+      "explanation": "INV-9104 explicitly references PO-9104, but no purchase order document exists anywhere in the transaction evidence, leaving the purchase unauthorized by any supplied PO."
+     },
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "severity": "medium",
+      "explanation": "No goods receipt or delivery/service completion document exists for this transaction, so delivery of the invoiced goods or services cannot be confirmed."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_94",
+    "rows": [
+     {
+      "document": "INV-9104",
+      "finding": "Missing PO; missing receipt",
+      "evidence": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "confidence": 0.9,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 1,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 4,
+   "anomaly": {
+    "transaction_id": "TXN_94",
+    "case_id": "CASE_94",
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9104"
+      ],
+      "severity": "high",
+      "confidence": 0.95,
+      "explanation": "Invoice INV-9104 explicitly references PO-9104 but no purchase order document exists in the transaction at all, so the procurement authorization and agreed terms cannot be verified."
+     },
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "severity": "medium",
+      "confidence": 0.8,
+      "explanation": "No receipt or payment confirmation document of any kind is present, leaving the invoice's settlement unevidenced since the ledger entry alone only shows internal recording."
+     },
+     {
+      "type": "date_inconsistency",
+      "documents": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "severity": "low",
+      "confidence": 0.35,
+      "explanation": "The ledger entry is dated 2026-07-25, twenty days after the invoice date of 2026-07-05, which is likely a normal posting lag but is not the date corroboration the evidence map asserts."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_94",
+    "case_id": "CASE_94",
+    "action": "human_review",
+    "confidence": 0.95,
+    "reason": "This transaction requires human review because invoice INV-9104 references PO-9104 but no purchase order document is present (high severity, confidence 0.95), and it is further compounded by a missing receipt/payment confirmation for INV-9104 and LED-9104 (medium severity) plus a minor 20-day date gap between the invoice and ledger entry (low severity).",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9104"
+      ],
+      "severity": "high",
+      "explanation": "Invoice INV-9104 explicitly references PO-9104 but no purchase order document exists in the transaction at all, so the procurement authorization and agreed terms cannot be verified."
+     },
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "severity": "medium",
+      "explanation": "No receipt or payment confirmation document of any kind is present, leaving the invoice's settlement unevidenced since the ledger entry alone only shows internal recording."
+     },
+     {
+      "type": "date_inconsistency",
+      "documents": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "severity": "low",
+      "explanation": "The ledger entry is dated 2026-07-25, twenty days after the invoice date of 2026-07-05, which is likely a normal posting lag but is not the date corroboration the evidence map asserts."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_94",
+    "rows": [
+     {
+      "document": "INV-9104",
+      "finding": "Missing PO; missing receipt; date inconsistency",
+      "evidence": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "confidence": 0.95,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 1,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  },
+  {
+   "run": 5,
+   "anomaly": {
+    "transaction_id": "TXN_94",
+    "case_id": "CASE_94",
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9104"
+      ],
+      "severity": "high",
+      "confidence": 0.9,
+      "explanation": "Invoice INV-9104 references purchase order PO-9104 but no purchase order document exists in the transaction, so the invoice cannot be matched to an authorized order."
+     },
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "severity": "medium",
+      "confidence": 0.85,
+      "explanation": "No goods receipt or delivery/acceptance confirmation document exists for this transaction, so there is no proof the office systems billed were actually received."
+     }
+    ]
+   },
+   "decision": {
+    "transaction_id": "TXN_94",
+    "case_id": "CASE_94",
+    "action": "human_review",
+    "confidence": 0.9,
+    "reason": "Transaction TXN_94 requires human review because invoice INV-9104 references a purchase order (PO-9104) that does not exist in the transaction, preventing authorization matching, and additionally no goods receipt or delivery confirmation was found to verify the office systems were actually received.",
+    "thresholds_used": {
+     "auto_clear": 0.95,
+     "human_review": 0.8
+    },
+    "findings": [
+     {
+      "type": "missing_po",
+      "documents": [
+       "INV-9104"
+      ],
+      "severity": "high",
+      "explanation": "Invoice INV-9104 references purchase order PO-9104 but no purchase order document exists in the transaction, so the invoice cannot be matched to an authorized order."
+     },
+     {
+      "type": "missing_receipt",
+      "documents": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "severity": "medium",
+      "explanation": "No goods receipt or delivery/acceptance confirmation document exists for this transaction, so there is no proof the office systems billed were actually received."
+     }
+    ]
+   },
+   "workpaper": {
+    "case_id": "CASE_94",
+    "rows": [
+     {
+      "document": "INV-9104",
+      "finding": "Missing PO; missing receipt",
+      "evidence": [
+       "INV-9104",
+       "LED-9104"
+      ],
+      "confidence": 0.9,
+      "action": "human_review"
+     }
+    ],
+    "summary": {
+     "items_reviewed": 1,
+     "auto_cleared": 0,
+     "human_review": 1,
+     "critical": 1,
+     "assumed_minutes_per_item": 3,
+     "estimated_minutes_saved": 0
+    }
+   }
+  }
+ ]
+}
