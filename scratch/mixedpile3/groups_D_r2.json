@@ -1,0 +1,663 @@
+{
+ "groups": {
+  "G01": {
+   "members": [
+    "BNK-12906",
+    "INV-46281",
+    "INV-84263",
+    "LED-71202",
+    "PO-16533",
+    "REC-86581"
+   ],
+   "shared": []
+  },
+  "G02": {
+   "members": [
+    "BNK-74654",
+    "INV-96326",
+    "LED-85111",
+    "PO-94562"
+   ],
+   "shared": []
+  },
+  "G03": {
+   "members": [
+    "BNK-62846",
+    "INV-16023",
+    "LED-10898",
+    "PO-41858",
+    "REC-76283"
+   ],
+   "shared": []
+  },
+  "G04": {
+   "members": [
+    "BNK-33247",
+    "INV-90387",
+    "LED-55770",
+    "REC-20048"
+   ],
+   "shared": []
+  },
+  "G05": {
+   "members": [
+    "BNK-55802",
+    "INV-82776",
+    "LED-79242",
+    "PO-64567",
+    "REC-46301"
+   ],
+   "shared": []
+  },
+  "G06": {
+   "members": [
+    "BNK-46510",
+    "INV-68290",
+    "LED-81419",
+    "PO-77099",
+    "REC-23178"
+   ],
+   "shared": []
+  },
+  "G07": {
+   "members": [
+    "BNK-36557",
+    "INV-31559",
+    "INV-79746",
+    "LED-45247",
+    "PO-91116"
+   ],
+   "shared": []
+  },
+  "G08": {
+   "members": [
+    "INV-33619",
+    "REC-15268"
+   ],
+   "shared": []
+  },
+  "G09": {
+   "members": [
+    "BNK-66333",
+    "INV-13513",
+    "LED-75187",
+    "PO-15226",
+    "REC-21078"
+   ],
+   "shared": []
+  },
+  "G10": {
+   "members": [
+    "BNK-52891",
+    "INV-35047",
+    "LED-95393",
+    "PO-54952",
+    "REC-44638"
+   ],
+   "shared": []
+  },
+  "G11": {
+   "members": [
+    "BNK-50320",
+    "LED-94393",
+    "PO-19740",
+    "REC-64864"
+   ],
+   "shared": []
+  },
+  "G12": {
+   "members": [
+    "INV-24423"
+   ],
+   "shared": []
+  },
+  "G13": {
+   "members": [
+    "INV-61960"
+   ],
+   "shared": []
+  }
+ },
+ "shared": {},
+ "clusters": [
+  {
+   "cluster_id": "U01",
+   "doc_ids": [
+    "BNK-29140",
+    "LED-61696"
+   ],
+   "vendor": "Apex Process Systems Pvt. Ltd.",
+   "confidence": 0.95,
+   "reasons": "Same vendor, identical amount (129800 INR) and identical date (2026-08-12) across bank statement and ledger entry."
+  },
+  {
+   "cluster_id": "U02",
+   "doc_ids": [
+    "BNK-59245",
+    "LED-18464"
+   ],
+   "vendor": "Meridian Network Components Pvt. Ltd.",
+   "confidence": 0.95,
+   "reasons": "Same vendor, identical amount (141600 INR) and identical date (2026-08-28) across bank statement and ledger entry."
+  },
+  {
+   "cluster_id": "U03",
+   "doc_ids": [
+    "BNK-70658",
+    "LED-39140",
+    "REC-98450"
+   ],
+   "vendor": "Horizon Office Systems Pvt. Ltd.",
+   "confidence": 0.75,
+   "reasons": "Same vendor and identical amount (47200 INR) for bank statement, ledger entry, and receipt; receipt date (2026-07-09) precedes payment date (2026-07-25) which is plausible for a goods receipt followed by settlement, but the date mismatch lowers confidence slightly."
+  },
+  {
+   "cluster_id": "U04",
+   "doc_ids": [
+    "BNK-79834",
+    "LED-11627"
+   ],
+   "vendor": "Meridian Cloud Services Inc.",
+   "confidence": 0.85,
+   "reasons": "Same vendor, identical amount (415000 INR) and identical date (2026-07-18) for bank statement and ledger entry, though a noted currency discrepancy with an unlinked invoice slightly reduces certainty; receipt REC-79398 excluded due to missing amount and mismatched date."
+  }
+ ],
+ "rejected_clusters": [],
+ "unplaced_report": [
+  {
+   "doc_id": "BNK-29140",
+   "type": "bank_statement",
+   "vendor": "Apex Process Systems Pvt. Ltd.",
+   "amount": 129800.0,
+   "date": "2026-08-12",
+   "reason": "Vendor Apex Process Systems matches G08 but amount 129800 doesn't match the invoice total of 118000, leaving the match uncertain.",
+   "cluster": "U01",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "BNK-59245",
+   "type": "bank_statement",
+   "vendor": "Meridian Network Components Pvt. Ltd.",
+   "amount": 141600.0,
+   "date": "2026-08-28",
+   "reason": "Vendor Meridian Network Components does not match any group's vendor despite amount coincidentally equaling G07's total.",
+   "cluster": "U02",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "BNK-70658",
+   "type": "bank_statement",
+   "vendor": "Horizon Office Systems Pvt. Ltd.",
+   "amount": 47200.0,
+   "date": "2026-07-25",
+   "reason": "Vendor Horizon Office Systems matches two possible groups (G12, G13) but amount 47200 doesn't exactly match either invoice, making the correct group ambiguous.",
+   "cluster": "U03",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "BNK-79834",
+   "type": "bank_statement",
+   "vendor": "Meridian Cloud Services Inc.",
+   "amount": 415000.0,
+   "date": "2026-07-18",
+   "reason": "No group exists for vendor Meridian Cloud Services Inc.; amount/currency also mismatched with any group.",
+   "cluster": "U04",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "LED-11627",
+   "type": "ledger_entry",
+   "vendor": "Meridian Cloud Services Inc.",
+   "amount": 415000.0,
+   "date": "2026-07-18",
+   "reason": "No group exists for vendor Meridian Cloud Services Inc.",
+   "cluster": "U04",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "LED-18464",
+   "type": "ledger_entry",
+   "vendor": "Meridian Network Components Pvt. Ltd.",
+   "amount": 141600.0,
+   "date": "2026-08-28",
+   "reason": "Vendor Meridian Network Components does not correspond to any group's vendor despite matching amount coincidentally with G07.",
+   "cluster": "U02",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "LED-39140",
+   "type": "ledger_entry",
+   "vendor": "Horizon Office Systems Pvt. Ltd.",
+   "amount": 47200.0,
+   "date": "2026-07-25",
+   "reason": "Vendor Horizon Office Systems could match either G12 or G13, but amount 47200 doesn't align exactly with either invoice, making the group ambiguous.",
+   "cluster": "U03",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "LED-61696",
+   "type": "ledger_entry",
+   "vendor": "Apex Process Systems Pvt. Ltd.",
+   "amount": 129800.0,
+   "date": "2026-08-12",
+   "reason": "Vendor matches Apex Process Systems but amount 129800 does not match the only Apex invoice total of 118000, so no group confidently fits.",
+   "cluster": "U01",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "REC-79398",
+   "type": "receipt",
+   "vendor": "Meridian Cloud Services Inc.",
+   "amount": null,
+   "date": "2026-07-15",
+   "reason": "No group exists for vendor Meridian Cloud Services Inc., and no amount is provided to aid matching.",
+   "cluster": null,
+   "status": "unplaced, needs human placement"
+  },
+  {
+   "doc_id": "REC-98450",
+   "type": "receipt",
+   "vendor": "Horizon Office Systems Pvt. Ltd.",
+   "amount": 47200.0,
+   "date": "2026-07-09",
+   "reason": "Vendor Horizon Office Systems could correspond to either G12 or G13, but amount 47200 doesn't precisely match either invoice total, so assignment is uncertain.",
+   "cluster": "U03",
+   "status": "clustered, needs human placement"
+  }
+ ],
+ "method": {
+  "LED-81419": "model",
+  "LED-94393": "model",
+  "LED-95393": "model",
+  "REC-46301": "model",
+  "REC-86581": "model",
+  "LED-45247": "model",
+  "REC-64864": "model",
+  "LED-71202": "model",
+  "REC-44638": "model",
+  "LED-85111": "model",
+  "REC-20048": "model",
+  "LED-10898": "model",
+  "BNK-46510": "model",
+  "REC-76283": "model",
+  "BNK-52891": "model",
+  "BNK-33247": "model",
+  "REC-23178": "model",
+  "LED-79242": "model",
+  "BNK-12906": "model",
+  "LED-75187": "model",
+  "BNK-50320": "model",
+  "BNK-55802": "model",
+  "REC-21078": "model",
+  "REC-15268": "model",
+  "BNK-62846": "model",
+  "BNK-74654": "model",
+  "BNK-66333": "model",
+  "BNK-36557": "model",
+  "LED-55770": "model"
+ },
+ "unresolved_refs": {
+  "G01": [],
+  "G02": [
+   "NAS/2026/Q1/77"
+  ],
+  "G03": [],
+  "G04": [
+   "PO-79855"
+  ],
+  "G05": [],
+  "G06": [
+   "BPT/2026/0805"
+  ],
+  "G07": [],
+  "G08": [
+   "APS/2026/614",
+   "PO-14513"
+  ],
+  "G09": [
+   "VPS/2026/0619"
+  ],
+  "G10": [],
+  "G11": [],
+  "G12": [
+   "PO-44324"
+  ],
+  "G13": [
+   "PO-25840"
+  ]
+ },
+ "attach_log": [
+  {
+   "doc_id": "LED-61696",
+   "groups": [],
+   "confidence": 0.3,
+   "reason": "Vendor matches Apex Process Systems but amount 129800 does not match the only Apex invoice total of 118000, so no group confidently fits."
+  },
+  {
+   "doc_id": "LED-81419",
+   "groups": [
+    "G06"
+   ],
+   "confidence": 0.95,
+   "reason": "Vendor BluePeak Training and amount 106200 exactly match G06's invoice and PO totals."
+  },
+  {
+   "doc_id": "LED-94393",
+   "groups": [
+    "G11"
+   ],
+   "confidence": 0.6,
+   "reason": "Vendor CloudDesk Software matches G11's PO, though amount 94400 is slightly higher than PO total 93220, likely due to tax difference."
+  },
+  {
+   "doc_id": "LED-95393",
+   "groups": [
+    "G10"
+   ],
+   "confidence": 0.95,
+   "reason": "Vendor Sunrise Packaging and amount 246000 exactly match G10's invoice and PO."
+  },
+  {
+   "doc_id": "REC-46301",
+   "groups": [
+    "G05"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Beacon IT Consulting and amount 70800 match G05's invoice exactly."
+  },
+  {
+   "doc_id": "BNK-79834",
+   "groups": [],
+   "confidence": 0.2,
+   "reason": "No group exists for vendor Meridian Cloud Services Inc.; amount/currency also mismatched with any group."
+  },
+  {
+   "doc_id": "REC-86581",
+   "groups": [
+    "G01"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Sterling Safety Supplies and amount 70800 match G01's invoices exactly."
+  },
+  {
+   "doc_id": "LED-45247",
+   "groups": [
+    "G07"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Pioneer Industrial Supplies and amount 141600 match G07's invoice totals exactly."
+  },
+  {
+   "doc_id": "REC-64864",
+   "groups": [
+    "G11"
+   ],
+   "confidence": 0.6,
+   "reason": "Vendor CloudDesk Software matches G11; amount 94400 close to PO total 93220 with minor discrepancy likely from tax."
+  },
+  {
+   "doc_id": "BNK-29140",
+   "groups": [],
+   "confidence": 0.3,
+   "reason": "Vendor Apex Process Systems matches G08 but amount 129800 doesn't match the invoice total of 118000, leaving the match uncertain."
+  },
+  {
+   "doc_id": "LED-71202",
+   "groups": [
+    "G01"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Sterling Safety Supplies and amount 70800 align with G01's invoice total."
+  },
+  {
+   "doc_id": "REC-44638",
+   "groups": [
+    "G10"
+   ],
+   "confidence": 0.55,
+   "reason": "Vendor Sunrise Packaging and date closely follow G10's invoice/PO, though no monetary amount is stated to confirm exact match."
+  },
+  {
+   "doc_id": "LED-85111",
+   "groups": [
+    "G02"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Nova Archive Storage and amount 236000 match G02's invoice exactly."
+  },
+  {
+   "doc_id": "REC-20048",
+   "groups": [
+    "G04"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor GreenRoute Logistics and amount 59000 match G04's invoice exactly."
+  },
+  {
+   "doc_id": "LED-10898",
+   "groups": [
+    "G03"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Orchid Workspace Solutions and amount 53100 match G03's invoice exactly."
+  },
+  {
+   "doc_id": "BNK-46510",
+   "groups": [
+    "G06"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor BluePeak Training and amount 106200 match G06's invoice and PO totals."
+  },
+  {
+   "doc_id": "REC-76283",
+   "groups": [
+    "G03"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor Atlas Facilities Care and amount 53100 match G03's purchase order exactly."
+  },
+  {
+   "doc_id": "BNK-70658",
+   "groups": [],
+   "confidence": 0.3,
+   "reason": "Vendor Horizon Office Systems matches two possible groups (G12, G13) but amount 47200 doesn't exactly match either invoice, making the correct group ambiguous."
+  },
+  {
+   "doc_id": "BNK-52891",
+   "groups": [
+    "G10"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Sunrise Packaging and amount 246000 match G10's invoice and PO totals."
+  },
+  {
+   "doc_id": "BNK-33247",
+   "groups": [
+    "G04"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor GreenRoute Logistics and amount 59000 match G04's invoice exactly."
+  },
+  {
+   "doc_id": "REC-98450",
+   "groups": [],
+   "confidence": 0.3,
+   "reason": "Vendor Horizon Office Systems could correspond to either G12 or G13, but amount 47200 doesn't precisely match either invoice total, so assignment is uncertain."
+  },
+  {
+   "doc_id": "REC-23178",
+   "groups": [
+    "G06"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor BluePeak Training and amount 106200 match G06's invoice and PO."
+  },
+  {
+   "doc_id": "LED-79242",
+   "groups": [
+    "G05"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Beacon IT Consulting and amount 70800 match G05's invoice exactly."
+  },
+  {
+   "doc_id": "BNK-59245",
+   "groups": [],
+   "confidence": 0.2,
+   "reason": "Vendor Meridian Network Components does not match any group's vendor despite amount coincidentally equaling G07's total."
+  },
+  {
+   "doc_id": "REC-79398",
+   "groups": [],
+   "confidence": 0.2,
+   "reason": "No group exists for vendor Meridian Cloud Services Inc., and no amount is provided to aid matching."
+  },
+  {
+   "doc_id": "BNK-12906",
+   "groups": [
+    "G01"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Sterling Safety Supplies and amount 70800 match G01's invoice total."
+  },
+  {
+   "doc_id": "LED-75187",
+   "groups": [
+    "G09"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Vertex Print Solutions and amount 82500 match G09's invoice exactly."
+  },
+  {
+   "doc_id": "BNK-50320",
+   "groups": [
+    "G11"
+   ],
+   "confidence": 0.6,
+   "reason": "Vendor CloudDesk Software matches G11; amount 94400 is close to PO total 93220 with a small tax-related discrepancy."
+  },
+  {
+   "doc_id": "BNK-55802",
+   "groups": [
+    "G05"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Beacon IT Consulting and amount 70800 match G05's invoice total."
+  },
+  {
+   "doc_id": "LED-11627",
+   "groups": [],
+   "confidence": 0.2,
+   "reason": "No group exists for vendor Meridian Cloud Services Inc."
+  },
+  {
+   "doc_id": "LED-39140",
+   "groups": [],
+   "confidence": 0.3,
+   "reason": "Vendor Horizon Office Systems could match either G12 or G13, but amount 47200 doesn't align exactly with either invoice, making the group ambiguous."
+  },
+  {
+   "doc_id": "REC-21078",
+   "groups": [
+    "G09"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor Vertex Print Solutions and amount 75000 match G09's purchase order total exactly."
+  },
+  {
+   "doc_id": "REC-15268",
+   "groups": [
+    "G08"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Apex Process Systems and amount 118000 match G08's invoice total exactly."
+  },
+  {
+   "doc_id": "BNK-62846",
+   "groups": [
+    "G03"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Orchid Workspace Solutions and amount 53100 match G03's invoice total."
+  },
+  {
+   "doc_id": "BNK-74654",
+   "groups": [
+    "G02"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Nova Archive Storage and amount 236000 match G02's invoice total."
+  },
+  {
+   "doc_id": "LED-18464",
+   "groups": [],
+   "confidence": 0.2,
+   "reason": "Vendor Meridian Network Components does not correspond to any group's vendor despite matching amount coincidentally with G07."
+  },
+  {
+   "doc_id": "BNK-66333",
+   "groups": [
+    "G09"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor Vertex Print Solutions and amount 82500 match G09's invoice total."
+  },
+  {
+   "doc_id": "BNK-36557",
+   "groups": [
+    "G07"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor Pioneer Industrial Supplies and amount 141600 match G07's invoice totals despite differing from the PO amount."
+  },
+  {
+   "doc_id": "LED-55770",
+   "groups": [
+    "G04"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor GreenRoute Logistics and amount 59000 match G04's invoice total."
+  }
+ ],
+ "cluster_log": [
+  {
+   "doc_ids": [
+    "BNK-29140",
+    "LED-61696"
+   ],
+   "vendor": "Apex Process Systems Pvt. Ltd.",
+   "confidence": 0.95,
+   "reasons": "Same vendor, identical amount (129800 INR) and identical date (2026-08-12) across bank statement and ledger entry."
+  },
+  {
+   "doc_ids": [
+    "BNK-59245",
+    "LED-18464"
+   ],
+   "vendor": "Meridian Network Components Pvt. Ltd.",
+   "confidence": 0.95,
+   "reasons": "Same vendor, identical amount (141600 INR) and identical date (2026-08-28) across bank statement and ledger entry."
+  },
+  {
+   "doc_ids": [
+    "BNK-70658",
+    "LED-39140",
+    "REC-98450"
+   ],
+   "vendor": "Horizon Office Systems Pvt. Ltd.",
+   "confidence": 0.75,
+   "reasons": "Same vendor and identical amount (47200 INR) for bank statement, ledger entry, and receipt; receipt date (2026-07-09) precedes payment date (2026-07-25) which is plausible for a goods receipt followed by settlement, but the date mismatch lowers confidence slightly."
+  },
+  {
+   "doc_ids": [
+    "BNK-79834",
+    "LED-11627"
+   ],
+   "vendor": "Meridian Cloud Services Inc.",
+   "confidence": 0.85,
+   "reasons": "Same vendor, identical amount (415000 INR) and identical date (2026-07-18) for bank statement and ledger entry, though a noted currency discrepancy with an unlinked invoice slightly reduces certainty; receipt REC-79398 excluded due to missing amount and mismatched date."
+  }
+ ],
+ "model_calls": 2
+}

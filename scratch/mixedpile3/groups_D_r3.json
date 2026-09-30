@@ -1,0 +1,624 @@
+{
+ "groups": {
+  "G01": {
+   "members": [
+    "BNK-12906",
+    "INV-46281",
+    "INV-84263",
+    "LED-71202",
+    "PO-16533",
+    "REC-86581"
+   ],
+   "shared": []
+  },
+  "G02": {
+   "members": [
+    "BNK-74654",
+    "INV-96326",
+    "LED-85111",
+    "PO-94562"
+   ],
+   "shared": []
+  },
+  "G03": {
+   "members": [
+    "BNK-62846",
+    "INV-16023",
+    "LED-10898",
+    "PO-41858",
+    "REC-76283"
+   ],
+   "shared": []
+  },
+  "G04": {
+   "members": [
+    "BNK-33247",
+    "INV-90387",
+    "LED-55770",
+    "REC-20048"
+   ],
+   "shared": []
+  },
+  "G05": {
+   "members": [
+    "BNK-55802",
+    "INV-82776",
+    "LED-79242",
+    "PO-64567",
+    "REC-46301"
+   ],
+   "shared": []
+  },
+  "G06": {
+   "members": [
+    "BNK-46510",
+    "INV-68290",
+    "LED-81419",
+    "PO-77099",
+    "REC-23178"
+   ],
+   "shared": []
+  },
+  "G07": {
+   "members": [
+    "BNK-36557",
+    "INV-31559",
+    "INV-79746",
+    "LED-45247",
+    "PO-91116"
+   ],
+   "shared": []
+  },
+  "G08": {
+   "members": [
+    "INV-33619",
+    "REC-15268"
+   ],
+   "shared": []
+  },
+  "G09": {
+   "members": [
+    "BNK-66333",
+    "INV-13513",
+    "LED-75187",
+    "PO-15226",
+    "REC-21078"
+   ],
+   "shared": []
+  },
+  "G10": {
+   "members": [
+    "BNK-52891",
+    "INV-35047",
+    "LED-95393",
+    "PO-54952",
+    "REC-44638"
+   ],
+   "shared": []
+  },
+  "G11": {
+   "members": [
+    "BNK-50320",
+    "LED-94393",
+    "PO-19740",
+    "REC-64864"
+   ],
+   "shared": []
+  },
+  "G12": {
+   "members": [
+    "INV-24423"
+   ],
+   "shared": []
+  },
+  "G13": {
+   "members": [
+    "BNK-70658",
+    "INV-61960",
+    "LED-39140",
+    "REC-98450"
+   ],
+   "shared": []
+  }
+ },
+ "shared": {},
+ "clusters": [
+  {
+   "cluster_id": "U01",
+   "doc_ids": [
+    "BNK-29140",
+    "LED-61696"
+   ],
+   "vendor": "Apex Process Systems Pvt. Ltd.",
+   "confidence": 0.95,
+   "reasons": "Same vendor, identical amount (129800.0 INR) and identical date (2026-08-12) between bank statement and ledger entry, indicating the same transaction settlement."
+  },
+  {
+   "cluster_id": "U02",
+   "doc_ids": [
+    "BNK-59245",
+    "LED-18464"
+   ],
+   "vendor": "Meridian Network Components Pvt. Ltd.",
+   "confidence": 0.95,
+   "reasons": "Same vendor, identical amount (141600.0 INR) and identical date (2026-08-28) between bank statement and ledger entry, indicating the same transaction settlement."
+  },
+  {
+   "cluster_id": "U03",
+   "doc_ids": [
+    "BNK-79834",
+    "LED-11627"
+   ],
+   "vendor": "Meridian Cloud Services Inc.",
+   "confidence": 0.9,
+   "reasons": "Same vendor, identical amount (415000.0 INR) and identical date (2026-07-18) between bank statement and ledger entry. REC-79398 excluded due to differing date (2026-07-15) and missing monetary amount, making the link uncertain."
+  }
+ ],
+ "rejected_clusters": [],
+ "unplaced_report": [
+  {
+   "doc_id": "BNK-29140",
+   "type": "bank_statement",
+   "vendor": "Apex Process Systems Pvt. Ltd.",
+   "amount": 129800.0,
+   "date": "2026-08-12",
+   "reason": "Amount 129800 INR for Apex Process Systems does not match G08's 118000 INR total; unresolved discrepancy.",
+   "cluster": "U01",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "BNK-59245",
+   "type": "bank_statement",
+   "vendor": "Meridian Network Components Pvt. Ltd.",
+   "amount": 141600.0,
+   "date": "2026-08-28",
+   "reason": "Vendor Meridian Network Components Pvt. Ltd. does not match any vendor in the batch despite matching amount to G07.",
+   "cluster": "U02",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "BNK-79834",
+   "type": "bank_statement",
+   "vendor": "Meridian Cloud Services Inc.",
+   "amount": 415000.0,
+   "date": "2026-07-18",
+   "reason": "Vendor Meridian Cloud Services Inc. does not correspond to any group in the batch; amount/currency also mismatched.",
+   "cluster": "U03",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "LED-11627",
+   "type": "ledger_entry",
+   "vendor": "Meridian Cloud Services Inc.",
+   "amount": 415000.0,
+   "date": "2026-07-18",
+   "reason": "Vendor Meridian Cloud Services Inc. is not represented by any group in the batch.",
+   "cluster": "U03",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "LED-18464",
+   "type": "ledger_entry",
+   "vendor": "Meridian Network Components Pvt. Ltd.",
+   "amount": 141600.0,
+   "date": "2026-08-28",
+   "reason": "Vendor Meridian Network Components Pvt. Ltd. does not match any vendor in the batch despite amount similarity to G07.",
+   "cluster": "U02",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "LED-61696",
+   "type": "ledger_entry",
+   "vendor": "Apex Process Systems Pvt. Ltd.",
+   "amount": 129800.0,
+   "date": "2026-08-12",
+   "reason": "Amount 129800 INR does not match Apex Process Systems' only known transaction (G08, 118000 INR); discrepancy too large to confidently attach.",
+   "cluster": "U01",
+   "status": "clustered, needs human placement"
+  },
+  {
+   "doc_id": "REC-79398",
+   "type": "receipt",
+   "vendor": "Meridian Cloud Services Inc.",
+   "amount": null,
+   "date": "2026-07-15",
+   "reason": "No amount stated and vendor Meridian Cloud Services Inc. does not correspond to any group.",
+   "cluster": null,
+   "status": "unplaced, needs human placement"
+  }
+ ],
+ "method": {
+  "LED-81419": "model",
+  "LED-94393": "model",
+  "LED-95393": "model",
+  "REC-46301": "model",
+  "REC-86581": "model",
+  "LED-45247": "model",
+  "REC-64864": "model",
+  "LED-71202": "model",
+  "REC-44638": "model",
+  "LED-85111": "model",
+  "REC-20048": "model",
+  "LED-10898": "model",
+  "BNK-46510": "model",
+  "REC-76283": "model",
+  "BNK-70658": "model",
+  "BNK-52891": "model",
+  "BNK-33247": "model",
+  "REC-98450": "model",
+  "REC-23178": "model",
+  "LED-79242": "model",
+  "BNK-12906": "model",
+  "LED-75187": "model",
+  "BNK-50320": "model",
+  "BNK-55802": "model",
+  "LED-39140": "model",
+  "REC-21078": "model",
+  "REC-15268": "model",
+  "BNK-62846": "model",
+  "BNK-74654": "model",
+  "BNK-66333": "model",
+  "BNK-36557": "model",
+  "LED-55770": "model"
+ },
+ "unresolved_refs": {
+  "G01": [],
+  "G02": [
+   "NAS/2026/Q1/77"
+  ],
+  "G03": [],
+  "G04": [
+   "PO-79855"
+  ],
+  "G05": [],
+  "G06": [
+   "BPT/2026/0805"
+  ],
+  "G07": [],
+  "G08": [
+   "APS/2026/614",
+   "PO-14513"
+  ],
+  "G09": [
+   "VPS/2026/0619"
+  ],
+  "G10": [],
+  "G11": [],
+  "G12": [
+   "PO-44324"
+  ],
+  "G13": [
+   "PO-25840"
+  ]
+ },
+ "attach_log": [
+  {
+   "doc_id": "LED-61696",
+   "groups": [],
+   "confidence": 0.3,
+   "reason": "Amount 129800 INR does not match Apex Process Systems' only known transaction (G08, 118000 INR); discrepancy too large to confidently attach."
+  },
+  {
+   "doc_id": "LED-81419",
+   "groups": [
+    "G06"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor BluePeak Training Services and amount 106200 INR match G06's invoice/PO total exactly."
+  },
+  {
+   "doc_id": "LED-94393",
+   "groups": [
+    "G11"
+   ],
+   "confidence": 0.7,
+   "reason": "Vendor CloudDesk Software matches G11; amount 94400 is close to PO total 93220, likely including minor tax adjustment."
+  },
+  {
+   "doc_id": "LED-95393",
+   "groups": [
+    "G10"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Sunrise Packaging Solutions and amount 246000 INR match G10's invoice/PO exactly."
+  },
+  {
+   "doc_id": "REC-46301",
+   "groups": [
+    "G05"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Beacon IT Consulting and amount 70800 INR match G05's invoice total."
+  },
+  {
+   "doc_id": "BNK-79834",
+   "groups": [],
+   "confidence": 0.2,
+   "reason": "Vendor Meridian Cloud Services Inc. does not correspond to any group in the batch; amount/currency also mismatched."
+  },
+  {
+   "doc_id": "REC-86581",
+   "groups": [
+    "G01"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Sterling Safety Supplies and amount 70800 INR match G01's invoices."
+  },
+  {
+   "doc_id": "LED-45247",
+   "groups": [
+    "G07"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Pioneer Industrial Supplies and amount 141600 INR match G07's duplicate invoices."
+  },
+  {
+   "doc_id": "REC-64864",
+   "groups": [
+    "G11"
+   ],
+   "confidence": 0.7,
+   "reason": "Vendor CloudDesk Software matches G11; amount 94400 close to PO total with likely tax adjustment."
+  },
+  {
+   "doc_id": "BNK-29140",
+   "groups": [],
+   "confidence": 0.3,
+   "reason": "Amount 129800 INR for Apex Process Systems does not match G08's 118000 INR total; unresolved discrepancy."
+  },
+  {
+   "doc_id": "LED-71202",
+   "groups": [
+    "G01"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Sterling Safety Supplies and amount 70800 INR match G01."
+  },
+  {
+   "doc_id": "REC-44638",
+   "groups": [
+    "G10"
+   ],
+   "confidence": 0.6,
+   "reason": "Vendor Sunrise Packaging Solutions matches G10; no amount stated to confirm further."
+  },
+  {
+   "doc_id": "LED-85111",
+   "groups": [
+    "G02"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Nova Archive Storage and amount 236000 INR match G02's invoice/PO."
+  },
+  {
+   "doc_id": "REC-20048",
+   "groups": [
+    "G04"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor GreenRoute Logistics and amount 59000 INR match G04's invoice."
+  },
+  {
+   "doc_id": "LED-10898",
+   "groups": [
+    "G03"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Orchid Workspace Solutions and amount 53100 INR match G03's invoice."
+  },
+  {
+   "doc_id": "BNK-46510",
+   "groups": [
+    "G06"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor BluePeak Training Services and amount 106200 INR match G06."
+  },
+  {
+   "doc_id": "REC-76283",
+   "groups": [
+    "G03"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor Atlas Facilities Care and amount 53100 INR match G03's PO vendor and total."
+  },
+  {
+   "doc_id": "BNK-70658",
+   "groups": [
+    "G13"
+   ],
+   "confidence": 0.6,
+   "reason": "Vendor Horizon Office Systems and amount 47200 INR are closer to G13's invoice timeline (07-06) than G12's, though not an exact amount match."
+  },
+  {
+   "doc_id": "BNK-52891",
+   "groups": [
+    "G10"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Sunrise Packaging Solutions and amount 246000 INR match G10."
+  },
+  {
+   "doc_id": "BNK-33247",
+   "groups": [
+    "G04"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor GreenRoute Logistics and amount 59000 INR match G04."
+  },
+  {
+   "doc_id": "REC-98450",
+   "groups": [
+    "G13"
+   ],
+   "confidence": 0.65,
+   "reason": "Vendor Horizon Office Systems and date 2026-07-09 fit shortly after G13's invoice date (07-06), though amount 47200 differs slightly from invoice total 46905."
+  },
+  {
+   "doc_id": "REC-23178",
+   "groups": [
+    "G06"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor BluePeak Training Services and amount 106200 INR match G06."
+  },
+  {
+   "doc_id": "LED-79242",
+   "groups": [
+    "G05"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor Beacon IT Consulting and amount 70800 INR match G05, consistent with other Beacon settlement documents."
+  },
+  {
+   "doc_id": "BNK-59245",
+   "groups": [],
+   "confidence": 0.2,
+   "reason": "Vendor Meridian Network Components Pvt. Ltd. does not match any vendor in the batch despite matching amount to G07."
+  },
+  {
+   "doc_id": "REC-79398",
+   "groups": [],
+   "confidence": 0.2,
+   "reason": "No amount stated and vendor Meridian Cloud Services Inc. does not correspond to any group."
+  },
+  {
+   "doc_id": "BNK-12906",
+   "groups": [
+    "G01"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Sterling Safety Supplies and amount 70800 INR match G01."
+  },
+  {
+   "doc_id": "LED-75187",
+   "groups": [
+    "G09"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor Vertex Print Solutions and amount 82500 INR match G09's invoice total."
+  },
+  {
+   "doc_id": "BNK-50320",
+   "groups": [
+    "G11"
+   ],
+   "confidence": 0.7,
+   "reason": "Vendor CloudDesk Software matches G11; amount 94400 slightly above PO total, consistent with other CloudDesk settlement docs."
+  },
+  {
+   "doc_id": "BNK-55802",
+   "groups": [
+    "G05"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Beacon IT Consulting and amount 70800 INR match G05."
+  },
+  {
+   "doc_id": "LED-11627",
+   "groups": [],
+   "confidence": 0.2,
+   "reason": "Vendor Meridian Cloud Services Inc. is not represented by any group in the batch."
+  },
+  {
+   "doc_id": "LED-39140",
+   "groups": [
+    "G13"
+   ],
+   "confidence": 0.6,
+   "reason": "Vendor Horizon Office Systems and amount 47200 INR align with the same settlement pattern as other G13-linked documents."
+  },
+  {
+   "doc_id": "REC-21078",
+   "groups": [
+    "G09"
+   ],
+   "confidence": 0.75,
+   "reason": "Vendor Vertex Print Solutions and amount 75000 INR match G09's PO total exactly."
+  },
+  {
+   "doc_id": "REC-15268",
+   "groups": [
+    "G08"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Apex Process Systems and amount 118000 INR match G08's invoice total exactly."
+  },
+  {
+   "doc_id": "BNK-62846",
+   "groups": [
+    "G03"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Orchid Workspace Solutions and amount 53100 INR match G03."
+  },
+  {
+   "doc_id": "BNK-74654",
+   "groups": [
+    "G02"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor Nova Archive Storage and amount 236000 INR match G02."
+  },
+  {
+   "doc_id": "LED-18464",
+   "groups": [],
+   "confidence": 0.2,
+   "reason": "Vendor Meridian Network Components Pvt. Ltd. does not match any vendor in the batch despite amount similarity to G07."
+  },
+  {
+   "doc_id": "BNK-66333",
+   "groups": [
+    "G09"
+   ],
+   "confidence": 0.8,
+   "reason": "Vendor Vertex Print Solutions and amount 82500 INR match G09's invoice total."
+  },
+  {
+   "doc_id": "BNK-36557",
+   "groups": [
+    "G07"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor Pioneer Industrial Supplies and amount 141600 INR match G07's invoice totals despite PO discrepancy."
+  },
+  {
+   "doc_id": "LED-55770",
+   "groups": [
+    "G04"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor GreenRoute Logistics and amount 59000 INR match G04."
+  }
+ ],
+ "cluster_log": [
+  {
+   "doc_ids": [
+    "BNK-29140",
+    "LED-61696"
+   ],
+   "vendor": "Apex Process Systems Pvt. Ltd.",
+   "confidence": 0.95,
+   "reasons": "Same vendor, identical amount (129800.0 INR) and identical date (2026-08-12) between bank statement and ledger entry, indicating the same transaction settlement."
+  },
+  {
+   "doc_ids": [
+    "BNK-59245",
+    "LED-18464"
+   ],
+   "vendor": "Meridian Network Components Pvt. Ltd.",
+   "confidence": 0.95,
+   "reasons": "Same vendor, identical amount (141600.0 INR) and identical date (2026-08-28) between bank statement and ledger entry, indicating the same transaction settlement."
+  },
+  {
+   "doc_ids": [
+    "BNK-79834",
+    "LED-11627"
+   ],
+   "vendor": "Meridian Cloud Services Inc.",
+   "confidence": 0.9,
+   "reasons": "Same vendor, identical amount (415000.0 INR) and identical date (2026-07-18) between bank statement and ledger entry. REC-79398 excluded due to differing date (2026-07-15) and missing monetary amount, making the link uncertain."
+  }
+ ],
+ "model_calls": 2
+}

@@ -1,0 +1,233 @@
+{
+ "groups": {
+  "G01": {
+   "members": [
+    "BNK-12906",
+    "INV-46281",
+    "INV-84263",
+    "LED-71202",
+    "PO-16533",
+    "REC-86581"
+   ],
+   "shared": []
+  },
+  "G02": {
+   "members": [
+    "BNK-70658",
+    "BNK-78056",
+    "INV-63147",
+    "LED-39140",
+    "PO-92645",
+    "REC-98450"
+   ],
+   "shared": [
+    "BNK-78056"
+   ]
+  },
+  "G03": {
+   "members": [
+    "BNK-74654",
+    "INV-96326",
+    "LED-85111",
+    "PO-94562"
+   ],
+   "shared": []
+  },
+  "G04": {
+   "members": [
+    "BNK-79834",
+    "INV-44755",
+    "LED-11627",
+    "PO-44811",
+    "REC-79398"
+   ],
+   "shared": []
+  },
+  "G05": {
+   "members": [
+    "BNK-55802",
+    "INV-82776",
+    "LED-79242",
+    "PO-64567",
+    "REC-46301"
+   ],
+   "shared": []
+  },
+  "G06": {
+   "members": [
+    "BNK-59245",
+    "INV-98413",
+    "LED-18464",
+    "PO-52232"
+   ],
+   "shared": []
+  },
+  "G07": {
+   "members": [
+    "BNK-62846",
+    "INV-16023",
+    "LED-10898",
+    "PO-41858",
+    "REC-76283"
+   ],
+   "shared": []
+  },
+  "G08": {
+   "members": [
+    "BNK-33247",
+    "INV-90387",
+    "LED-55770",
+    "REC-20048"
+   ],
+   "shared": []
+  },
+  "G09": {
+   "members": [
+    "BNK-50320",
+    "BNK-78056",
+    "INV-93865",
+    "LED-94393",
+    "PO-75791",
+    "REC-64864"
+   ],
+   "shared": [
+    "BNK-78056"
+   ]
+  },
+  "G10": {
+   "members": [
+    "BNK-52891",
+    "INV-35047",
+    "LED-95393",
+    "PO-54952",
+    "REC-44638"
+   ],
+   "shared": []
+  },
+  "G11": {
+   "members": [
+    "BNK-46510",
+    "BNK-78056",
+    "INV-68290",
+    "LED-81419",
+    "PO-77099",
+    "REC-23178"
+   ],
+   "shared": [
+    "BNK-78056"
+   ]
+  },
+  "G12": {
+   "members": [
+    "BNK-36557",
+    "INV-31559",
+    "INV-79746",
+    "LED-45247",
+    "PO-91116"
+   ],
+   "shared": []
+  },
+  "G13": {
+   "members": [
+    "BNK-29140",
+    "INV-33619",
+    "LED-61696",
+    "REC-15268"
+   ],
+   "shared": []
+  },
+  "G14": {
+   "members": [
+    "BNK-66333",
+    "BNK-78056",
+    "INV-13513",
+    "LED-75187",
+    "PO-15226",
+    "REC-21078"
+   ],
+   "shared": [
+    "BNK-78056"
+   ]
+  }
+ },
+ "shared": {
+  "BNK-78056": [
+   "G02",
+   "G09",
+   "G11",
+   "G14"
+  ]
+ },
+ "clusters": [],
+ "rejected_clusters": [],
+ "unplaced_report": [],
+ "method": {
+  "LED-61696": "reference",
+  "LED-81419": "reference",
+  "LED-94393": "reference",
+  "LED-95393": "reference",
+  "BNK-79834": "reference",
+  "LED-45247": "reference",
+  "BNK-29140": "reference",
+  "LED-71202": "reference",
+  "LED-85111": "reference",
+  "LED-10898": "reference",
+  "BNK-46510": "reference",
+  "BNK-70658": "reference",
+  "BNK-52891": "reference",
+  "BNK-33247": "reference",
+  "LED-79242": "reference",
+  "BNK-59245": "reference",
+  "BNK-12906": "reference",
+  "LED-75187": "reference",
+  "BNK-50320": "reference",
+  "BNK-55802": "reference",
+  "LED-11627": "reference",
+  "LED-39140": "reference",
+  "BNK-62846": "reference",
+  "BNK-74654": "reference",
+  "LED-18464": "reference",
+  "BNK-66333": "reference",
+  "BNK-36557": "reference",
+  "LED-55770": "reference",
+  "BNK-78056": "reference"
+ },
+ "unresolved_refs": {
+  "G01": [
+   "SSS/2026/188"
+  ],
+  "G02": [],
+  "G03": [
+   "NAS/2026/Q1/77"
+  ],
+  "G04": [
+   "MCS-2026-4471"
+  ],
+  "G05": [],
+  "G06": [],
+  "G07": [],
+  "G08": [
+   "PO-79855"
+  ],
+  "G09": [],
+  "G10": [
+   "SPS/2026/2208"
+  ],
+  "G11": [
+   "BPT/2026/0805"
+  ],
+  "G12": [
+   "PIS/2026/091"
+  ],
+  "G13": [
+   "APS/2026/614",
+   "PO-14513"
+  ],
+  "G14": [
+   "VPS/2026/0619"
+  ]
+ },
+ "attach_log": [],
+ "cluster_log": [],
+ "model_calls": 0
+}

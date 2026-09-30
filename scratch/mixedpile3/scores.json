@@ -1,0 +1,719 @@
+{
+ "A_M_r1": {
+  "score": {
+   "correct": 67,
+   "wrong": 0,
+   "unplaced": 0,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 0,
+   "cluster_merges": 0,
+   "groups": 14,
+   "clusters": 0,
+   "rejected_clusters": 0,
+   "model_calls": 0,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": true,
+   "mp_linked_cases": [
+    "CASE_01",
+    "CASE_02",
+    "CASE_04",
+    "CASE_08"
+   ],
+   "mp_shared": true,
+   "mp_merged_groups": false,
+   "distractors": {},
+   "distractor_docs_in_real_groups": [],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": []
+  },
+  "detail": {
+   "splits": {},
+   "merges": {},
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G08"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G13"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {}
+  }
+ },
+ "A_M_r2": {
+  "score": {
+   "correct": 67,
+   "wrong": 0,
+   "unplaced": 0,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 0,
+   "cluster_merges": 0,
+   "groups": 14,
+   "clusters": 0,
+   "rejected_clusters": 0,
+   "model_calls": 0,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": true,
+   "mp_linked_cases": [
+    "CASE_01",
+    "CASE_02",
+    "CASE_04",
+    "CASE_08"
+   ],
+   "mp_shared": true,
+   "mp_merged_groups": false,
+   "distractors": {},
+   "distractor_docs_in_real_groups": [],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": []
+  },
+  "detail": {
+   "splits": {},
+   "merges": {},
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G08"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G13"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {}
+  }
+ },
+ "A_M_r3": {
+  "score": {
+   "correct": 67,
+   "wrong": 0,
+   "unplaced": 0,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 0,
+   "cluster_merges": 0,
+   "groups": 14,
+   "clusters": 0,
+   "rejected_clusters": 0,
+   "model_calls": 0,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": true,
+   "mp_linked_cases": [
+    "CASE_01",
+    "CASE_02",
+    "CASE_04",
+    "CASE_08"
+   ],
+   "mp_shared": true,
+   "mp_merged_groups": false,
+   "distractors": {},
+   "distractor_docs_in_real_groups": [],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": []
+  },
+  "detail": {
+   "splits": {},
+   "merges": {},
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G08"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G13"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {}
+  }
+ },
+ "B_r1": {
+  "score": {
+   "correct": 67,
+   "wrong": 0,
+   "unplaced": 0,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 0,
+   "cluster_merges": 0,
+   "groups": 14,
+   "clusters": 0,
+   "rejected_clusters": 0,
+   "model_calls": 1,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": true,
+   "distractors": {},
+   "distractor_docs_in_real_groups": [],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": []
+  },
+  "detail": {
+   "splits": {},
+   "merges": {},
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G07"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G12"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {}
+  }
+ },
+ "B_r2": {
+  "score": {
+   "correct": 67,
+   "wrong": 0,
+   "unplaced": 0,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 0,
+   "cluster_merges": 0,
+   "groups": 14,
+   "clusters": 0,
+   "rejected_clusters": 0,
+   "model_calls": 1,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": true,
+   "distractors": {},
+   "distractor_docs_in_real_groups": [],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": []
+  },
+  "detail": {
+   "splits": {},
+   "merges": {},
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G07"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G12"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {}
+  }
+ },
+ "B_r3": {
+  "score": {
+   "correct": 67,
+   "wrong": 0,
+   "unplaced": 0,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 0,
+   "cluster_merges": 0,
+   "groups": 14,
+   "clusters": 0,
+   "rejected_clusters": 0,
+   "model_calls": 1,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": true,
+   "distractors": {},
+   "distractor_docs_in_real_groups": [],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": []
+  },
+  "detail": {
+   "splits": {},
+   "merges": {},
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G07"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G12"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {}
+  }
+ },
+ "C_r1": {
+  "score": {
+   "correct": 67,
+   "wrong": 0,
+   "unplaced": 0,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 0,
+   "cluster_merges": 0,
+   "groups": 17,
+   "clusters": 0,
+   "rejected_clusters": 0,
+   "model_calls": 1,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": true,
+   "distractors": {
+    "PO-19740": "in G15",
+    "INV-24423": "in G16",
+    "INV-61960": "in G17"
+   },
+   "distractor_docs_in_real_groups": [],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": []
+  },
+  "detail": {
+   "splits": {},
+   "merges": {},
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G07"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G12"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {}
+  }
+ },
+ "C_r2": {
+  "score": {
+   "correct": 67,
+   "wrong": 0,
+   "unplaced": 0,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 0,
+   "cluster_merges": 0,
+   "groups": 17,
+   "clusters": 0,
+   "rejected_clusters": 0,
+   "model_calls": 1,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": true,
+   "distractors": {
+    "PO-19740": "in G15",
+    "INV-24423": "in G16",
+    "INV-61960": "in G17"
+   },
+   "distractor_docs_in_real_groups": [],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": []
+  },
+  "detail": {
+   "splits": {},
+   "merges": {},
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G07"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G12"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {}
+  }
+ },
+ "C_r3": {
+  "score": {
+   "correct": 67,
+   "wrong": 0,
+   "unplaced": 0,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 0,
+   "cluster_merges": 0,
+   "groups": 17,
+   "clusters": 0,
+   "rejected_clusters": 0,
+   "model_calls": 1,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": true,
+   "distractors": {
+    "PO-19740": "in G15",
+    "INV-24423": "in G16",
+    "INV-61960": "in G17"
+   },
+   "distractor_docs_in_real_groups": [],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": []
+  },
+  "detail": {
+   "splits": {},
+   "merges": {},
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G07"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G12"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {}
+  }
+ },
+ "C_M_r1": {
+  "score": {
+   "correct": 67,
+   "wrong": 0,
+   "unplaced": 0,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 0,
+   "cluster_merges": 0,
+   "groups": 17,
+   "clusters": 0,
+   "rejected_clusters": 0,
+   "model_calls": 1,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": true,
+   "mp_linked_cases": [
+    "CASE_01",
+    "CASE_02",
+    "CASE_04",
+    "CASE_08"
+   ],
+   "mp_shared": true,
+   "mp_merged_groups": false,
+   "distractors": {
+    "PO-19740": "in G15",
+    "INV-24423": "in G16",
+    "INV-61960": "in G17"
+   },
+   "distractor_docs_in_real_groups": [],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": []
+  },
+  "detail": {
+   "splits": {},
+   "merges": {},
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G07"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G12"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {}
+  }
+ },
+ "C_M_r2": {
+  "score": {
+   "correct": 67,
+   "wrong": 0,
+   "unplaced": 0,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 0,
+   "cluster_merges": 0,
+   "groups": 17,
+   "clusters": 0,
+   "rejected_clusters": 0,
+   "model_calls": 1,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": true,
+   "mp_linked_cases": [
+    "CASE_01",
+    "CASE_02",
+    "CASE_04",
+    "CASE_08"
+   ],
+   "mp_shared": true,
+   "mp_merged_groups": false,
+   "distractors": {
+    "PO-19740": "in G15",
+    "INV-24423": "in G16",
+    "INV-61960": "in G17"
+   },
+   "distractor_docs_in_real_groups": [],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": []
+  },
+  "detail": {
+   "splits": {},
+   "merges": {},
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G07"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G12"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {}
+  }
+ },
+ "C_M_r3": {
+  "score": {
+   "correct": 67,
+   "wrong": 0,
+   "unplaced": 0,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 0,
+   "cluster_merges": 0,
+   "groups": 17,
+   "clusters": 0,
+   "rejected_clusters": 0,
+   "model_calls": 1,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": true,
+   "mp_linked_cases": [
+    "CASE_01",
+    "CASE_02",
+    "CASE_04",
+    "CASE_08"
+   ],
+   "mp_shared": true,
+   "mp_merged_groups": false,
+   "distractors": {
+    "PO-19740": "in G15",
+    "INV-24423": "in G16",
+    "INV-61960": "in G17"
+   },
+   "distractor_docs_in_real_groups": [],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": []
+  },
+  "detail": {
+   "splits": {},
+   "merges": {},
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G07"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G12"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {}
+  }
+ },
+ "D_r1": {
+  "score": {
+   "correct": 51,
+   "wrong": 0,
+   "unplaced": 8,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 1,
+   "cluster_merges": 0,
+   "groups": 13,
+   "clusters": 3,
+   "rejected_clusters": 0,
+   "model_calls": 2,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": true,
+   "distractors": {
+    "PO-19740": "in G11",
+    "INV-24423": "in G12",
+    "INV-61960": "in G13"
+   },
+   "distractor_docs_in_real_groups": [
+    "PO-19740"
+   ],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": [
+    {
+     "case": "CASE_13",
+     "why": "no group"
+    },
+    {
+     "case": "CASE_01",
+     "why": "no group"
+    },
+    {
+     "case": "CASE_06",
+     "why": "no group"
+    }
+   ]
+  },
+  "detail": {
+   "splits": {},
+   "merges": {
+    "G11": {
+     "CASE_02": 3,
+     "DIST_PO": 1
+    }
+   },
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G04"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G08"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {
+    "G11": {
+     "PO-19740": "reference-linked"
+    }
+   }
+  }
+ },
+ "D_r2": {
+  "score": {
+   "correct": 49,
+   "wrong": 0,
+   "unplaced": 10,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 1,
+   "cluster_merges": 0,
+   "groups": 13,
+   "clusters": 4,
+   "rejected_clusters": 0,
+   "model_calls": 2,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": false,
+   "distractors": {
+    "PO-19740": "in G11",
+    "INV-24423": "in G12",
+    "INV-61960": "in G13"
+   },
+   "distractor_docs_in_real_groups": [
+    "PO-19740"
+   ],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": [
+    {
+     "case": "CASE_13",
+     "why": "no group"
+    },
+    {
+     "case": "CASE_01",
+     "why": "no group"
+    },
+    {
+     "case": "CASE_06",
+     "why": "no group"
+    }
+   ]
+  },
+  "detail": {
+   "splits": {},
+   "merges": {
+    "G11": {
+     "CASE_02": 3,
+     "DIST_PO": 1
+    }
+   },
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G04"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G08",
+    "U01"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {
+    "G11": {
+     "PO-19740": "reference-linked"
+    }
+   }
+  }
+ },
+ "D_r3": {
+  "score": {
+   "correct": 52,
+   "wrong": 0,
+   "unplaced": 7,
+   "shared_real": 0,
+   "splits": 0,
+   "merges": 2,
+   "cluster_merges": 0,
+   "groups": 13,
+   "clusters": 3,
+   "rejected_clusters": 0,
+   "model_calls": 2,
+   "CASE_05_one_home": true,
+   "CASE_11_one_home": false,
+   "distractors": {
+    "PO-19740": "in G11",
+    "INV-24423": "in G12",
+    "INV-61960": "in G13"
+   },
+   "distractor_docs_in_real_groups": [
+    "PO-19740",
+    "INV-61960"
+   ],
+   "real_docs_in_distractor_groups": [],
+   "false_missing_risk": [
+    {
+     "case": "CASE_13",
+     "why": "no group"
+    },
+    {
+     "case": "CASE_06",
+     "why": "no group"
+    }
+   ]
+  },
+  "detail": {
+   "splits": {},
+   "merges": {
+    "G11": {
+     "CASE_02": 3,
+     "DIST_PO": 1
+    },
+    "G13": {
+     "CASE_01": 3,
+     "DIST_1": 1
+    }
+   },
+   "cluster_merges": {},
+   "CASE_05_homes": [
+    "G04"
+   ],
+   "CASE_05_foreign": [],
+   "CASE_11_homes": [
+    "G08",
+    "U01"
+   ],
+   "CASE_11_foreign": [],
+   "wrong_docs": [],
+   "cluster_merge_reasons": {},
+   "group_merge_reasons": {
+    "G11": {
+     "PO-19740": "reference-linked"
+    },
+    "G13": {
+     "INV-61960": "reference-linked"
+    }
+   }
+  }
+ }
+}

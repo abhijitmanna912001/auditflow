@@ -1,0 +1,529 @@
+{
+ "groups": {
+  "G01": {
+   "members": [
+    "BNK-12906",
+    "INV-46281",
+    "INV-84263",
+    "LED-71202",
+    "PO-16533",
+    "REC-86581"
+   ],
+   "shared": []
+  },
+  "G02": {
+   "members": [
+    "BNK-70658",
+    "INV-63147",
+    "LED-39140",
+    "PO-92645",
+    "REC-98450"
+   ],
+   "shared": []
+  },
+  "G03": {
+   "members": [
+    "BNK-74654",
+    "INV-96326",
+    "LED-85111",
+    "PO-94562"
+   ],
+   "shared": []
+  },
+  "G04": {
+   "members": [
+    "BNK-79834",
+    "INV-44755",
+    "LED-11627",
+    "PO-44811",
+    "REC-79398"
+   ],
+   "shared": []
+  },
+  "G05": {
+   "members": [
+    "BNK-59245",
+    "INV-98413",
+    "LED-18464",
+    "PO-52232"
+   ],
+   "shared": []
+  },
+  "G06": {
+   "members": [
+    "BNK-62846",
+    "INV-16023",
+    "LED-10898",
+    "PO-41858",
+    "REC-76283"
+   ],
+   "shared": []
+  },
+  "G07": {
+   "members": [
+    "BNK-33247",
+    "INV-90387",
+    "LED-55770",
+    "REC-20048"
+   ],
+   "shared": []
+  },
+  "G08": {
+   "members": [
+    "BNK-55802",
+    "INV-82776",
+    "LED-79242",
+    "PO-64567",
+    "REC-46301"
+   ],
+   "shared": []
+  },
+  "G09": {
+   "members": [
+    "BNK-50320",
+    "INV-93865",
+    "LED-94393",
+    "PO-75791",
+    "REC-64864"
+   ],
+   "shared": []
+  },
+  "G10": {
+   "members": [
+    "BNK-46510",
+    "INV-68290",
+    "LED-81419",
+    "PO-77099",
+    "REC-23178"
+   ],
+   "shared": []
+  },
+  "G11": {
+   "members": [
+    "BNK-36557",
+    "INV-31559",
+    "INV-79746",
+    "LED-45247",
+    "PO-91116"
+   ],
+   "shared": []
+  },
+  "G12": {
+   "members": [
+    "BNK-29140",
+    "INV-33619",
+    "LED-61696",
+    "REC-15268"
+   ],
+   "shared": []
+  },
+  "G13": {
+   "members": [
+    "BNK-66333",
+    "INV-13513",
+    "LED-75187",
+    "PO-15226",
+    "REC-21078"
+   ],
+   "shared": []
+  },
+  "G14": {
+   "members": [
+    "BNK-52891",
+    "INV-35047",
+    "LED-95393",
+    "PO-54952",
+    "REC-44638"
+   ],
+   "shared": []
+  }
+ },
+ "shared": {},
+ "clusters": [],
+ "rejected_clusters": [],
+ "unplaced_report": [],
+ "method": {
+  "LED-61696": "model",
+  "LED-81419": "model",
+  "LED-94393": "model",
+  "LED-95393": "model",
+  "REC-46301": "model",
+  "BNK-79834": "model",
+  "REC-86581": "model",
+  "LED-45247": "model",
+  "REC-64864": "model",
+  "BNK-29140": "model",
+  "LED-71202": "model",
+  "REC-44638": "model",
+  "LED-85111": "model",
+  "REC-20048": "model",
+  "LED-10898": "model",
+  "BNK-46510": "model",
+  "REC-76283": "model",
+  "BNK-70658": "model",
+  "BNK-52891": "model",
+  "BNK-33247": "model",
+  "REC-98450": "model",
+  "REC-23178": "model",
+  "LED-79242": "model",
+  "BNK-59245": "model",
+  "REC-79398": "model",
+  "BNK-12906": "model",
+  "LED-75187": "model",
+  "BNK-50320": "model",
+  "BNK-55802": "model",
+  "LED-11627": "model",
+  "LED-39140": "model",
+  "REC-21078": "model",
+  "REC-15268": "model",
+  "BNK-62846": "model",
+  "BNK-74654": "model",
+  "LED-18464": "model",
+  "BNK-66333": "model",
+  "BNK-36557": "model",
+  "LED-55770": "model"
+ },
+ "unresolved_refs": {
+  "G01": [],
+  "G02": [],
+  "G03": [
+   "NAS/2026/Q1/77"
+  ],
+  "G04": [],
+  "G05": [],
+  "G06": [],
+  "G07": [
+   "PO-79855"
+  ],
+  "G08": [],
+  "G09": [],
+  "G10": [
+   "BPT/2026/0805"
+  ],
+  "G11": [],
+  "G12": [
+   "APS/2026/614",
+   "PO-14513"
+  ],
+  "G13": [
+   "VPS/2026/0619"
+  ],
+  "G14": []
+ },
+ "attach_log": [
+  {
+   "doc_id": "LED-61696",
+   "groups": [
+    "G12"
+   ],
+   "confidence": 0.75,
+   "reason": "Vendor matches Apex Process Systems and amount 129800 equals invoice total 118000 plus 10% GST, consistent with G12."
+  },
+  {
+   "doc_id": "LED-81419",
+   "groups": [
+    "G10"
+   ],
+   "confidence": 0.95,
+   "reason": "Vendor and amount exactly match BluePeak Training Services G10 invoice/PO total of 106200 INR."
+  },
+  {
+   "doc_id": "LED-94393",
+   "groups": [
+    "G09"
+   ],
+   "confidence": 0.95,
+   "reason": "Vendor and amount exactly match CloudDesk Software India G09 total of 94400 INR."
+  },
+  {
+   "doc_id": "LED-95393",
+   "groups": [
+    "G14"
+   ],
+   "confidence": 0.95,
+   "reason": "Vendor and amount exactly match Sunrise Packaging Solutions G14 total of 246000 INR."
+  },
+  {
+   "doc_id": "REC-46301",
+   "groups": [
+    "G08"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Beacon IT Consulting G08 invoice total of 70800 INR."
+  },
+  {
+   "doc_id": "BNK-79834",
+   "groups": [
+    "G04"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor matches Meridian Cloud Services and amount 415000 INR matches PO-44811 total in G04 despite currency mismatch with invoice."
+  },
+  {
+   "doc_id": "REC-86581",
+   "groups": [
+    "G01"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Sterling Safety Supplies G01 invoice total of 70800 INR."
+  },
+  {
+   "doc_id": "LED-45247",
+   "groups": [
+    "G11"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor and amount match Pioneer Industrial Supplies G11 invoice total of 141600 INR."
+  },
+  {
+   "doc_id": "REC-64864",
+   "groups": [
+    "G09"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match CloudDesk Software India G09 total of 94400 INR."
+  },
+  {
+   "doc_id": "BNK-29140",
+   "groups": [
+    "G12"
+   ],
+   "confidence": 0.75,
+   "reason": "Vendor matches Apex Process Systems and amount 129800 equals invoice total plus 10% GST, consistent with G12."
+  },
+  {
+   "doc_id": "LED-71202",
+   "groups": [
+    "G01"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Sterling Safety Supplies G01 total of 70800 INR."
+  },
+  {
+   "doc_id": "REC-44638",
+   "groups": [
+    "G14"
+   ],
+   "confidence": 0.6,
+   "reason": "Vendor matches Sunrise Packaging Solutions and date is close to G14 transaction, though amount is missing."
+  },
+  {
+   "doc_id": "LED-85111",
+   "groups": [
+    "G03"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Nova Archive Storage G03 total of 236000 INR."
+  },
+  {
+   "doc_id": "REC-20048",
+   "groups": [
+    "G07"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match GreenRoute Logistics G07 invoice total of 59000 INR."
+  },
+  {
+   "doc_id": "LED-10898",
+   "groups": [
+    "G06"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Orchid Workspace Solutions G06 total of 53100 INR."
+  },
+  {
+   "doc_id": "BNK-46510",
+   "groups": [
+    "G10"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match BluePeak Training Services G10 total of 106200 INR."
+  },
+  {
+   "doc_id": "REC-76283",
+   "groups": [
+    "G06"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor Atlas Facilities Care matches PO in G06 and amount 53100 INR aligns with the group total."
+  },
+  {
+   "doc_id": "BNK-70658",
+   "groups": [
+    "G02"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Horizon Office Systems G02 total of 47200 INR."
+  },
+  {
+   "doc_id": "BNK-52891",
+   "groups": [
+    "G14"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Sunrise Packaging Solutions G14 total of 246000 INR."
+  },
+  {
+   "doc_id": "BNK-33247",
+   "groups": [
+    "G07"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor and amount match GreenRoute Logistics G07 total of 59000 INR."
+  },
+  {
+   "doc_id": "REC-98450",
+   "groups": [
+    "G02"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Horizon Office Systems G02 total of 47200 INR."
+  },
+  {
+   "doc_id": "REC-23178",
+   "groups": [
+    "G10"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match BluePeak Training Services G10 total of 106200 INR."
+  },
+  {
+   "doc_id": "LED-79242",
+   "groups": [
+    "G08"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Beacon IT Consulting G08 total of 70800 INR."
+  },
+  {
+   "doc_id": "BNK-59245",
+   "groups": [
+    "G05"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Meridian Network Components G05 total of 141600 INR."
+  },
+  {
+   "doc_id": "REC-79398",
+   "groups": [
+    "G04"
+   ],
+   "confidence": 0.6,
+   "reason": "Vendor matches Meridian Cloud Services and date close to G04 invoice, though amount is missing."
+  },
+  {
+   "doc_id": "BNK-12906",
+   "groups": [
+    "G01"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Sterling Safety Supplies G01 total of 70800 INR."
+  },
+  {
+   "doc_id": "LED-75187",
+   "groups": [
+    "G13"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor and amount match Vertex Print Solutions G13 invoice total of 82500 INR."
+  },
+  {
+   "doc_id": "BNK-50320",
+   "groups": [
+    "G09"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match CloudDesk Software India G09 total of 94400 INR."
+  },
+  {
+   "doc_id": "BNK-55802",
+   "groups": [
+    "G08"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Beacon IT Consulting G08 total of 70800 INR."
+  },
+  {
+   "doc_id": "LED-11627",
+   "groups": [
+    "G04"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor and amount match Meridian Cloud Services PO total of 415000 INR in G04."
+  },
+  {
+   "doc_id": "LED-39140",
+   "groups": [
+    "G02"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Horizon Office Systems G02 total of 47200 INR."
+  },
+  {
+   "doc_id": "REC-21078",
+   "groups": [
+    "G13"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor and amount match Vertex Print Solutions PO total of 75000 INR in G13."
+  },
+  {
+   "doc_id": "REC-15268",
+   "groups": [
+    "G12"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Apex Process Systems G12 invoice total of 118000 INR."
+  },
+  {
+   "doc_id": "BNK-62846",
+   "groups": [
+    "G06"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor and amount match Orchid Workspace Solutions G06 total of 53100 INR."
+  },
+  {
+   "doc_id": "BNK-74654",
+   "groups": [
+    "G03"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor and amount match Nova Archive Storage G03 total of 236000 INR."
+  },
+  {
+   "doc_id": "LED-18464",
+   "groups": [
+    "G05"
+   ],
+   "confidence": 0.9,
+   "reason": "Vendor and amount exactly match Meridian Network Components G05 total of 141600 INR."
+  },
+  {
+   "doc_id": "BNK-66333",
+   "groups": [
+    "G13"
+   ],
+   "confidence": 0.75,
+   "reason": "Vendor and amount match Vertex Print Solutions invoice total of 82500 INR in G13, though discrepancy noted with receipt amount."
+  },
+  {
+   "doc_id": "BNK-36557",
+   "groups": [
+    "G11"
+   ],
+   "confidence": 0.75,
+   "reason": "Vendor and amount match Pioneer Industrial Supplies invoice total of 141600 INR in G11, despite PO amount mismatch."
+  },
+  {
+   "doc_id": "LED-55770",
+   "groups": [
+    "G07"
+   ],
+   "confidence": 0.85,
+   "reason": "Vendor and amount match GreenRoute Logistics G07 total of 59000 INR."
+  }
+ ],
+ "cluster_log": [],
+ "model_calls": 1
+}

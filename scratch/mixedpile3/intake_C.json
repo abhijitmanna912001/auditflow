@@ -1,0 +1,882 @@
+[
+ {
+  "doc_id": "LED-61696",
+  "type": "ledger_entry",
+  "vendor": "Apex Process Systems Pvt. Ltd.",
+  "amount": 129800.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-08-12",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Account name references Input GST but no separate tax amount is stated; debit amount represents total settlement."
+ },
+ {
+  "doc_id": "LED-81419",
+  "type": "ledger_entry",
+  "vendor": "BluePeak Training Services Pvt. Ltd.",
+  "amount": 106200.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-09-03",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No explicit tax breakout stated; debit amount represents total settlement."
+ },
+ {
+  "doc_id": "PO-16533",
+  "type": "purchase_order",
+  "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+  "amount": 70800.0,
+  "tax_amount": 10800.0,
+  "currency": "INR",
+  "date": "2026-07-12",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No reference IDs to other documents stated."
+ },
+ {
+  "doc_id": "LED-94393",
+  "type": "ledger_entry",
+  "vendor": "CloudDesk Software India Pvt. Ltd.",
+  "amount": 94400.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-09-01",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No explicit tax breakout stated; debit amount represents total settlement."
+ },
+ {
+  "doc_id": "LED-95393",
+  "type": "ledger_entry",
+  "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+  "amount": 246000.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-08-14",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No explicit tax breakout stated; debit amount represents total."
+ },
+ {
+  "doc_id": "PO-92645",
+  "type": "purchase_order",
+  "vendor": "Horizon Office Systems Pvt. Ltd.",
+  "amount": 47200.0,
+  "tax_amount": 7200.0,
+  "currency": "INR",
+  "date": "2026-07-01",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No reference IDs to other documents stated."
+ },
+ {
+  "doc_id": "PO-94562",
+  "type": "purchase_order",
+  "vendor": "Nova Archive Storage Pvt. Ltd.",
+  "amount": 236000.0,
+  "tax_amount": 36000.0,
+  "currency": "INR",
+  "date": "2026-08-08",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No reference IDs to other documents stated."
+ },
+ {
+  "doc_id": "PO-44811",
+  "type": "purchase_order",
+  "vendor": "Meridian Cloud Services Inc.",
+  "amount": 415000.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-02",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No GST or tax line item stated on this PO."
+ },
+ {
+  "doc_id": "REC-46301",
+  "type": "receipt",
+  "vendor": "Beacon IT Consulting Pvt. Ltd.",
+  "amount": 70800.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-09-03",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Accepted value stated as including GST but tax is not broken out separately, so tax_amount left null."
+ },
+ {
+  "doc_id": "PO-52232",
+  "type": "purchase_order",
+  "vendor": "Meridian Network Components Pvt. Ltd.",
+  "amount": 141600.0,
+  "tax_amount": 21600.0,
+  "currency": "INR",
+  "date": "2026-08-05",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No reference IDs to other documents stated."
+ },
+ {
+  "doc_id": "PO-41858",
+  "type": "purchase_order",
+  "vendor": "Atlas Facilities Care Pvt. Ltd.",
+  "amount": 53100.0,
+  "tax_amount": 8100.0,
+  "currency": "INR",
+  "date": "2026-06-10",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": null
+ },
+ {
+  "doc_id": "INV-90387",
+  "type": "invoice",
+  "vendor": "GreenRoute Logistics Pvt. Ltd.",
+  "amount": 59000.0,
+  "tax_amount": 9000.0,
+  "currency": "INR",
+  "date": "2026-07-21",
+  "references": [
+   "PO-79855"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": null
+ },
+ {
+  "doc_id": "INV-82776",
+  "type": "invoice",
+  "vendor": "Beacon IT Consulting Pvt. Ltd.",
+  "amount": 70800.0,
+  "tax_amount": 10800.0,
+  "currency": "INR",
+  "date": "2026-09-20",
+  "references": [
+   "PO-64567"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": null
+ },
+ {
+  "doc_id": "BNK-79834",
+  "type": "bank_statement",
+  "vendor": "Meridian Cloud Services Inc.",
+  "amount": 415000.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-18",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Statement does not break out tax separately. Amount (INR 415,000.00) and currency differ from referenced invoice INV-44755, which states USD 4,980.00; discrepancy not resolved from available documents."
+ },
+ {
+  "doc_id": "REC-86581",
+  "type": "receipt",
+  "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+  "amount": 70800.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-19",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Accepted value stated as inclusive of GST but tax not broken out separately on this document."
+ },
+ {
+  "doc_id": "INV-84263",
+  "type": "invoice",
+  "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+  "amount": 70800.0,
+  "tax_amount": 10800.0,
+  "currency": "INR",
+  "date": "2026-07-16",
+  "references": [
+   "PO-16533"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": null
+ },
+ {
+  "doc_id": "INV-44755",
+  "type": "invoice",
+  "vendor": "Meridian Cloud Services Inc.",
+  "amount": 4980.0,
+  "tax_amount": null,
+  "currency": "USD",
+  "date": "2026-07-14",
+  "references": [
+   "PO-44811"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": "No tax line item stated on this invoice."
+ },
+ {
+  "doc_id": "LED-45247",
+  "type": "ledger_entry",
+  "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+  "amount": 141600.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-22",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Debit amount posted to combined 'Warehouse Supplies Expense and Input GST' account; tax portion not separately itemized."
+ },
+ {
+  "doc_id": "REC-64864",
+  "type": "receipt",
+  "vendor": "CloudDesk Software India Pvt. Ltd.",
+  "amount": 94400.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-08-04",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Accepted value stated as inclusive of GST but tax not broken out separately on this document."
+ },
+ {
+  "doc_id": "BNK-29140",
+  "type": "bank_statement",
+  "vendor": "Apex Process Systems Pvt. Ltd.",
+  "amount": 129800.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-08-12",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Statement does not break out tax separately."
+ },
+ {
+  "doc_id": "LED-71202",
+  "type": "ledger_entry",
+  "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+  "amount": 70800.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-08-10",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Ledger entry states a single debit amount; no separate tax line item is broken out."
+ },
+ {
+  "doc_id": "REC-44638",
+  "type": "receipt",
+  "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+  "amount": null,
+  "tax_amount": null,
+  "currency": null,
+  "date": "2026-08-11",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Goods receipt note confirms quantity received but does not state a monetary amount or currency."
+ },
+ {
+  "doc_id": "LED-85111",
+  "type": "ledger_entry",
+  "vendor": "Nova Archive Storage Pvt. Ltd.",
+  "amount": 236000.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-09-20",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Ledger entry states a single debit amount; no separate tax line item is broken out."
+ },
+ {
+  "doc_id": "REC-20048",
+  "type": "receipt",
+  "vendor": "GreenRoute Logistics Pvt. Ltd.",
+  "amount": 59000.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-18",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Accepted value stated as inclusive of GST, but the tax amount is not broken out separately, so it cannot be extracted."
+ },
+ {
+  "doc_id": "INV-46281",
+  "type": "invoice",
+  "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+  "amount": 70800.0,
+  "tax_amount": 10800.0,
+  "currency": "INR",
+  "date": "2026-07-16",
+  "references": [
+   "PO-16533"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": "Document notes this is the second received scan of supplier invoice SSS/2026/188; supplier invoice number is the document's own identifier, not a reference to a separate document."
+ },
+ {
+  "doc_id": "LED-10898",
+  "type": "ledger_entry",
+  "vendor": "Orchid Workspace Solutions Pvt. Ltd.",
+  "amount": 53100.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-20",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Ledger entry states a single debit amount; no separate tax line item is broken out."
+ },
+ {
+  "doc_id": "BNK-46510",
+  "type": "bank_statement",
+  "vendor": "BluePeak Training Services Pvt. Ltd.",
+  "amount": 106200.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-09-03",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Bank statement shows a single debit amount for the NEFT settlement; no separate tax line item is stated."
+ },
+ {
+  "doc_id": "INV-63147",
+  "type": "invoice",
+  "vendor": "Horizon Office Systems Pvt. Ltd.",
+  "amount": 47200.0,
+  "tax_amount": 7200.0,
+  "currency": "INR",
+  "date": "2026-07-05",
+  "references": [
+   "PO-92645"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": null
+ },
+ {
+  "doc_id": "PO-64567",
+  "type": "purchase_order",
+  "vendor": "Crestline Data Services Pvt. Ltd.",
+  "amount": 70800.0,
+  "tax_amount": 10800.0,
+  "currency": "INR",
+  "date": "2026-08-01",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No references to other documents are cited on this purchase order."
+ },
+ {
+  "doc_id": "INV-93865",
+  "type": "invoice",
+  "vendor": "CloudDesk Software India Pvt. Ltd.",
+  "amount": 94400.0,
+  "tax_amount": 14400.0,
+  "currency": "INR",
+  "date": "2026-08-02",
+  "references": [
+   "PO-75791"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": null
+ },
+ {
+  "doc_id": "REC-76283",
+  "type": "receipt",
+  "vendor": "Atlas Facilities Care Pvt. Ltd.",
+  "amount": 53100.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-06-30",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Accepted value stated as inclusive of GST but tax amount not broken out separately."
+ },
+ {
+  "doc_id": "PO-77099",
+  "type": "purchase_order",
+  "vendor": "BluePeak Training Services Pvt. Ltd.",
+  "amount": 106200.0,
+  "tax_amount": 16200.0,
+  "currency": "INR",
+  "date": "2026-08-15",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Amount reflects PO total inclusive of stated GST line item."
+ },
+ {
+  "doc_id": "BNK-70658",
+  "type": "bank_statement",
+  "vendor": "Horizon Office Systems Pvt. Ltd.",
+  "amount": 47200.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-25",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Bank statement does not break out tax separately."
+ },
+ {
+  "doc_id": "BNK-52891",
+  "type": "bank_statement",
+  "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+  "amount": 246000.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-08-14",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Bank statement does not break out tax separately."
+ },
+ {
+  "doc_id": "BNK-33247",
+  "type": "bank_statement",
+  "vendor": "GreenRoute Logistics Pvt. Ltd.",
+  "amount": 59000.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-08-18",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Bank statement does not break out tax separately."
+ },
+ {
+  "doc_id": "REC-98450",
+  "type": "receipt",
+  "vendor": "Horizon Office Systems Pvt. Ltd.",
+  "amount": 47200.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-09",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Goods receipt note; accepted value stated inclusive of GST but not broken out separately."
+ },
+ {
+  "doc_id": "INV-31559",
+  "type": "invoice",
+  "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+  "amount": 141600.0,
+  "tax_amount": 21600.0,
+  "currency": "INR",
+  "date": "2026-07-15",
+  "references": [
+   "PO-91116"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": "Document notes this is a second received scan of supplier invoice PIS/2026/091; possible duplicate submission - flag for reconciliation."
+ },
+ {
+  "doc_id": "REC-23178",
+  "type": "receipt",
+  "vendor": "BluePeak Training Services Pvt. Ltd.",
+  "amount": 106200.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-08-19",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Accepted value stated inclusive of GST but tax amount not broken out separately."
+ },
+ {
+  "doc_id": "LED-79242",
+  "type": "ledger_entry",
+  "vendor": "Beacon IT Consulting Pvt. Ltd.",
+  "amount": 70800.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-09-10",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Ledger account combines expense and input GST; no separate tax figure stated."
+ },
+ {
+  "doc_id": "INV-98413",
+  "type": "invoice",
+  "vendor": "Meridian Network Components Pvt. Ltd.",
+  "amount": 141600.0,
+  "tax_amount": 21600.0,
+  "currency": "INR",
+  "date": "2026-08-14",
+  "references": [
+   "PO-52232"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": null
+ },
+ {
+  "doc_id": "BNK-59245",
+  "type": "bank_statement",
+  "vendor": "Meridian Network Components Pvt. Ltd.",
+  "amount": 141600.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-08-28",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No tax amount stated separately on bank statement."
+ },
+ {
+  "doc_id": "REC-79398",
+  "type": "receipt",
+  "vendor": "Meridian Cloud Services Inc.",
+  "amount": null,
+  "tax_amount": null,
+  "currency": null,
+  "date": "2026-07-15",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Document confirms service acceptance but does not state any monetary amount or currency."
+ },
+ {
+  "doc_id": "BNK-12906",
+  "type": "bank_statement",
+  "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+  "amount": 70800.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-08-10",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No tax amount stated separately on bank statement."
+ },
+ {
+  "doc_id": "LED-75187",
+  "type": "ledger_entry",
+  "vendor": "Vertex Print Solutions Pvt. Ltd.",
+  "amount": 82500.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-10",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Account name references Input GST but the ledger entry does not break out a separate tax amount."
+ },
+ {
+  "doc_id": "INV-33619",
+  "type": "invoice",
+  "vendor": "Apex Process Systems Pvt. Ltd.",
+  "amount": 118000.0,
+  "tax_amount": 18000.0,
+  "currency": "INR",
+  "date": "2026-07-11",
+  "references": [
+   "APS/2026/614",
+   "PO-14513"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": "Amount taken as invoice total (subtotal + GST); supplier invoice number APS/2026/614 included as a reference alongside the document's own ID."
+ },
+ {
+  "doc_id": "BNK-50320",
+  "type": "bank_statement",
+  "vendor": "CloudDesk Software India Pvt. Ltd.",
+  "amount": 94400.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-09-01",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No tax amount stated separately on bank statement."
+ },
+ {
+  "doc_id": "BNK-55802",
+  "type": "bank_statement",
+  "vendor": "Beacon IT Consulting Pvt. Ltd.",
+  "amount": 70800.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-09-10",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No tax amount stated separately on bank statement."
+ },
+ {
+  "doc_id": "LED-11627",
+  "type": "ledger_entry",
+  "vendor": "Meridian Cloud Services Inc.",
+  "amount": 415000.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-18",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No tax amount stated separately on ledger entry."
+ },
+ {
+  "doc_id": "PO-15226",
+  "type": "purchase_order",
+  "vendor": "Vertex Print Solutions Pvt. Ltd.",
+  "amount": 75000.0,
+  "tax_amount": 11440.68,
+  "currency": "INR",
+  "date": "2026-06-03",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Amount taken as purchase order total (subtotal + GST)."
+ },
+ {
+  "doc_id": "INV-68290",
+  "type": "invoice",
+  "vendor": "BluePeak Training Services Pvt. Ltd.",
+  "amount": 106200.0,
+  "tax_amount": 16200.0,
+  "currency": "INR",
+  "date": "2026-08-05",
+  "references": [
+   "BPT/2026/0805",
+   "PO-77099"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": "Amount taken as invoice total (subtotal + GST); supplier invoice number BPT/2026/0805 included as a reference alongside the document's own ID."
+ },
+ {
+  "doc_id": "LED-39140",
+  "type": "ledger_entry",
+  "vendor": "Horizon Office Systems Pvt. Ltd.",
+  "amount": 47200.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-25",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Ledger narration does not break out tax separately; debit amount likely includes GST but no explicit tax line stated."
+ },
+ {
+  "doc_id": "INV-79746",
+  "type": "invoice",
+  "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+  "amount": 141600.0,
+  "tax_amount": 21600.0,
+  "currency": "INR",
+  "date": "2026-07-15",
+  "references": [
+   "PO-91116"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": "Document also carries a separate supplier-assigned invoice number 'PIS/2026/091', distinct from internal Document ID INV-79746; both may appear in cross-references."
+ },
+ {
+  "doc_id": "INV-16023",
+  "type": "invoice",
+  "vendor": "Orchid Workspace Solutions Pvt. Ltd.",
+  "amount": 53100.0,
+  "tax_amount": 8100.0,
+  "currency": "INR",
+  "date": "2026-06-28",
+  "references": [
+   "PO-41858"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": "Document also carries supplier-assigned invoice number 'OWS/2026/0628', distinct from internal Document ID INV-16023."
+ },
+ {
+  "doc_id": "REC-21078",
+  "type": "receipt",
+  "vendor": "Vertex Print Solutions Pvt. Ltd.",
+  "amount": 75000.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-06-16",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Accepted value stated as including GST but no explicit tax breakdown provided."
+ },
+ {
+  "doc_id": "INV-35047",
+  "type": "invoice",
+  "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+  "amount": 246000.0,
+  "tax_amount": 36000.0,
+  "currency": "INR",
+  "date": "2026-08-09",
+  "references": [
+   "PO-54952"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": "Document also carries supplier-assigned invoice number 'SPS/2026/2208', distinct from internal Document ID INV-35047."
+ },
+ {
+  "doc_id": "REC-15268",
+  "type": "receipt",
+  "vendor": "Apex Process Systems Pvt. Ltd.",
+  "amount": 118000.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-18",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Accepted value stated as including GST but no explicit tax breakdown provided."
+ },
+ {
+  "doc_id": "BNK-62846",
+  "type": "bank_statement",
+  "vendor": "Orchid Workspace Solutions Pvt. Ltd.",
+  "amount": 53100.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-20",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Bank statement narration references settlement of invoice and PO; no tax breakdown present."
+ },
+ {
+  "doc_id": "BNK-74654",
+  "type": "bank_statement",
+  "vendor": "Nova Archive Storage Pvt. Ltd.",
+  "amount": 236000.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-09-20",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Bank statement narration references invoice and PO not otherwise present in this batch; no tax breakdown present."
+ },
+ {
+  "doc_id": "LED-18464",
+  "type": "ledger_entry",
+  "vendor": "Meridian Network Components Pvt. Ltd.",
+  "amount": 141600.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-08-28",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Ledger narration does not break out tax separately; debit amount likely includes GST but no explicit tax line stated."
+ },
+ {
+  "doc_id": "BNK-66333",
+  "type": "bank_statement",
+  "vendor": "Vertex Print Solutions Pvt. Ltd.",
+  "amount": 82500.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-10",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Bank statement narration references invoice and PO; amount differs from accepted goods receipt value of INR 75,000 in REC-21078, discrepancy not resolved by available documents; no tax breakdown present."
+ },
+ {
+  "doc_id": "BNK-36557",
+  "type": "bank_statement",
+  "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+  "amount": 141600.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-07-22",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No tax amount stated in bank transaction narration. Note: debit amount (INR 141,600) does not match the referenced PO-91116 total (INR 118,000) or the invoice PIS/2026/091 - possible discrepancy for review."
+ },
+ {
+  "doc_id": "INV-96326",
+  "type": "invoice",
+  "vendor": "Nova Archive Storage Pvt. Ltd.",
+  "amount": 236000.0,
+  "tax_amount": 36000.0,
+  "currency": "INR",
+  "date": "2026-08-30",
+  "references": [
+   "PO-94562",
+   "NAS/2026/Q1/77"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": null
+ },
+ {
+  "doc_id": "PO-54952",
+  "type": "purchase_order",
+  "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+  "amount": 246000.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-08-01",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "No tax breakdown provided on this purchase order; unclear if amount is inclusive or exclusive of tax."
+ },
+ {
+  "doc_id": "INV-13513",
+  "type": "invoice",
+  "vendor": "Vertex Print Solutions Pvt. Ltd.",
+  "amount": 82500.0,
+  "tax_amount": 12584.75,
+  "currency": "INR",
+  "date": "2026-06-12",
+  "references": [
+   "PO-15226",
+   "VPS/2026/0619"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": null
+ },
+ {
+  "doc_id": "PO-75791",
+  "type": "purchase_order",
+  "vendor": "CloudDesk Software India Pvt. Ltd.",
+  "amount": 94400.0,
+  "tax_amount": 14400.0,
+  "currency": "INR",
+  "date": "2026-08-01",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": null
+ },
+ {
+  "doc_id": "LED-55770",
+  "type": "ledger_entry",
+  "vendor": "GreenRoute Logistics Pvt. Ltd.",
+  "amount": 59000.0,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": "2026-08-18",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": "Ledger account combines Freight and Logistics Expense with Input GST; tax portion is not broken out separately."
+ },
+ {
+  "doc_id": "PO-91116",
+  "type": "purchase_order",
+  "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+  "amount": 118000.0,
+  "tax_amount": 18000.0,
+  "currency": "INR",
+  "date": "2026-07-03",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": null
+ },
+ {
+  "doc_id": "PO-19740",
+  "type": "purchase_order",
+  "vendor": "CloudDesk Software India Pvt. Ltd.",
+  "amount": 93220.0,
+  "tax_amount": 14220.0,
+  "currency": "INR",
+  "date": "2026-08-04",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": null
+ },
+ {
+  "doc_id": "INV-24423",
+  "type": "invoice",
+  "vendor": "Horizon Office Systems Pvt. Ltd.",
+  "amount": 47495.0,
+  "tax_amount": 7245.0,
+  "currency": "INR",
+  "date": "2026-07-12",
+  "references": [
+   "PO-44324"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": "Also carries supplier invoice number HOS/2026-27/137; PO-44324 referenced does not match any PO in this batch."
+ },
+ {
+  "doc_id": "INV-61960",
+  "type": "invoice",
+  "vendor": "Horizon Office Systems Pvt. Ltd.",
+  "amount": 46905.0,
+  "tax_amount": 7155.0,
+  "currency": "INR",
+  "date": "2026-07-06",
+  "references": [
+   "PO-25840"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": "Also carries supplier invoice number HOS/2026-27/131; PO-25840 referenced does not match any PO in this batch."
+ }
+]
