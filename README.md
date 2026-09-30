@@ -21,9 +21,9 @@ Audit review is often slowed less by the final judgment than by collecting evide
 - **Second-pass evidence resolution** on ambiguous cases, with disagreement surfaced rather than silently resolved
 - **Persistent reviewer decisions**, building a record of confirmed vs. overturned findings
 
-### Verified benchmark
+### Benchmark results
 
-**14 cases · 100% case-level routing accuracy on the verified benchmark run**
+**14 cases · repeated-run results: 12 pass every run, 2 are known to vary.** In repeated runs (3 per case), 12 of 14 cases produced the expected findings and routing every time. The tax-calculation case (CASE_14) is currently detected in about half of runs, and the ambiguous mixed goods/service case (CASE_06) occasionally returns no finding. Earlier single-run verification showed 100% routing accuracy, but repeated runs show that is not stable. We are working on both.
 
 ## Product Preview
 
@@ -61,7 +61,7 @@ The bounded exception types are duplicate invoice, amount mismatch, missing PO, 
 
 ### Evidence Resolver
 
-On transactions where the Evidence Agent's first pass lands below a confidence threshold, a second independent pass runs and the two are compared. If they agree, the higher-confidence result is kept. If they disagree, both sets of findings are unioned rather than one being silently picked, and the disagreement is surfaced in the UI. This targets the CASE_06-style ambiguity noted below.
+On transactions where the Evidence Agent's first pass lands below a confidence threshold, a second independent pass runs and the two are compared. If they agree, the higher-confidence result is kept. If they disagree, both sets of findings are unioned rather than one being silently picked, and the disagreement is surfaced in the UI. This targets low-confidence ambiguity; it does not catch confidently wrong Evidence results (see the Known limitations section below).
 
 ## Architecture and model strategy
 
@@ -81,7 +81,7 @@ The Anomaly Agent uses the stronger model because exception classification is th
 
 The benchmark contains 14 controlled scenarios: clean cases, duplicate invoices, amount and currency mismatches, tax calculation errors, missing POs and receipts, vendor mismatches, date inconsistencies, multi-issue cases, and incomplete or conflicting evidence. These are evaluation fixtures—not customer audits.
 
-**Known limitation:** `CASE_06` is an intentionally more ambiguous mixed goods/service scenario and has shown residual variance in full-sequence LLM runs even with the Evidence Resolver's second pass — documented honestly rather than hidden, since a single test run can land differently even when the resolver correctly agrees or disagrees on repeat runs.
+**Known limitations:** two cases vary between runs. `CASE_14` (tax calculation) is detected in about half of runs. `CASE_06` is an intentionally more ambiguous mixed goods/service scenario whose Evidence Agent output sometimes reports nothing missing, after which a finding is often not raised. The Evidence Resolver does not fully handle this: it only runs a second pass when evidence confidence is below 0.7, and in our tests the wrong Evidence outputs had confidence of 0.90 or higher, so the second pass would not have been triggered. Documented honestly rather than hidden.
 
 Detected exceptions are routed to a reviewer, who can inspect the finding, evidence, confidence, rationale, and workpaper context. The current UI supports **Clear exception**, **Request evidence**, and **Escalate** actions, and every decision is persisted server-side (`POST /feedback`) and viewable in a decision history dashboard (`GET /feedback/history`).
 
