@@ -23,7 +23,7 @@ Audit review is often slowed less by the final judgment than by collecting evide
 
 ### Benchmark results
 
-**14 cases · repeated-run results: 12 pass every run, 2 are known to vary.** In repeated runs (3 per case), 12 of 14 cases produced the expected findings and routing every time. The tax-calculation case (CASE_14) is currently detected in about half of runs, and the ambiguous mixed goods/service case (CASE_06) occasionally returns no finding. Earlier single-run verification showed 100% routing accuracy, but repeated runs show that is not stable. We are working on both.
+**14 cases · repeated-run results: 13 pass every run, 1 is known to vary.** In repeated runs (3 per case), 13 of 14 cases produced the expected findings and routing every time. The ambiguous mixed goods/service case (CASE_06) occasionally returns no finding. The tax-calculation case (CASE_14) used to be detected in only about half of runs; after a change to how the tax arithmetic is checked it was detected in 20 of 20 test runs and in 9 of 9 live runs. Earlier single-run verification showed 100% routing accuracy, but repeated runs show that is not stable. We are working on CASE_06.
 
 ## Product Preview
 
@@ -81,7 +81,7 @@ The Anomaly Agent uses the stronger model because exception classification is th
 
 The benchmark contains 14 controlled scenarios: clean cases, duplicate invoices, amount and currency mismatches, tax calculation errors, missing POs and receipts, vendor mismatches, date inconsistencies, multi-issue cases, and incomplete or conflicting evidence. These are evaluation fixtures—not customer audits.
 
-**Known limitations:** two cases vary between runs. `CASE_14` (tax calculation) is detected in about half of runs. `CASE_06` is an intentionally more ambiguous mixed goods/service scenario whose Evidence Agent output sometimes reports nothing missing, after which a finding is often not raised. The Evidence Resolver does not fully handle this: it only runs a second pass when evidence confidence is below 0.7, and in our tests the wrong Evidence outputs had confidence of 0.90 or higher, so the second pass would not have been triggered. Documented honestly rather than hidden.
+**Known limitations:** one case varies between runs. `CASE_06` is an intentionally more ambiguous mixed goods/service scenario whose Evidence Agent output sometimes reports nothing missing, after which a finding is often not raised. The Evidence Resolver does not fully handle this: it only runs a second pass when evidence confidence is below 0.7, and in our tests the wrong Evidence outputs had confidence of 0.90 or higher, so the second pass would not have been triggered. The tax check covers the arithmetic sum only: a tax amount that contradicts a stated rate while the sum still reconciles is not detected. Documented honestly rather than hidden.
 
 Detected exceptions are routed to a reviewer, who can inspect the finding, evidence, confidence, rationale, and workpaper context. The current UI supports **Clear exception**, **Request evidence**, and **Escalate** actions, and every decision is persisted server-side (`POST /feedback`) and viewable in a decision history dashboard (`GET /feedback/history`).
 
