@@ -1,0 +1,1460 @@
+[
+ {
+  "run": 1,
+  "intake": [
+   {
+    "doc_id": "BNK-9101",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Bank narration references INV-9101 and PO-9101; no tax breakdown provided in bank statement."
+   },
+   {
+    "doc_id": "INV-9101",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Supplier's own invoice number is HOS/2026-27/118; document ID used is INV-9101 as stated. GST at 18% explicitly broken out as tax amount."
+   },
+   {
+    "doc_id": "LED-9101",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "REC-9101",
+     "BNK-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Ledger entry does not separately state a tax amount; combined debit posted to Office Furniture Expense and Input GST accounts."
+   },
+   {
+    "doc_id": "REC-9101",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+     "PO-9101",
+     "INV-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Goods Receipt Note states accepted value 'including GST' but does not break out the tax amount separately, so tax_amount is left null."
+   }
+  ],
+  "evidence": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "documents": [
+    "BNK-9101",
+    "INV-9101",
+    "LED-9101",
+    "REC-9101"
+   ],
+   "missing_evidence": [
+    "purchase_order (PO-9101 is referenced by the invoice, receipt, and bank statement, but no actual PO document was provided in this case)"
+   ],
+   "evidence_confidence": 0.72,
+   "notes": "Invoice, receipt, ledger entry, and bank statement all share consistent vendor (Horizon Office Systems Pvt. Ltd.), amount (INR 47,200.00), and a logical date sequence (invoice 2026-07-05, goods receipt 2026-07-09, ledger/bank settlement 2026-07-25). All four documents reference PO-9101, indicating a purchase order was created for this transaction, but the PO document itself is not present in the provided set, so it is flagged as missing rather than assumed satisfied. Tax amount is only explicitly broken out on the invoice (7200.0); the bank statement, ledger entry, and receipt note the total as inclusive of tax but do not separately state the tax amount, which is a minor documentation gap rather than an inconsistency. The successful bank payment does not itself confirm that the goods receipt or PO terms were satisfied - those are separately evidenced by REC-9101, which is present. No indication in this vendor's document pattern suggests PO-exemption, since a PO number is explicitly referenced across multiple documents, so the absent PO document is treated as a genuine gap in evidence rather than an expected omission."
+  },
+  "anomaly": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101",
+      "LED-9101"
+     ],
+     "severity": "medium",
+     "confidence": 0.9,
+     "explanation": "PO-9101 is referenced by the invoice, receipt, and bank statement, but no purchase order document is present anywhere in the transaction evidence set."
+    }
+   ]
+  },
+  "decision": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "action": "human_review",
+   "confidence": 0.9,
+   "reason": "This transaction is flagged for human review because a missing_po finding (medium severity, confidence 0.9) was identified: PO-9101 is referenced by the invoice, receipt, and bank statement, but no corresponding purchase order document exists in the evidence set, requiring manual verification.",
+   "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+   },
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101",
+      "LED-9101"
+     ],
+     "severity": "medium",
+     "explanation": "PO-9101 is referenced by the invoice, receipt, and bank statement, but no purchase order document is present anywhere in the transaction evidence set."
+    }
+   ]
+  },
+  "workpaper": {
+   "case_id": "CASE_91",
+   "rows": [
+    {
+     "document": "INV-9101",
+     "finding": "Missing PO",
+     "evidence": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101",
+      "LED-9101"
+     ],
+     "confidence": 0.9,
+     "action": "human_review"
+    }
+   ],
+   "summary": {
+    "items_reviewed": 1,
+    "auto_cleared": 0,
+    "human_review": 1,
+    "critical": 0,
+    "assumed_minutes_per_item": 3,
+    "estimated_minutes_saved": 0
+   }
+  }
+ },
+ {
+  "run": 2,
+  "intake": [
+   {
+    "doc_id": "BNK-9101",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Bank statement does not break out tax separately; narration references INV-9101 and PO-9101."
+   },
+   {
+    "doc_id": "INV-9101",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "GST explicitly stated as 18% (INR 7,200.00) on subtotal of INR 40,000.00. Supplier's own invoice number (HOS/2026-27/118) is an internal identifier, not treated as a cross-reference to another document."
+   },
+   {
+    "doc_id": "LED-9101",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "REC-9101",
+     "BNK-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Ledger entry lists supporting documents but does not separately state a tax amount within this entry."
+   },
+   {
+    "doc_id": "REC-9101",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+     "PO-9101",
+     "INV-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Goods receipt note states accepted value of INR 47,200.00 'including GST' but does not break out the tax amount separately, so tax_amount is left null per instructions."
+   }
+  ],
+  "evidence": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "documents": [
+    "BNK-9101",
+    "INV-9101",
+    "LED-9101",
+    "REC-9101"
+   ],
+   "missing_evidence": [
+    "purchase_order document (PO-9101) - referenced by INV-9101, REC-9101, and BNK-9101 as the originating order, but no PO document itself was provided in the case file"
+   ],
+   "evidence_confidence": 0.62,
+   "notes": "All four present documents (invoice, receipt, bank statement, ledger entry) agree on vendor (Horizon Office Systems Pvt. Ltd.), currency (INR), and total amount (47,200.00), and follow a plausible date sequence: invoice issued 2026-07-05, goods receipt 2026-07-09, payment/bank posting and ledger entry both on 2026-07-25. The invoice explicitly breaks out GST (7,200.00 on a 40,000.00 subtotal), while the bank statement, receipt, and ledger entry note the same total inclusive of tax without separating it, which is internally consistent. However, PO-9101 is cited as a reference by three separate documents (invoice, receipt, bank statement) yet the purchase order itself was never supplied, so its existence and terms cannot be independently verified - the cross-references alone do not substitute for the document. Additionally, while a receipt (REC-9101) is present, confirming goods were received, the successful bank payment does not by itself prove any additional payment-terms conditions were met beyond what the receipt documents. Confidence is moderated downward due to the missing PO despite otherwise strong internal consistency across the remaining evidence chain."
+  },
+  "anomaly": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "confidence": 0.92,
+     "explanation": "No purchase order document exists in the case file at all, even though PO-9101 is cited as the originating order by the invoice, receipt, and bank statement, so its terms cannot be independently verified."
+    }
+   ]
+  },
+  "decision": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "action": "human_review",
+   "confidence": 0.92,
+   "reason": "Flagged for human review because no purchase order document is present in the case file despite PO-9101 being referenced by the invoice, receipt, and bank statement (INV-9101, REC-9101, BNK-9101), preventing independent verification of its terms; this medium-severity finding has a confidence of 0.92.",
+   "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+   },
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "explanation": "No purchase order document exists in the case file at all, even though PO-9101 is cited as the originating order by the invoice, receipt, and bank statement, so its terms cannot be independently verified."
+    }
+   ]
+  },
+  "workpaper": {
+   "case_id": "CASE_91",
+   "rows": [
+    {
+     "document": "INV-9101",
+     "finding": "Missing PO",
+     "evidence": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101"
+     ],
+     "confidence": 0.92,
+     "action": "human_review"
+    }
+   ],
+   "summary": {
+    "items_reviewed": 1,
+    "auto_cleared": 0,
+    "human_review": 1,
+    "critical": 0,
+    "assumed_minutes_per_item": 3,
+    "estimated_minutes_saved": 0
+   }
+  }
+ },
+ {
+  "run": 3,
+  "intake": [
+   {
+    "doc_id": "BNK-9101",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Bank statement narration references INV-9101 and PO-9101; no tax breakdown provided on a bank transaction record."
+   },
+   {
+    "doc_id": "INV-9101",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Supplier invoice number HOS/2026-27/118 noted separately from internal Document ID INV-9101; GST explicitly stated at 18% (INR 7,200.00)."
+   },
+   {
+    "doc_id": "LED-9101",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "REC-9101",
+     "BNK-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Ledger entry lists combined account for Office Furniture Expense and Input GST but does not break out the tax portion separately, so tax_amount left null."
+   },
+   {
+    "doc_id": "REC-9101",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+     "PO-9101",
+     "INV-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Document is a Goods Receipt Note, mapped to closest available type 'receipt'. Accepted Value stated as including GST but not broken out separately, so tax_amount left null."
+   }
+  ],
+  "evidence": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "documents": [
+    "BNK-9101",
+    "INV-9101",
+    "LED-9101",
+    "REC-9101"
+   ],
+   "missing_evidence": [
+    "purchase_order"
+   ],
+   "evidence_confidence": 0.72,
+   "notes": "Invoice, goods receipt note, ledger entry, and bank statement all reference PO-9101 and are mutually consistent in vendor, amount (INR 47,200.00), and a logical date sequence (invoice 2026-07-05, receipt 2026-07-09, ledger/bank 2026-07-25). However, the actual purchase order document PO-9101 was never supplied - only referenced by other documents - so it cannot be confirmed as issued or authorized; this is treated as missing supporting evidence rather than assumed present. The bank payment clearing does not by itself establish that any payment-terms condition (e.g., timely receipt confirmation) was met - only the receipt document, which is present here, can establish that. Tax amount (INR 7,200.00 GST) is stated only on the invoice and not broken out separately on the ledger or receipt, which is a normal accounting presentation and not treated as a discrepancy."
+  },
+  "anomaly": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "LED-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "confidence": 0.9,
+     "explanation": "No purchase order document was supplied for the transaction \u2014 PO-9101 is only referenced by the invoice, goods receipt note, ledger entry, and bank statement, so authorization cannot be confirmed."
+    }
+   ]
+  },
+  "decision": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "action": "human_review",
+   "confidence": 0.9,
+   "reason": "This transaction is flagged for human review because a missing_po finding (medium severity, confidence 0.9) indicates no purchase order document was provided\u2014PO-9101 is only referenced indirectly by the invoice, goods receipt note, ledger entry, and bank statement across documents INV-9101, REC-9101, LED-9101, and BNK-9101, so authorization cannot be confirmed.",
+   "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+   },
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "LED-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "explanation": "No purchase order document was supplied for the transaction \u2014 PO-9101 is only referenced by the invoice, goods receipt note, ledger entry, and bank statement, so authorization cannot be confirmed."
+    }
+   ]
+  },
+  "workpaper": {
+   "case_id": "CASE_91",
+   "rows": [
+    {
+     "document": "INV-9101",
+     "finding": "Missing PO",
+     "evidence": [
+      "INV-9101",
+      "REC-9101",
+      "LED-9101",
+      "BNK-9101"
+     ],
+     "confidence": 0.9,
+     "action": "human_review"
+    }
+   ],
+   "summary": {
+    "items_reviewed": 1,
+    "auto_cleared": 0,
+    "human_review": 1,
+    "critical": 0,
+    "assumed_minutes_per_item": 3,
+    "estimated_minutes_saved": 0
+   }
+  }
+ },
+ {
+  "run": 4,
+  "intake": [
+   {
+    "doc_id": "BNK-9101",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Tax amount not broken out separately on bank statement; only total debit amount stated."
+   },
+   {
+    "doc_id": "INV-9101",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Supplier's own invoice number (HOS/2026-27/118) is an internal identifier, not treated as a cross-document reference."
+   },
+   {
+    "doc_id": "LED-9101",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "REC-9101",
+     "BNK-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Ledger entry does not itemize tax separately from the debit amount."
+   },
+   {
+    "doc_id": "REC-9101",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+     "PO-9101",
+     "INV-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Goods receipt note states accepted value 'including GST' but does not break out the tax amount explicitly."
+   }
+  ],
+  "evidence": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "documents": [
+    "BNK-9101",
+    "INV-9101",
+    "LED-9101",
+    "REC-9101"
+   ],
+   "missing_evidence": [
+    "purchase_order"
+   ],
+   "evidence_confidence": 0.7,
+   "notes": "All present documents (invoice, receipt, ledger entry, bank statement) consistently reference PO-9101 by number, share the same vendor (Horizon Office Systems Pvt. Ltd.), amount (47200.0 INR), and follow a logical date sequence (invoice 2026-07-05, receipt 2026-07-09, ledger/bank debit 2026-07-25). However, the purchase order document itself (PO-9101) was never actually provided - only referenced by other documents - so its existence and terms cannot be independently verified. This internal consistency among available documents does not substitute for the missing PO. Tax amount (7200.0) is itemized only on the invoice; the bank statement, ledger, and receipt do not break out tax separately, but this is consistent with those document types and does not constitute a discrepancy. No payment-terms conditions beyond receipt of goods are evidenced, and the receipt itself is present, satisfying that requirement directly."
+  },
+  "anomaly": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "LED-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "confidence": 0.88,
+     "explanation": "No purchase order document was provided for this transaction; PO-9101 is only referenced by the invoice, receipt, ledger entry, and bank statement, so its authorization and terms cannot be independently verified."
+    }
+   ]
+  },
+  "decision": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "action": "human_review",
+   "confidence": 0.88,
+   "reason": "This transaction is flagged for human review because no purchase order document was provided; PO-9101 is only referenced indirectly by the invoice, receipt, ledger entry, and bank statement (INV-9101, REC-9101, LED-9101, BNK-9101), so its authorization and terms cannot be independently verified (medium severity, confidence 0.88).",
+   "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+   },
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "LED-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "explanation": "No purchase order document was provided for this transaction; PO-9101 is only referenced by the invoice, receipt, ledger entry, and bank statement, so its authorization and terms cannot be independently verified."
+    }
+   ]
+  },
+  "workpaper": {
+   "case_id": "CASE_91",
+   "rows": [
+    {
+     "document": "INV-9101",
+     "finding": "Missing PO",
+     "evidence": [
+      "INV-9101",
+      "REC-9101",
+      "LED-9101",
+      "BNK-9101"
+     ],
+     "confidence": 0.88,
+     "action": "human_review"
+    }
+   ],
+   "summary": {
+    "items_reviewed": 1,
+    "auto_cleared": 0,
+    "human_review": 1,
+    "critical": 0,
+    "assumed_minutes_per_item": 3,
+    "estimated_minutes_saved": 0
+   }
+  }
+ },
+ {
+  "run": 5,
+  "intake": [
+   {
+    "doc_id": "BNK-9101",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Tax amount not broken out separately in bank statement narration."
+   },
+   {
+    "doc_id": "INV-9101",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Supplier's own invoice numbering (HOS/2026-27/118) noted but doc_id taken as stated Document ID field INV-9101."
+   },
+   {
+    "doc_id": "LED-9101",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "REC-9101",
+     "BNK-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Ledger entry records combined debit to expense and input GST accounts without separately stating tax portion."
+   },
+   {
+    "doc_id": "REC-9101",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+     "PO-9101",
+     "INV-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Accepted value stated as inclusive of GST but tax portion not separately itemized."
+   }
+  ],
+  "evidence": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "documents": [
+    "BNK-9101",
+    "INV-9101",
+    "LED-9101",
+    "REC-9101"
+   ],
+   "missing_evidence": [
+    "purchase_order (PO-9101 is referenced by the invoice, receipt, and ledger entry but the PO document itself was never provided)"
+   ],
+   "evidence_confidence": 0.68,
+   "notes": "Invoice, receipt, ledger entry, and bank statement all present and mutually consistent: same vendor (Horizon Office Systems Pvt. Ltd.), same total amount (INR 47,200.0), and a logical date sequence (invoice 2026-07-05, receipt 2026-07-09, ledger/payment 2026-07-25). However, PO-9101 is cited as a reference in every other document but no actual purchase order document was submitted, so its existence and terms cannot be verified from this document set alone. Additionally, none of the bank statement, ledger entry, or receipt separately itemize the tax portion (only the invoice states tax_amount 7200.0), so the tax treatment downstream of the invoice is not independently corroborated. The successful bank payment and ledger posting confirm cash movement but do not by themselves prove that any payment-term conditions (e.g., receipt-based acceptance) were satisfied beyond what the receipt document itself states. With no other transactions from this vendor in the case, there is no pattern basis to infer this vendor is PO-exempt, so the missing PO is treated as an evidentiary gap rather than an expected omission."
+  },
+  "anomaly": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "LED-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "confidence": 0.9,
+     "explanation": "PO-9101 is referenced by the invoice, receipt, ledger entry, and bank statement, but no purchase order document was provided at all, so its authorization and terms cannot be verified."
+    }
+   ]
+  },
+  "decision": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "action": "human_review",
+   "confidence": 0.9,
+   "reason": "This transaction requires human review because PO-9101 is referenced across the invoice, receipt, ledger entry, and bank statement (INV-9101, REC-9101, LED-9101, BNK-9101), yet no purchase order document was actually provided, making it impossible to verify its authorization and terms (medium severity, confidence 0.9).",
+   "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+   },
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "LED-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "explanation": "PO-9101 is referenced by the invoice, receipt, ledger entry, and bank statement, but no purchase order document was provided at all, so its authorization and terms cannot be verified."
+    }
+   ]
+  },
+  "workpaper": {
+   "case_id": "CASE_91",
+   "rows": [
+    {
+     "document": "INV-9101",
+     "finding": "Missing PO",
+     "evidence": [
+      "INV-9101",
+      "REC-9101",
+      "LED-9101",
+      "BNK-9101"
+     ],
+     "confidence": 0.9,
+     "action": "human_review"
+    }
+   ],
+   "summary": {
+    "items_reviewed": 1,
+    "auto_cleared": 0,
+    "human_review": 1,
+    "critical": 0,
+    "assumed_minutes_per_item": 3,
+    "estimated_minutes_saved": 0
+   }
+  }
+ },
+ {
+  "run": 6,
+  "intake": [
+   {
+    "doc_id": "BNK-9101",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Bank statement does not break out tax separately."
+   },
+   {
+    "doc_id": "INV-9101",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "GST @18% explicitly stated as line item; supplier invoice number HOS/2026-27/118 noted but doc_id taken as INV-9101 per document content."
+   },
+   {
+    "doc_id": "LED-9101",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "REC-9101",
+     "BNK-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Ledger entry combines expense and input GST accounts but does not state a separate tax figure."
+   },
+   {
+    "doc_id": "REC-9101",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+     "PO-9101",
+     "INV-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Goods receipt note states accepted value including GST but does not break out the tax amount separately."
+   }
+  ],
+  "evidence": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "documents": [
+    "BNK-9101",
+    "INV-9101",
+    "LED-9101",
+    "REC-9101"
+   ],
+   "missing_evidence": [
+    "Purchase Order document (PO-9101) - referenced by the invoice, receipt, and bank statement, but no PO document itself is present in the case file"
+   ],
+   "evidence_confidence": 0.78,
+   "notes": "Invoice, goods receipt, ledger entry, and bank statement all agree on vendor (Horizon Office Systems Pvt. Ltd.), amount (INR 47,200.00), and follow a logical date sequence (invoice 2026-07-05, receipt 2026-07-09, payment/ledger 2026-07-25). All four documents cross-reference PO-9101, indicating a purchase order should exist, yet no PO document was provided in this case, so its content and terms cannot be verified. This internal consistency among the available documents does not establish that the PO was not required or that its terms (if any) were met - it only confirms coherence among the documents actually present. The receipt document is present and supports goods acceptance, but tax_amount is only explicitly stated on the invoice (INR 7,200.00 GST); the ledger and bank statement do not break out tax separately, which is treated here as an extraction limitation rather than missing evidence since the underlying transaction values reconcile."
+  },
+  "anomaly": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101",
+      "LED-9101"
+     ],
+     "severity": "medium",
+     "confidence": 0.9,
+     "explanation": "All four available documents reference PO-9101, but no purchase order document exists in the case file at all, so the authorized terms and approved amount cannot be verified."
+    }
+   ]
+  },
+  "decision": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "action": "human_review",
+   "confidence": 0.9,
+   "reason": "This transaction is flagged for human review because a missing_po finding was identified: all four documents (INV-9101, REC-9101, BNK-9101, LED-9101) reference PO-9101, but no purchase order document exists in the case file, making it impossible to verify the authorized terms and approved amount. This medium-severity finding with 0.9 confidence requires a human reviewer to confirm before the transaction can be cleared.",
+   "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+   },
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101",
+      "LED-9101"
+     ],
+     "severity": "medium",
+     "explanation": "All four available documents reference PO-9101, but no purchase order document exists in the case file at all, so the authorized terms and approved amount cannot be verified."
+    }
+   ]
+  },
+  "workpaper": {
+   "case_id": "CASE_91",
+   "rows": [
+    {
+     "document": "INV-9101",
+     "finding": "Missing PO document",
+     "evidence": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101",
+      "LED-9101"
+     ],
+     "confidence": 0.9,
+     "action": "human_review"
+    }
+   ],
+   "summary": {
+    "items_reviewed": 1,
+    "auto_cleared": 0,
+    "human_review": 1,
+    "critical": 0,
+    "assumed_minutes_per_item": 3,
+    "estimated_minutes_saved": 0
+   }
+  }
+ },
+ {
+  "run": 7,
+  "intake": [
+   {
+    "doc_id": "BNK-9101",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "No separate tax line stated on bank statement; only total debit amount given."
+   },
+   {
+    "doc_id": "INV-9101",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Supplier's internal invoice number HOS/2026-27/118 noted but doc_id taken as INV-9101 per document header. GST explicitly broken out at 18% (INR 7,200.00) on subtotal of INR 40,000.00."
+   },
+   {
+    "doc_id": "LED-9101",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "REC-9101",
+     "BNK-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Ledger entry does not break out tax separately from total debit amount."
+   },
+   {
+    "doc_id": "REC-9101",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+     "PO-9101",
+     "INV-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Goods receipt note states accepted value 'including GST' but does not separately itemize the tax amount."
+   }
+  ],
+  "evidence": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "documents": [
+    "BNK-9101",
+    "INV-9101",
+    "LED-9101",
+    "REC-9101"
+   ],
+   "missing_evidence": [
+    "purchase_order (PO-9101 referenced by invoice, receipt, and bank statement, but the PO document itself was never provided)"
+   ],
+   "evidence_confidence": 0.62,
+   "notes": "All four provided documents (invoice, receipt, ledger entry, bank statement) share consistent vendor (Horizon Office Systems Pvt. Ltd.), consistent total amount (INR 47,200.00), and a logical date sequence (invoice 2026-07-05, goods receipt 2026-07-09, ledger/bank debit 2026-07-25). However, PO-9101 is referenced by three separate documents (invoice, receipt, bank statement) yet the actual purchase order document was never submitted, so it cannot be confirmed as issued/approved - this internal consistency among present documents does not establish that the missing PO was unnecessary or that this vendor is PO-exempt, since no pattern of PO-exempt transactions is otherwise evidenced in this case. The successful debit shown on the bank statement and matching ledger entry confirm payment occurred but do not themselves substitute for or validate the missing PO. Tax treatment is also only explicitly itemized on the invoice (7,200.00 on a 40,000.00 subtotal); the receipt, ledger, and bank statement all report only gross totals without breaking out tax, which is a minor documentation gap but not treated as a required missing evidence type here since gross-amount matching across all four documents is otherwise fully consistent."
+  },
+  "anomaly": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "confidence": 0.9,
+     "explanation": "PO-9101 is referenced by the invoice, receipt, and bank statement, but no purchase order document was provided at all, so authorization of the purchase cannot be confirmed despite the other documents agreeing on vendor, amount, currency, and date sequence."
+    }
+   ]
+  },
+  "decision": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "action": "human_review",
+   "confidence": 0.9,
+   "reason": "This transaction requires human review because a medium-severity finding indicates a missing purchase order: although the invoice, receipt, and bank statement (INV-9101, REC-9101, BNK-9101) all reference PO-9101 and agree on vendor, amount, currency, and date sequence, no actual purchase order document was provided, so the purchase's authorization cannot be confirmed.",
+   "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+   },
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "explanation": "PO-9101 is referenced by the invoice, receipt, and bank statement, but no purchase order document was provided at all, so authorization of the purchase cannot be confirmed despite the other documents agreeing on vendor, amount, currency, and date sequence."
+    }
+   ]
+  },
+  "workpaper": {
+   "case_id": "CASE_91",
+   "rows": [
+    {
+     "document": "INV-9101",
+     "finding": "Missing PO",
+     "evidence": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101"
+     ],
+     "confidence": 0.9,
+     "action": "human_review"
+    }
+   ],
+   "summary": {
+    "items_reviewed": 1,
+    "auto_cleared": 0,
+    "human_review": 1,
+    "critical": 0,
+    "assumed_minutes_per_item": 3,
+    "estimated_minutes_saved": 0
+   }
+  }
+ },
+ {
+  "run": 8,
+  "intake": [
+   {
+    "doc_id": "BNK-9101",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Tax amount not broken out separately on bank statement; total debit amount recorded."
+   },
+   {
+    "doc_id": "INV-9101",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "GST amount explicitly stated as 18% (INR 7,200.00) on subtotal of INR 40,000.00; invoice total is INR 47,200.00. Supplier's internal invoice number (HOS/2026-27/118) noted but not treated as a cross-document reference."
+   },
+   {
+    "doc_id": "LED-9101",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "REC-9101",
+     "BNK-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Ledger entry references Office Furniture Expense and Input GST account but does not break out a separate tax figure."
+   },
+   {
+    "doc_id": "REC-9101",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+     "PO-9101",
+     "INV-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Goods receipt note states accepted value 'including GST' but does not itemize a separate tax amount."
+   }
+  ],
+  "evidence": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "documents": [
+    "BNK-9101",
+    "INV-9101",
+    "LED-9101",
+    "REC-9101"
+   ],
+   "missing_evidence": [
+    "purchase_order (PO-9101 referenced by INV-9101, REC-9101, and BNK-9101 but not provided)"
+   ],
+   "evidence_confidence": 0.68,
+   "notes": "All four provided documents (invoice, receipt, ledger entry, bank statement) reference the same transaction and agree on vendor (Horizon Office Systems Pvt. Ltd.), currency (INR), and total amount (47,200.00). The date sequence is logical: invoice dated 2026-07-05, goods receipt 2026-07-09, and ledger/bank settlement both dated 2026-07-25. However, PO-9101 is explicitly referenced by three separate documents (invoice, receipt, bank statement) yet the purchase order itself was never provided, so its existence and terms cannot be verified from the available evidence - this is treated as missing supporting documentation rather than assumed to be PO-exempt, since no pattern across multiple transactions for this vendor was supplied to establish such an exemption. Additionally, only the invoice breaks out the GST/tax amount (INR 7,200.00 on a INR 40,000.00 subtotal); the receipt and ledger entry mention GST inclusion but do not itemize it, and the bank statement records only the total debit, so tax-amount corroboration relies solely on the invoice. The successful bank debit confirms payment occurred but does not by itself confirm that the goods-receipt condition or PO terms were satisfied - that is inferred from the presence of REC-9101 itself, not from the payment status. Overall the transaction is reasonably well-supported by consistent amounts and a coherent document trail, but the absence of the referenced purchase order and the lack of independent tax breakdowns outside the invoice limit full confidence."
+  },
+  "anomaly": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "confidence": 0.9,
+     "explanation": "No purchase order document exists in the evidence map even though PO-9101 is explicitly referenced by the invoice, receipt, and bank statement, so the PO's existence and terms cannot be verified."
+    }
+   ]
+  },
+  "decision": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "action": "human_review",
+   "confidence": 0.9,
+   "reason": "This transaction requires human review because a medium-severity finding indicates a missing purchase order document (PO-9101) that is explicitly referenced by the invoice, receipt, and bank statement, yet cannot be verified for its existence or terms.",
+   "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+   },
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "explanation": "No purchase order document exists in the evidence map even though PO-9101 is explicitly referenced by the invoice, receipt, and bank statement, so the PO's existence and terms cannot be verified."
+    }
+   ]
+  },
+  "workpaper": {
+   "case_id": "CASE_91",
+   "rows": [
+    {
+     "document": "INV-9101",
+     "finding": "Missing PO",
+     "evidence": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101"
+     ],
+     "confidence": 0.9,
+     "action": "human_review"
+    }
+   ],
+   "summary": {
+    "items_reviewed": 1,
+    "auto_cleared": 0,
+    "human_review": 1,
+    "critical": 0,
+    "assumed_minutes_per_item": 3,
+    "estimated_minutes_saved": 0
+   }
+  }
+ },
+ {
+  "run": 9,
+  "intake": [
+   {
+    "doc_id": "BNK-9101",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "No tax breakdown provided on bank statement; amount reflects total debit."
+   },
+   {
+    "doc_id": "INV-9101",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "GST explicitly stated as 18% (INR 7,200.00) on subtotal of INR 40,000.00, totaling invoice amount of INR 47,200.00."
+   },
+   {
+    "doc_id": "LED-9101",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "REC-9101",
+     "BNK-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Ledger entry does not separately break out tax amount; combined account for Office Furniture Expense and Input GST."
+   },
+   {
+    "doc_id": "REC-9101",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+     "PO-9101",
+     "INV-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Goods receipt note states accepted value inclusive of GST but does not break out tax amount separately."
+   }
+  ],
+  "evidence": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "documents": [
+    "BNK-9101",
+    "INV-9101",
+    "LED-9101",
+    "REC-9101"
+   ],
+   "missing_evidence": [
+    "purchase_order (PO-9101 referenced by invoice, receipt, and bank statement, but the PO document itself was never provided)"
+   ],
+   "evidence_confidence": 0.62,
+   "notes": "Invoice, receipt, ledger entry, and bank statement are internally consistent: same vendor (Horizon Office Systems Pvt. Ltd.), same total amount (INR 47,200.00), and a logical date sequence (invoice 2026-07-05, goods receipt 2026-07-09, ledger/bank settlement 2026-07-25). However, all four documents reference PO-9101, indicating a purchase order was expected to exist for this transaction, yet no such document was supplied. This is a single-transaction case, so there is no pattern across multiple transactions to support inferring that this vendor is PO-exempt; therefore the absence of the PO cannot be treated as expected or benign. Additionally, none of the documents (invoice, receipt, or ledger) separately itemize tax in a way that is independently corroborated by a tax document, though the invoice's stated GST breakdown is plausible on its face. The successful bank debit confirms payment occurred but does not itself establish that any purchase-order-based approval or payment-terms condition was satisfied, since that can only be confirmed by the PO document itself. Given the strong internal consistency of the present documents but the notable gap of a referenced-yet-missing purchase order, confidence is moderate rather than high."
+  },
+  "anomaly": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101",
+      "LED-9101"
+     ],
+     "severity": "medium",
+     "confidence": 0.9,
+     "explanation": "No purchase order document exists for this transaction even though PO-9101 is explicitly referenced by the invoice, receipt, and bank statement, leaving the authorization basis for the INR 47,200.00 payment unverifiable."
+    }
+   ]
+  },
+  "decision": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "action": "human_review",
+   "confidence": 0.9,
+   "reason": "This transaction is flagged for human review because a missing purchase order was identified: PO-9101 is referenced by the invoice, receipt, and bank statement (INV-9101, REC-9101, BNK-9101, LED-9101), but no actual PO document exists, leaving the INR 47,200.00 payment's authorization basis unverifiable (medium severity, confidence 0.9).",
+   "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+   },
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101",
+      "LED-9101"
+     ],
+     "severity": "medium",
+     "explanation": "No purchase order document exists for this transaction even though PO-9101 is explicitly referenced by the invoice, receipt, and bank statement, leaving the authorization basis for the INR 47,200.00 payment unverifiable."
+    }
+   ]
+  },
+  "workpaper": {
+   "case_id": "CASE_91",
+   "rows": [
+    {
+     "document": "INV-9101",
+     "finding": "Missing PO",
+     "evidence": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101",
+      "LED-9101"
+     ],
+     "confidence": 0.9,
+     "action": "human_review"
+    }
+   ],
+   "summary": {
+    "items_reviewed": 1,
+    "auto_cleared": 0,
+    "human_review": 1,
+    "critical": 0,
+    "assumed_minutes_per_item": 3,
+    "estimated_minutes_saved": 0
+   }
+  }
+ },
+ {
+  "run": 10,
+  "intake": [
+   {
+    "doc_id": "BNK-9101",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Tax amount not broken out separately in bank statement narration; only total debit amount given."
+   },
+   {
+    "doc_id": "INV-9101",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+     "PO-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "GST explicitly stated as 18% amounting to INR 7,200.00 on subtotal of INR 40,000.00; total invoice amount INR 47,200.00. Supplier's own invoice number (HOS/2026-27/118) noted but document ID used is INV-9101 as per header."
+   },
+   {
+    "doc_id": "LED-9101",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+     "INV-9101",
+     "REC-9101",
+     "BNK-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Ledger entry records combined debit to Office Furniture Expense and Input GST accounts without breaking out the GST portion separately."
+   },
+   {
+    "doc_id": "REC-9101",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+     "PO-9101",
+     "INV-9101"
+    ],
+    "case_id": "CASE_91",
+    "extraction_notes": "Accepted value stated as including GST but tax amount is not separately itemized on this goods receipt note."
+   }
+  ],
+  "evidence": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "documents": [
+    "BNK-9101",
+    "INV-9101",
+    "LED-9101",
+    "REC-9101"
+   ],
+   "missing_evidence": [
+    "Purchase order document PO-9101 is referenced by the invoice, receipt, and bank statement but was never provided, so the underlying order terms cannot be verified."
+   ],
+   "evidence_confidence": 0.72,
+   "notes": "Invoice, goods receipt, ledger entry, and bank statement all reference the same PO-9101 and show consistent vendor (Horizon Office Systems Pvt. Ltd.) and amount (INR 47,200.00), with a plausible date sequence (invoice 2026-07-05, receipt 2026-07-09, ledger/payment 2026-07-25). However, the PO document itself is absent, so the transaction's originating terms and authorization cannot be independently confirmed - the internal consistency of the other documents does not substitute for the missing PO. Tax amount (INR 7,200.00) is only itemized on the invoice; neither the receipt, ledger, nor bank statement break out GST separately, which is consistent with typical narration limitations rather than an anomaly. The successful bank debit confirms payment occurred but does not by itself confirm that receipt/acceptance conditions tied to payment terms were satisfied - only the receipt document, which is present here, establishes that."
+  },
+  "anomaly": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "confidence": 0.93,
+     "explanation": "No purchase order document exists for this transaction at all - PO-9101 is referenced by the invoice, goods receipt, and bank statement but was never provided, so the originating order terms and authorization cannot be independently verified."
+    }
+   ]
+  },
+  "decision": {
+   "transaction_id": "TXN_91",
+   "case_id": "CASE_91",
+   "action": "human_review",
+   "confidence": 0.93,
+   "reason": "This transaction requires human review because a missing purchase order (PO-9101) was flagged with medium severity and 0.93 confidence - the invoice, goods receipt, and bank statement all reference this PO, but it was never provided, making it impossible to independently verify the order terms and authorization.",
+   "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+   },
+   "findings": [
+    {
+     "type": "missing_po",
+     "documents": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101"
+     ],
+     "severity": "medium",
+     "explanation": "No purchase order document exists for this transaction at all - PO-9101 is referenced by the invoice, goods receipt, and bank statement but was never provided, so the originating order terms and authorization cannot be independently verified."
+    }
+   ]
+  },
+  "workpaper": {
+   "case_id": "CASE_91",
+   "rows": [
+    {
+     "document": "INV-9101",
+     "finding": "Missing PO",
+     "evidence": [
+      "INV-9101",
+      "REC-9101",
+      "BNK-9101"
+     ],
+     "confidence": 0.93,
+     "action": "human_review"
+    }
+   ],
+   "summary": {
+    "items_reviewed": 1,
+    "auto_cleared": 0,
+    "human_review": 1,
+    "critical": 0,
+    "assumed_minutes_per_item": 3,
+    "estimated_minutes_saved": 0
+   }
+  }
+ }
+]
