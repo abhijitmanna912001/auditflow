@@ -1,0 +1,14 @@
+PURCHASE ORDER
+Document ID: PO-1013
+PO Number: PO-1013
+Issue Date: 2026-07-02
+Vendor: Meridian Cloud Services Inc.
+Ship To: AuditFlow Operations, Bengaluru
+
+Description: Annual cloud infrastructure subscription renewal
+Quantity: 1 unit
+Amount: INR 415,000.00
+Currency: INR
+
+Approved By: Procurement Desk
+Terms: Payment on receipt of valid invoice referencing this PO.

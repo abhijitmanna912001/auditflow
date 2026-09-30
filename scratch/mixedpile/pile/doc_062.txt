@@ -1,0 +1,13 @@
+PURCHASE ORDER
+Purchase Order No: PO-1007
+Issue Date: 2026-06-10
+Supplier: Atlas Facilities Care Pvt. Ltd.
+Ship To: AuditFlow Headquarters, Bengaluru
+
+Description: Quarterly deep-cleaning and consumables service
+Subtotal: INR 45,000.00
+GST @ 18%: INR 8,100.00
+Purchase Order Total: INR 53,100.00
+
+Payment Terms: Net 30 days from service acceptance.
+Authorized by: Facilities Manager

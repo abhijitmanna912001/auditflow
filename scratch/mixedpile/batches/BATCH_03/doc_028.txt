@@ -1,0 +1,14 @@
+PURCHASE ORDER
+Purchase Order No: PO-1002
+Issue Date: 2026-08-01
+Supplier: CloudDesk Software India Pvt. Ltd.
+Ship To: AuditFlow Finance Team, Bengaluru
+
+Description: Annual collaboration software subscription, 20 users
+Subscription Period: 2026-08-01 to 2027-07-31
+Subtotal: INR 80,000.00
+GST @ 18%: INR 14,400.00
+Purchase Order Total: INR 94,400.00
+
+Payment Terms: Net 30 days from accepted invoice.
+Authorized by: Head of Finance

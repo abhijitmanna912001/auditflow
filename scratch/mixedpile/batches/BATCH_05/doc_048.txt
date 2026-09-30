@@ -1,0 +1,13 @@
+PURCHASE ORDER
+Purchase Order No: PO-1008
+Issue Date: 2026-08-15
+Supplier: BluePeak Training Services Pvt. Ltd.
+Ship To: AuditFlow Learning Team, Bengaluru
+
+Description: Finance-controls workshop for 25 employees
+Subtotal: INR 90,000.00
+GST @ 18%: INR 16,200.00
+Purchase Order Total: INR 106,200.00
+
+Payment Terms: Net 30 days from accepted invoice.
+Authorized by: Head of Finance

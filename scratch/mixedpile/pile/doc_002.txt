@@ -1,0 +1,13 @@
+PURCHASE ORDER
+Purchase Order No: PO-1009
+Issue Date: 2026-07-03
+Supplier: Pioneer Industrial Supplies Pvt. Ltd.
+Ship To: AuditFlow Warehouse, Bengaluru
+
+Description: Warehouse packing materials for quarterly dispatches
+Subtotal: INR 100,000.00
+GST @ 18%: INR 18,000.00
+Purchase Order Total: INR 118,000.00
+
+Payment Terms: Payment after signed goods receipt and accepted invoice.
+Authorized by: Warehouse Procurement Manager

@@ -1,0 +1,11 @@
+GOODS RECEIPT NOTE
+Receipt No: REC-1004
+Receipt Date: 2026-06-16
+Vendor: Vertex Print Solutions Pvt. Ltd.
+PO Reference: PO-1004
+Invoice Reference: INV-1004
+
+Received: 1,500 branded client presentation folders
+Condition: Quantity accepted in good condition.
+Accepted Purchase Order Value: INR 75,000.00 including GST
+Received By: AuditFlow Marketing Operations

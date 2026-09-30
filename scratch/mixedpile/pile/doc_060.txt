@@ -1,0 +1,8 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-1010
+Posting Date: 2026-09-10
+Vendor: Beacon IT Consulting Pvt. Ltd.
+Supporting Documents: PO-1010, INV-1010, REC-1010, BNK-1010
+Account: Information Technology Consulting Expense and Input GST
+Debit Amount: INR 70,800.00
+Narration: Payment posted to Beacon IT Consulting for rack audit service.

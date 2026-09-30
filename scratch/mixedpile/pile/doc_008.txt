@@ -1,0 +1,11 @@
+BANK STATEMENT EXTRACT
+Document ID: BNK-1014
+Account: AuditFlow Operations - Operating Account
+Statement Period: 2026-08-01 to 2026-08-31
+
+Transaction Date: 2026-08-14
+Description: Payment - Sunrise Packaging Solutions Pvt. Ltd. - Invoice INV-1014
+Amount: INR 246,000.00
+Reference: SPS/2026/2208
+
+Balance carried forward per statement.

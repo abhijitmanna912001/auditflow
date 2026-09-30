@@ -1,0 +1,14 @@
+TAX INVOICE
+Document ID: INV-1010
+Supplier Invoice No: BIC/2026/920
+Invoice Date: 2026-09-20
+Vendor: Beacon IT Consulting Pvt. Ltd.
+Bill To: AuditFlow Technology Team, Bengaluru
+PO Reference: PO-1010
+
+Description: Data-centre rack audit and cable labelling service
+Subtotal: INR 60,000.00
+GST @ 18%: INR 10,800.00
+Invoice Total: INR 70,800.00
+
+Payment Terms: Net 15 days from invoice date; payment due 2026-10-05.

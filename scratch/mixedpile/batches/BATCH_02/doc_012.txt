@@ -1,0 +1,14 @@
+TAX INVOICE
+Document ID: INV-1007
+Supplier Invoice No: OWS/2026/0628
+Invoice Date: 2026-06-28
+Vendor: Orchid Workspace Solutions Pvt. Ltd.
+Bill To: AuditFlow Headquarters, Bengaluru
+PO Reference: PO-1007
+
+Description: Quarterly deep-cleaning and consumables service
+Subtotal: INR 45,000.00
+GST @ 18%: INR 8,100.00
+Invoice Total: INR 53,100.00
+
+Payment Terms: Net 30 days from service acceptance.

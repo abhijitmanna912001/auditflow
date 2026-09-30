@@ -1,0 +1,199 @@
+{
+ "groups": {
+  "G01": [
+   "BNK-1012",
+   "INV-1012",
+   "LED-1012",
+   "PO-1012"
+  ],
+  "G02": [
+   "BNK-1009",
+   "INV-1009-A",
+   "INV-1009-B",
+   "LED-1009",
+   "PO-1009"
+  ],
+  "G03": [
+   "BNK-1005",
+   "INV-1005",
+   "LED-1005",
+   "REC-1005"
+  ],
+  "G04": [
+   "BNK-1003",
+   "INV-1003-A",
+   "INV-1003-B",
+   "LED-1003",
+   "PO-1003",
+   "REC-1003"
+  ],
+  "G05": [
+   "BNK-1002",
+   "INV-1002",
+   "LED-1002",
+   "PO-1002",
+   "REC-1002"
+  ],
+  "G06": [
+   "BNK-1014",
+   "INV-1014",
+   "LED-1014",
+   "PO-1014",
+   "REC-1014"
+  ],
+  "G07": [
+   "BNK-1007",
+   "INV-1007",
+   "LED-1007",
+   "PO-1007",
+   "REC-1007"
+  ],
+  "G08": [
+   "BNK-1008",
+   "INV-1008",
+   "LED-1008",
+   "PO-1008",
+   "REC-1008"
+  ],
+  "G09": [
+   "BNK-1013",
+   "INV-1013",
+   "LED-1013",
+   "PO-1013",
+   "REC-1013"
+  ],
+  "G10": [
+   "BNK-1004",
+   "INV-1004",
+   "LED-1004",
+   "PO-1004",
+   "REC-1004"
+  ],
+  "G11": [
+   "BNK-1011",
+   "INV-1011",
+   "LED-1011",
+   "REC-1011"
+  ],
+  "G12": [
+   "BNK-1001",
+   "INV-1001",
+   "LED-1001",
+   "PO-1001",
+   "REC-1001"
+  ],
+  "G13": [
+   "BNK-1010",
+   "INV-1010",
+   "LED-1010",
+   "PO-1010",
+   "REC-1010"
+  ],
+  "G14": [
+   "BNK-1006",
+   "INV-1006",
+   "LED-1006",
+   "PO-1006"
+  ]
+ },
+ "method": {
+  "PO-1012": "reference",
+  "BNK-1012": "reference",
+  "INV-1012": "reference",
+  "LED-1012": "reference",
+  "PO-1009": "reference",
+  "LED-1009": "reference",
+  "INV-1009-B": "reference",
+  "INV-1009-A": "reference",
+  "BNK-1009": "reference",
+  "LED-1005": "reference",
+  "BNK-1005": "reference",
+  "REC-1005": "reference",
+  "INV-1005": "reference",
+  "BNK-1003": "reference",
+  "INV-1003-B": "reference",
+  "LED-1003": "reference",
+  "PO-1003": "reference",
+  "REC-1003": "reference",
+  "INV-1003-A": "reference",
+  "REC-1002": "reference",
+  "LED-1002": "reference",
+  "INV-1002": "reference",
+  "PO-1002": "reference",
+  "BNK-1002": "reference",
+  "BNK-1014": "reference",
+  "REC-1014": "reference",
+  "LED-1014": "reference",
+  "INV-1014": "reference",
+  "PO-1014": "reference",
+  "REC-1007": "reference",
+  "INV-1007": "reference",
+  "LED-1007": "reference",
+  "BNK-1007": "reference",
+  "PO-1007": "reference",
+  "REC-1008": "reference",
+  "INV-1008": "reference",
+  "BNK-1008": "reference",
+  "PO-1008": "reference",
+  "LED-1008": "reference",
+  "BNK-1013": "reference",
+  "REC-1013": "reference",
+  "INV-1013": "reference",
+  "PO-1013": "reference",
+  "LED-1013": "reference",
+  "LED-1004": "reference",
+  "PO-1004": "reference",
+  "BNK-1004": "reference",
+  "REC-1004": "reference",
+  "INV-1004": "reference",
+  "INV-1011": "reference",
+  "BNK-1011": "reference",
+  "REC-1011": "reference",
+  "LED-1011": "reference",
+  "BNK-1001": "reference",
+  "REC-1001": "reference",
+  "LED-1001": "reference",
+  "PO-1001": "reference",
+  "INV-1001": "reference",
+  "BNK-1010": "reference",
+  "PO-1010": "reference",
+  "REC-1010": "reference",
+  "LED-1010": "reference",
+  "INV-1010": "reference",
+  "BNK-1006": "reference",
+  "LED-1006": "reference",
+  "INV-1006": "reference",
+  "PO-1006": "reference"
+ },
+ "model_calls": 0,
+ "model_assignments": [],
+ "unresolved_refs": {
+  "G01": [],
+  "G02": [
+   "PIS/2026/091"
+  ],
+  "G03": [
+   "PO-1005"
+  ],
+  "G04": [
+   "SSS/2026/188"
+  ],
+  "G05": [],
+  "G06": [
+   "SPS/2026/2208"
+  ],
+  "G07": [],
+  "G08": [],
+  "G09": [
+   "MCS-2026-4471"
+  ],
+  "G10": [],
+  "G11": [
+   "PO-1011"
+  ],
+  "G12": [],
+  "G13": [],
+  "G14": []
+ },
+ "strip_refs": []
+}

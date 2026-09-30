@@ -1,0 +1,8 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-1008
+Posting Date: 2026-09-03
+Vendor: BluePeak Training Services Pvt. Ltd.
+Supporting Documents: PO-1008, INV-1008, REC-1008, BNK-1008
+Account: Employee Training Expense and Input GST
+Debit Amount: INR 106,200.00
+Narration: Settlement of finance-controls workshop invoice.

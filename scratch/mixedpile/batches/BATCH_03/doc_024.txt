@@ -1,0 +1,14 @@
+TAX INVOICE
+Document ID: INV-1012
+Supplier Invoice No: NAS/2026/Q1/77
+Invoice Date: 2026-08-30
+Vendor: Nova Archive Storage Pvt. Ltd.
+Bill To: AuditFlow Records Centre, Bengaluru
+PO Reference: PO-1012
+
+Description: Off-site document storage and indexing service, first quarter
+Subtotal: INR 200,000.00
+GST @ 18%: INR 36,000.00
+Invoice Total: INR 236,000.00
+
+Payment Terms: Payment only after signed service acceptance receipt and valid invoice.

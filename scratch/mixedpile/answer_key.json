@@ -1,0 +1,270 @@
+{
+ "doc_001.txt": {
+  "case": "CASE_12",
+  "original": "PO-1012.txt"
+ },
+ "doc_002.txt": {
+  "case": "CASE_09",
+  "original": "PO-1009.txt"
+ },
+ "doc_003.txt": {
+  "case": "CASE_05",
+  "original": "LED-1005.txt"
+ },
+ "doc_004.txt": {
+  "case": "CASE_03",
+  "original": "BNK-1003.txt"
+ },
+ "doc_005.txt": {
+  "case": "CASE_02",
+  "original": "REC-1002.txt"
+ },
+ "doc_006.txt": {
+  "case": "CASE_05",
+  "original": "BNK-1005.txt"
+ },
+ "doc_007.txt": {
+  "case": "CASE_03",
+  "original": "INV-1003-B.txt"
+ },
+ "doc_008.txt": {
+  "case": "CASE_14",
+  "original": "BNK-1014.txt"
+ },
+ "doc_009.txt": {
+  "case": "CASE_02",
+  "original": "LED-1002.txt"
+ },
+ "doc_010.txt": {
+  "case": "CASE_07",
+  "original": "REC-1007.txt"
+ },
+ "doc_011.txt": {
+  "case": "CASE_08",
+  "original": "REC-1008.txt"
+ },
+ "doc_012.txt": {
+  "case": "CASE_07",
+  "original": "INV-1007.txt"
+ },
+ "doc_013.txt": {
+  "case": "CASE_13",
+  "original": "BNK-1013.txt"
+ },
+ "doc_014.txt": {
+  "case": "CASE_08",
+  "original": "INV-1008.txt"
+ },
+ "doc_015.txt": {
+  "case": "CASE_13",
+  "original": "REC-1013.txt"
+ },
+ "doc_016.txt": {
+  "case": "CASE_04",
+  "original": "LED-1004.txt"
+ },
+ "doc_017.txt": {
+  "case": "CASE_03",
+  "original": "LED-1003.txt"
+ },
+ "doc_018.txt": {
+  "case": "CASE_13",
+  "original": "INV-1013.txt"
+ },
+ "doc_019.txt": {
+  "case": "CASE_14",
+  "original": "REC-1014.txt"
+ },
+ "doc_020.txt": {
+  "case": "CASE_09",
+  "original": "LED-1009.txt"
+ },
+ "doc_021.txt": {
+  "case": "CASE_12",
+  "original": "BNK-1012.txt"
+ },
+ "doc_022.txt": {
+  "case": "CASE_04",
+  "original": "PO-1004.txt"
+ },
+ "doc_023.txt": {
+  "case": "CASE_02",
+  "original": "INV-1002.txt"
+ },
+ "doc_024.txt": {
+  "case": "CASE_12",
+  "original": "INV-1012.txt"
+ },
+ "doc_025.txt": {
+  "case": "CASE_11",
+  "original": "INV-1011.txt"
+ },
+ "doc_026.txt": {
+  "case": "CASE_14",
+  "original": "LED-1014.txt"
+ },
+ "doc_027.txt": {
+  "case": "CASE_03",
+  "original": "PO-1003.txt"
+ },
+ "doc_028.txt": {
+  "case": "CASE_02",
+  "original": "PO-1002.txt"
+ },
+ "doc_029.txt": {
+  "case": "CASE_04",
+  "original": "BNK-1004.txt"
+ },
+ "doc_030.txt": {
+  "case": "CASE_01",
+  "original": "BNK-1001.txt"
+ },
+ "doc_031.txt": {
+  "case": "CASE_11",
+  "original": "BNK-1011.txt"
+ },
+ "doc_032.txt": {
+  "case": "CASE_03",
+  "original": "REC-1003.txt"
+ },
+ "doc_033.txt": {
+  "case": "CASE_10",
+  "original": "BNK-1010.txt"
+ },
+ "doc_034.txt": {
+  "case": "CASE_06",
+  "original": "BNK-1006.txt"
+ },
+ "doc_035.txt": {
+  "case": "CASE_10",
+  "original": "PO-1010.txt"
+ },
+ "doc_036.txt": {
+  "case": "CASE_04",
+  "original": "REC-1004.txt"
+ },
+ "doc_037.txt": {
+  "case": "CASE_05",
+  "original": "REC-1005.txt"
+ },
+ "doc_038.txt": {
+  "case": "CASE_01",
+  "original": "REC-1001.txt"
+ },
+ "doc_039.txt": {
+  "case": "CASE_05",
+  "original": "INV-1005.txt"
+ },
+ "doc_040.txt": {
+  "case": "CASE_08",
+  "original": "BNK-1008.txt"
+ },
+ "doc_041.txt": {
+  "case": "CASE_14",
+  "original": "INV-1014.txt"
+ },
+ "doc_042.txt": {
+  "case": "CASE_03",
+  "original": "INV-1003-A.txt"
+ },
+ "doc_043.txt": {
+  "case": "CASE_02",
+  "original": "BNK-1002.txt"
+ },
+ "doc_044.txt": {
+  "case": "CASE_07",
+  "original": "LED-1007.txt"
+ },
+ "doc_045.txt": {
+  "case": "CASE_01",
+  "original": "LED-1001.txt"
+ },
+ "doc_046.txt": {
+  "case": "CASE_12",
+  "original": "LED-1012.txt"
+ },
+ "doc_047.txt": {
+  "case": "CASE_06",
+  "original": "LED-1006.txt"
+ },
+ "doc_048.txt": {
+  "case": "CASE_08",
+  "original": "PO-1008.txt"
+ },
+ "doc_049.txt": {
+  "case": "CASE_14",
+  "original": "PO-1014.txt"
+ },
+ "doc_050.txt": {
+  "case": "CASE_07",
+  "original": "BNK-1007.txt"
+ },
+ "doc_051.txt": {
+  "case": "CASE_04",
+  "original": "INV-1004.txt"
+ },
+ "doc_052.txt": {
+  "case": "CASE_10",
+  "original": "REC-1010.txt"
+ },
+ "doc_053.txt": {
+  "case": "CASE_13",
+  "original": "PO-1013.txt"
+ },
+ "doc_054.txt": {
+  "case": "CASE_08",
+  "original": "LED-1008.txt"
+ },
+ "doc_055.txt": {
+  "case": "CASE_01",
+  "original": "PO-1001.txt"
+ },
+ "doc_056.txt": {
+  "case": "CASE_01",
+  "original": "INV-1001.txt"
+ },
+ "doc_057.txt": {
+  "case": "CASE_11",
+  "original": "REC-1011.txt"
+ },
+ "doc_058.txt": {
+  "case": "CASE_06",
+  "original": "INV-1006.txt"
+ },
+ "doc_059.txt": {
+  "case": "CASE_09",
+  "original": "INV-1009-B.txt"
+ },
+ "doc_060.txt": {
+  "case": "CASE_10",
+  "original": "LED-1010.txt"
+ },
+ "doc_061.txt": {
+  "case": "CASE_10",
+  "original": "INV-1010.txt"
+ },
+ "doc_062.txt": {
+  "case": "CASE_07",
+  "original": "PO-1007.txt"
+ },
+ "doc_063.txt": {
+  "case": "CASE_09",
+  "original": "INV-1009-A.txt"
+ },
+ "doc_064.txt": {
+  "case": "CASE_09",
+  "original": "BNK-1009.txt"
+ },
+ "doc_065.txt": {
+  "case": "CASE_06",
+  "original": "PO-1006.txt"
+ },
+ "doc_066.txt": {
+  "case": "CASE_11",
+  "original": "LED-1011.txt"
+ },
+ "doc_067.txt": {
+  "case": "CASE_13",
+  "original": "LED-1013.txt"
+ }
+}

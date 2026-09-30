@@ -1,0 +1,15 @@
+TAX INVOICE
+Document ID: INV-1004
+Supplier Invoice No: VPS/2026/0619
+Invoice Date: 2026-06-12
+Vendor: Vertex Print Solutions Pvt. Ltd.
+Bill To: AuditFlow Operations, Bengaluru
+PO Reference: PO-1004
+
+Description: Branded client presentation folders
+Quantity: 1,500 units
+Subtotal: INR 69,915.25
+GST @ 18%: INR 12,584.75
+Invoice Total: INR 82,500.00
+
+Payment Terms: Net 30 days from invoice date.

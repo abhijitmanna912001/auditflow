@@ -1,0 +1,14 @@
+PURCHASE ORDER
+Purchase Order No: PO-1001
+Issue Date: 2026-07-01
+Supplier: Horizon Office Systems Pvt. Ltd.
+Ship To: AuditFlow Operations, Bengaluru
+
+Description: Ergonomic visitor chairs, black mesh back
+Quantity: 10 units at INR 4,000.00 each
+Subtotal: INR 40,000.00
+GST @ 18%: INR 7,200.00
+Purchase Order Total: INR 47,200.00
+
+Payment Terms: Net 30 days from accepted invoice.
+Authorized by: Procurement Manager

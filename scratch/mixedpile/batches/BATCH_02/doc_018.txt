@@ -1,0 +1,14 @@
+TAX INVOICE
+Document ID: INV-1013
+Supplier Invoice No: MCS-2026-4471
+Invoice Date: 2026-07-14
+Vendor: Meridian Cloud Services Inc.
+Bill To: AuditFlow Operations, Bengaluru
+PO Reference: PO-1013
+
+Description: Annual cloud infrastructure subscription renewal
+Quantity: 1 unit
+Amount: USD 4,980.00
+Currency: USD
+
+Payment Terms: Net 30 days from invoice date.

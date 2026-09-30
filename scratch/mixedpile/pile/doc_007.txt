@@ -1,0 +1,16 @@
+TAX INVOICE
+Document ID: INV-1003-B
+Supplier Invoice No: SSS/2026/188
+Invoice Date: 2026-07-16
+Vendor: Sterling Safety Supplies Pvt. Ltd.
+Bill To: AuditFlow Warehouse, Bengaluru
+PO Reference: PO-1003
+
+Description: Industrial safety kits, standard issue
+Quantity: 20 kits at INR 3,000.00 each
+Subtotal: INR 60,000.00
+GST @ 18%: INR 10,800.00
+Invoice Total: INR 70,800.00
+
+Payment Terms: Net 30 days from invoice date.
+Ingestion Note: Second received scan of supplier invoice SSS/2026/188.

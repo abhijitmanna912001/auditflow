@@ -1,0 +1,30 @@
+{
+ "correct": 65,
+ "wrong": [
+  "BNK-1011",
+  "LED-1011"
+ ],
+ "splits": {
+  "CASE_11": [
+   "G10",
+   "G15",
+   "G16"
+  ]
+ },
+ "merges": {},
+ "exact": [
+  "CASE_12",
+  "CASE_09",
+  "CASE_05",
+  "CASE_03",
+  "CASE_02",
+  "CASE_14",
+  "CASE_07",
+  "CASE_08",
+  "CASE_13",
+  "CASE_04",
+  "CASE_01",
+  "CASE_10",
+  "CASE_06"
+ ]
+}

@@ -1,0 +1,13 @@
+PURCHASE ORDER
+Purchase Order No: PO-1010
+Issue Date: 2026-08-01
+Supplier: Crestline Data Services Pvt. Ltd.
+Ship To: AuditFlow Technology Team, Bengaluru
+
+Description: Data-centre rack audit and cable labelling service
+Subtotal: INR 60,000.00
+GST @ 18%: INR 10,800.00
+Purchase Order Total: INR 70,800.00
+
+Payment Terms: Payment only after receipt of a valid supplier invoice; no advance payment is authorized.
+Authorized by: Technology Procurement Manager

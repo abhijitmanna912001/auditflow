@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-1002
+Transaction Date: 2026-09-01
+Account Holder: AuditFlow Operations
+Beneficiary: CloudDesk Software India Pvt. Ltd.
+Narration: NEFT settlement of INV-1002 / PO-1002
+Debit Amount: INR 94,400.00
+Status: Successful

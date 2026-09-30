@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-1005
+Transaction Date: 2026-08-18
+Account Holder: AuditFlow Operations
+Beneficiary: GreenRoute Logistics Pvt. Ltd.
+Narration: NEFT settlement of INV-1005
+Debit Amount: INR 59,000.00
+Status: Successful

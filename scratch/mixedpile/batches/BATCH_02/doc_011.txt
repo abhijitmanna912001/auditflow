@@ -1,0 +1,10 @@
+SERVICE ACCEPTANCE RECEIPT
+Receipt No: REC-1008
+Acceptance Date: 2026-08-19
+Vendor: BluePeak Training Services Pvt. Ltd.
+PO Reference: PO-1008
+Invoice Reference: INV-1008
+
+Service Accepted: Finance-controls workshop for 25 employees
+Accepted Value: INR 106,200.00 including GST
+Accepted By: AuditFlow Learning Team Lead

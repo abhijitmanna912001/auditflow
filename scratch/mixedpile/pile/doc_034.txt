@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-1006
+Transaction Date: 2026-08-28
+Account Holder: AuditFlow Operations
+Beneficiary: Meridian Network Components Pvt. Ltd.
+Narration: NEFT payment against INV-1006 / PO-1006
+Debit Amount: INR 141,600.00
+Status: Successful

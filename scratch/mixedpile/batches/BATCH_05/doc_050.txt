@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-1007
+Transaction Date: 2026-07-20
+Account Holder: AuditFlow Operations
+Beneficiary: Orchid Workspace Solutions Pvt. Ltd.
+Narration: NEFT settlement of INV-1007 / PO-1007
+Debit Amount: INR 53,100.00
+Status: Successful

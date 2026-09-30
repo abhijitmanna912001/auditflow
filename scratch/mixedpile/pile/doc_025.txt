@@ -1,0 +1,14 @@
+TAX INVOICE
+Document ID: INV-1011
+Supplier Invoice No: APS/2026/614
+Invoice Date: 2026-07-11
+Vendor: Apex Process Systems Pvt. Ltd.
+Bill To: AuditFlow Operations, Bengaluru
+PO Reference: PO-1011
+
+Description: Finance workflow configuration and user training
+Subtotal: INR 100,000.00
+GST @ 18%: INR 18,000.00
+Invoice Total: INR 118,000.00
+
+Payment Terms: Net 30 days from service acceptance.

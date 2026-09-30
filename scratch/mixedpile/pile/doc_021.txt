@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-1012
+Transaction Date: 2026-09-20
+Account Holder: AuditFlow Operations
+Beneficiary: Nova Archive Storage Pvt. Ltd.
+Narration: NEFT payment against INV-1012 / PO-1012
+Debit Amount: INR 236,000.00
+Status: Successful

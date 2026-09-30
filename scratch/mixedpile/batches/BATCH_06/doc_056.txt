@@ -1,0 +1,15 @@
+TAX INVOICE
+Document ID: INV-1001
+Supplier Invoice No: HOS/2026-27/118
+Invoice Date: 2026-07-05
+Vendor: Horizon Office Systems Pvt. Ltd.
+Bill To: AuditFlow Operations, Bengaluru
+PO Reference: PO-1001
+
+Description: Ergonomic visitor chairs, black mesh back
+Quantity: 10 units at INR 4,000.00 each
+Subtotal: INR 40,000.00
+GST @ 18%: INR 7,200.00
+Invoice Total: INR 47,200.00
+
+Payment Terms: Net 30 days from invoice date.

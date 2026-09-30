@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-1004
+Transaction Date: 2026-07-10
+Account Holder: AuditFlow Operations
+Beneficiary: Vertex Print Solutions Pvt. Ltd.
+Narration: NEFT payment against INV-1004 / PO-1004
+Debit Amount: INR 82,500.00
+Status: Successful

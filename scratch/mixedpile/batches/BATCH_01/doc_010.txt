@@ -1,0 +1,10 @@
+SERVICE ACCEPTANCE RECEIPT
+Receipt No: REC-1007
+Acceptance Date: 2026-06-30
+Vendor: Atlas Facilities Care Pvt. Ltd.
+PO Reference: PO-1007
+Invoice Reference: INV-1007
+
+Service Accepted: Quarterly deep-cleaning and consumables service
+Accepted Value: INR 53,100.00 including GST
+Accepted By: AuditFlow Facilities Manager
