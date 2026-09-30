@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-46510
+Transaction Date: 2026-09-03
+Account Holder: AuditFlow Operations
+Beneficiary: BluePeak Training Services Pvt. Ltd.
+Narration: NEFT settlement of INV-68290 / PO-77099
+Debit Amount: INR 106,200.00
+Status: Successful

@@ -1,0 +1,10 @@
+SERVICE ACCEPTANCE RECEIPT
+Receipt No: REC-15268
+Acceptance Date: 2026-07-18
+Vendor: Apex Process Systems Pvt. Ltd.
+Invoice Reference: INV-33619
+PO Reference Cited by Vendor: PO-14513
+
+Service Accepted: Finance workflow configuration and user training
+Accepted Value: INR 118,000.00 including GST
+Accepted By: AuditFlow Finance Transformation Lead

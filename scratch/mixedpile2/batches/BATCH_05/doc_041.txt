@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-59245
+Transaction Date: 2026-08-28
+Account Holder: AuditFlow Operations
+Beneficiary: Meridian Network Components Pvt. Ltd.
+Narration: NEFT payment against INV-98413 / PO-52232
+Debit Amount: INR 141,600.00
+Status: Successful

@@ -1,0 +1,8 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-75187
+Posting Date: 2026-07-10
+Vendor: Vertex Print Solutions Pvt. Ltd.
+Supporting Documents: PO-15226, INV-13513, REC-21078, BNK-66333
+Account: Marketing Collateral Expense and Input GST
+Debit Amount: INR 82,500.00
+Narration: Payment posted at invoice value for presentation folders.

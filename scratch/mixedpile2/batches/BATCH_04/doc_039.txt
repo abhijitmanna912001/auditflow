@@ -1,0 +1,8 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-79242
+Posting Date: 2026-09-10
+Vendor: Beacon IT Consulting Pvt. Ltd.
+Supporting Documents: PO-64567, INV-82776, REC-46301, BNK-55802
+Account: Information Technology Consulting Expense and Input GST
+Debit Amount: INR 70,800.00
+Narration: Payment posted to Beacon IT Consulting for rack audit service.

@@ -1,0 +1,198 @@
+{
+ "groups": {
+  "G01": [
+   "BNK-29140",
+   "INV-33619",
+   "LED-61696",
+   "REC-15268"
+  ],
+  "G02": [
+   "BNK-46510",
+   "BNK-50320",
+   "BNK-66333",
+   "BNK-70658",
+   "BNK-78056",
+   "INV-13513",
+   "INV-63147",
+   "INV-68290",
+   "INV-93865",
+   "LED-39140",
+   "LED-75187",
+   "LED-81419",
+   "LED-94393",
+   "PO-15226",
+   "PO-75791",
+   "PO-77099",
+   "PO-92645",
+   "REC-21078",
+   "REC-23178",
+   "REC-64864",
+   "REC-98450"
+  ],
+  "G03": [
+   "BNK-12906",
+   "INV-46281",
+   "INV-84263",
+   "LED-71202",
+   "PO-16533",
+   "REC-86581"
+  ],
+  "G04": [
+   "BNK-52891",
+   "INV-35047",
+   "LED-95393",
+   "PO-54952",
+   "REC-44638"
+  ],
+  "G05": [
+   "BNK-74654",
+   "INV-96326",
+   "LED-85111",
+   "PO-94562"
+  ],
+  "G06": [
+   "BNK-79834",
+   "INV-44755",
+   "LED-11627",
+   "PO-44811",
+   "REC-79398"
+  ],
+  "G07": [
+   "BNK-55802",
+   "INV-82776",
+   "LED-79242",
+   "PO-64567",
+   "REC-46301"
+  ],
+  "G08": [
+   "BNK-59245",
+   "INV-98413",
+   "LED-18464",
+   "PO-52232"
+  ],
+  "G09": [
+   "BNK-62846",
+   "INV-16023",
+   "LED-10898",
+   "PO-41858",
+   "REC-76283"
+  ],
+  "G10": [
+   "BNK-33247",
+   "INV-90387",
+   "LED-55770",
+   "REC-20048"
+  ],
+  "G11": [
+   "BNK-36557",
+   "INV-31559",
+   "INV-79746",
+   "LED-45247",
+   "PO-91116"
+  ]
+ },
+ "unplaced": [],
+ "method": {
+  "BNK-29140": "reference",
+  "INV-33619": "reference",
+  "LED-61696": "reference",
+  "REC-15268": "reference",
+  "BNK-46510": "reference",
+  "BNK-50320": "reference",
+  "BNK-66333": "reference",
+  "BNK-70658": "reference",
+  "BNK-78056": "reference",
+  "INV-13513": "reference",
+  "INV-63147": "reference",
+  "INV-68290": "reference",
+  "INV-93865": "reference",
+  "LED-39140": "reference",
+  "LED-75187": "reference",
+  "LED-81419": "reference",
+  "LED-94393": "reference",
+  "PO-15226": "reference",
+  "PO-75791": "reference",
+  "PO-77099": "reference",
+  "PO-92645": "reference",
+  "REC-21078": "reference",
+  "REC-23178": "reference",
+  "REC-64864": "reference",
+  "REC-98450": "reference",
+  "BNK-12906": "reference",
+  "INV-46281": "reference",
+  "INV-84263": "reference",
+  "LED-71202": "reference",
+  "PO-16533": "reference",
+  "REC-86581": "reference",
+  "BNK-52891": "reference",
+  "INV-35047": "reference",
+  "LED-95393": "reference",
+  "PO-54952": "reference",
+  "REC-44638": "reference",
+  "BNK-74654": "reference",
+  "INV-96326": "reference",
+  "LED-85111": "reference",
+  "PO-94562": "reference",
+  "BNK-79834": "reference",
+  "INV-44755": "reference",
+  "LED-11627": "reference",
+  "PO-44811": "reference",
+  "REC-79398": "reference",
+  "BNK-55802": "reference",
+  "INV-82776": "reference",
+  "LED-79242": "reference",
+  "PO-64567": "reference",
+  "REC-46301": "reference",
+  "BNK-59245": "reference",
+  "INV-98413": "reference",
+  "LED-18464": "reference",
+  "PO-52232": "reference",
+  "BNK-62846": "reference",
+  "INV-16023": "reference",
+  "LED-10898": "reference",
+  "PO-41858": "reference",
+  "REC-76283": "reference",
+  "BNK-33247": "reference",
+  "INV-90387": "reference",
+  "LED-55770": "reference",
+  "REC-20048": "reference",
+  "BNK-36557": "reference",
+  "INV-31559": "reference",
+  "INV-79746": "reference",
+  "LED-45247": "reference",
+  "PO-91116": "reference"
+ },
+ "model_calls": 0,
+ "model_assignments": [],
+ "unresolved_refs": {
+  "G01": [
+   "APS/2026/614",
+   "PO-14513"
+  ],
+  "G02": [
+   "BPT/2026/0805",
+   "VPS/2026/0619"
+  ],
+  "G03": [
+   "SSS/2026/188"
+  ],
+  "G04": [
+   "SPS/2026/2208"
+  ],
+  "G05": [
+   "NAS/2026/Q1/77"
+  ],
+  "G06": [
+   "MCS-2026-4471"
+  ],
+  "G07": [],
+  "G08": [],
+  "G09": [],
+  "G10": [
+   "PO-79855"
+  ],
+  "G11": [
+   "PIS/2026/091"
+  ]
+ }
+}

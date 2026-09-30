@@ -1,0 +1,15 @@
+TAX INVOICE
+Document ID: INV-61960
+Supplier Invoice No: HOS/2026-27/131
+Invoice Date: 2026-07-06
+Vendor: Horizon Office Systems Pvt. Ltd.
+Bill To: AuditFlow Operations, Bengaluru
+PO Reference: PO-25840
+
+Description: Ergonomic task chairs, mesh back
+Quantity: 10 units at INR 3,975.00 each
+Subtotal: INR 39,750.00
+GST @ 18%: INR 7,155.00
+Invoice Total: INR 46,905.00
+
+Payment Terms: Net 30 days from invoice date.

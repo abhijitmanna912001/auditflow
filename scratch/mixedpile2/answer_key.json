@@ -1,0 +1,430 @@
+{
+ "files": {
+  "doc_001.txt": {
+   "truth": "CASE_11",
+   "original": "LED-1011.txt",
+   "new_id": "LED-61696"
+  },
+  "doc_002.txt": {
+   "truth": "CASE_08",
+   "original": "LED-1008.txt",
+   "new_id": "LED-81419"
+  },
+  "doc_003.txt": {
+   "truth": "CASE_03",
+   "original": "PO-1003.txt",
+   "new_id": "PO-16533"
+  },
+  "doc_004.txt": {
+   "truth": "CASE_02",
+   "original": "LED-1002.txt",
+   "new_id": "LED-94393"
+  },
+  "doc_005.txt": {
+   "truth": "CASE_14",
+   "original": "LED-1014.txt",
+   "new_id": "LED-95393"
+  },
+  "doc_006.txt": {
+   "truth": "CASE_01",
+   "original": "PO-1001.txt",
+   "new_id": "PO-92645"
+  },
+  "doc_007.txt": {
+   "truth": "CASE_12",
+   "original": "PO-1012.txt",
+   "new_id": "PO-94562"
+  },
+  "doc_008.txt": {
+   "truth": "CASE_13",
+   "original": "PO-1013.txt",
+   "new_id": "PO-44811"
+  },
+  "doc_009.txt": {
+   "truth": "CASE_10",
+   "original": "REC-1010.txt",
+   "new_id": "REC-46301"
+  },
+  "doc_010.txt": {
+   "truth": "CASE_06",
+   "original": "PO-1006.txt",
+   "new_id": "PO-52232"
+  },
+  "doc_011.txt": {
+   "truth": "CASE_07",
+   "original": "PO-1007.txt",
+   "new_id": "PO-41858"
+  },
+  "doc_012.txt": {
+   "truth": "CASE_05",
+   "original": "INV-1005.txt",
+   "new_id": "INV-90387"
+  },
+  "doc_013.txt": {
+   "truth": "CASE_10",
+   "original": "INV-1010.txt",
+   "new_id": "INV-82776"
+  },
+  "doc_014.txt": {
+   "truth": "CASE_13",
+   "original": "BNK-1013.txt",
+   "new_id": "BNK-79834"
+  },
+  "doc_015.txt": {
+   "truth": "CASE_03",
+   "original": "REC-1003.txt",
+   "new_id": "REC-86581"
+  },
+  "doc_016.txt": {
+   "truth": "CASE_03",
+   "original": "INV-1003-A.txt",
+   "new_id": "INV-84263"
+  },
+  "doc_017.txt": {
+   "truth": "CASE_13",
+   "original": "INV-1013.txt",
+   "new_id": "INV-44755"
+  },
+  "doc_018.txt": {
+   "truth": "CASE_09",
+   "original": "LED-1009.txt",
+   "new_id": "LED-45247"
+  },
+  "doc_019.txt": {
+   "truth": "CASE_02",
+   "original": "REC-1002.txt",
+   "new_id": "REC-64864"
+  },
+  "doc_020.txt": {
+   "truth": "CASE_11",
+   "original": "BNK-1011.txt",
+   "new_id": "BNK-29140"
+  },
+  "doc_021.txt": {
+   "truth": "CASE_03",
+   "original": "LED-1003.txt",
+   "new_id": "LED-71202"
+  },
+  "doc_022.txt": {
+   "truth": "CASE_14",
+   "original": "REC-1014.txt",
+   "new_id": "REC-44638"
+  },
+  "doc_023.txt": {
+   "truth": "CASE_12",
+   "original": "LED-1012.txt",
+   "new_id": "LED-85111"
+  },
+  "doc_024.txt": {
+   "truth": "CASE_05",
+   "original": "REC-1005.txt",
+   "new_id": "REC-20048"
+  },
+  "doc_025.txt": {
+   "truth": "CASE_03",
+   "original": "INV-1003-B.txt",
+   "new_id": "INV-46281"
+  },
+  "doc_026.txt": {
+   "truth": "CASE_07",
+   "original": "LED-1007.txt",
+   "new_id": "LED-10898"
+  },
+  "doc_027.txt": {
+   "truth": "CASE_08",
+   "original": "BNK-1008.txt",
+   "new_id": "BNK-46510"
+  },
+  "doc_028.txt": {
+   "truth": "CASE_01",
+   "original": "INV-1001.txt",
+   "new_id": "INV-63147"
+  },
+  "doc_029.txt": {
+   "truth": "CASE_10",
+   "original": "PO-1010.txt",
+   "new_id": "PO-64567"
+  },
+  "doc_030.txt": {
+   "truth": "CASE_02",
+   "original": "INV-1002.txt",
+   "new_id": "INV-93865"
+  },
+  "doc_031.txt": {
+   "truth": "CASE_07",
+   "original": "REC-1007.txt",
+   "new_id": "REC-76283"
+  },
+  "doc_032.txt": {
+   "truth": "CASE_08",
+   "original": "PO-1008.txt",
+   "new_id": "PO-77099"
+  },
+  "doc_033.txt": {
+   "truth": "CASE_01",
+   "original": "BNK-1001.txt",
+   "new_id": "BNK-70658"
+  },
+  "doc_034.txt": {
+   "truth": "CASE_14",
+   "original": "BNK-1014.txt",
+   "new_id": "BNK-52891"
+  },
+  "doc_035.txt": {
+   "truth": "CASE_05",
+   "original": "BNK-1005.txt",
+   "new_id": "BNK-33247"
+  },
+  "doc_036.txt": {
+   "truth": "CASE_01",
+   "original": "REC-1001.txt",
+   "new_id": "REC-98450"
+  },
+  "doc_037.txt": {
+   "truth": "CASE_09",
+   "original": "INV-1009-B.txt",
+   "new_id": "INV-31559"
+  },
+  "doc_038.txt": {
+   "truth": "CASE_08",
+   "original": "REC-1008.txt",
+   "new_id": "REC-23178"
+  },
+  "doc_039.txt": {
+   "truth": "CASE_10",
+   "original": "LED-1010.txt",
+   "new_id": "LED-79242"
+  },
+  "doc_040.txt": {
+   "truth": "CASE_06",
+   "original": "INV-1006.txt",
+   "new_id": "INV-98413"
+  },
+  "doc_041.txt": {
+   "truth": "CASE_06",
+   "original": "BNK-1006.txt",
+   "new_id": "BNK-59245"
+  },
+  "doc_042.txt": {
+   "truth": "CASE_13",
+   "original": "REC-1013.txt",
+   "new_id": "REC-79398"
+  },
+  "doc_043.txt": {
+   "truth": "CASE_03",
+   "original": "BNK-1003.txt",
+   "new_id": "BNK-12906"
+  },
+  "doc_044.txt": {
+   "truth": "CASE_04",
+   "original": "LED-1004.txt",
+   "new_id": "LED-75187"
+  },
+  "doc_045.txt": {
+   "truth": "CASE_11",
+   "original": "INV-1011.txt",
+   "new_id": "INV-33619"
+  },
+  "doc_046.txt": {
+   "truth": "CASE_02",
+   "original": "BNK-1002.txt",
+   "new_id": "BNK-50320"
+  },
+  "doc_047.txt": {
+   "truth": "CASE_10",
+   "original": "BNK-1010.txt",
+   "new_id": "BNK-55802"
+  },
+  "doc_048.txt": {
+   "truth": "CASE_13",
+   "original": "LED-1013.txt",
+   "new_id": "LED-11627"
+  },
+  "doc_049.txt": {
+   "truth": "CASE_04",
+   "original": "PO-1004.txt",
+   "new_id": "PO-15226"
+  },
+  "doc_050.txt": {
+   "truth": "CASE_08",
+   "original": "INV-1008.txt",
+   "new_id": "INV-68290"
+  },
+  "doc_051.txt": {
+   "truth": "CASE_01",
+   "original": "LED-1001.txt",
+   "new_id": "LED-39140"
+  },
+  "doc_052.txt": {
+   "truth": "CASE_09",
+   "original": "INV-1009-A.txt",
+   "new_id": "INV-79746"
+  },
+  "doc_053.txt": {
+   "truth": "CASE_07",
+   "original": "INV-1007.txt",
+   "new_id": "INV-16023"
+  },
+  "doc_054.txt": {
+   "truth": "CASE_04",
+   "original": "REC-1004.txt",
+   "new_id": "REC-21078"
+  },
+  "doc_055.txt": {
+   "truth": "CASE_14",
+   "original": "INV-1014.txt",
+   "new_id": "INV-35047"
+  },
+  "doc_056.txt": {
+   "truth": "CASE_11",
+   "original": "REC-1011.txt",
+   "new_id": "REC-15268"
+  },
+  "doc_057.txt": {
+   "truth": "CASE_07",
+   "original": "BNK-1007.txt",
+   "new_id": "BNK-62846"
+  },
+  "doc_058.txt": {
+   "truth": "CASE_12",
+   "original": "BNK-1012.txt",
+   "new_id": "BNK-74654"
+  },
+  "doc_059.txt": {
+   "truth": "CASE_06",
+   "original": "LED-1006.txt",
+   "new_id": "LED-18464"
+  },
+  "doc_060.txt": {
+   "truth": "CASE_04",
+   "original": "BNK-1004.txt",
+   "new_id": "BNK-66333"
+  },
+  "doc_061.txt": {
+   "truth": "CASE_09",
+   "original": "BNK-1009.txt",
+   "new_id": "BNK-36557"
+  },
+  "doc_062.txt": {
+   "truth": "CASE_12",
+   "original": "INV-1012.txt",
+   "new_id": "INV-96326"
+  },
+  "doc_063.txt": {
+   "truth": "CASE_14",
+   "original": "PO-1014.txt",
+   "new_id": "PO-54952"
+  },
+  "doc_064.txt": {
+   "truth": "CASE_04",
+   "original": "INV-1004.txt",
+   "new_id": "INV-13513"
+  },
+  "doc_065.txt": {
+   "truth": "CASE_02",
+   "original": "PO-1002.txt",
+   "new_id": "PO-75791"
+  },
+  "doc_066.txt": {
+   "truth": "CASE_05",
+   "original": "LED-1005.txt",
+   "new_id": "LED-55770"
+  },
+  "doc_067.txt": {
+   "truth": "CASE_09",
+   "original": "PO-1009.txt",
+   "new_id": "PO-91116"
+  },
+  "doc_068.txt": {
+   "truth": "MULTI:CASE_01,CASE_02,CASE_04,CASE_08",
+   "original": "mp_statement",
+   "new_id": "BNK-78056"
+  },
+  "doc_069.txt": {
+   "truth": "DIST_PO",
+   "original": "dist_po",
+   "new_id": "PO-19740"
+  },
+  "doc_070.txt": {
+   "truth": "DIST_2",
+   "original": "dist_inv2",
+   "new_id": "INV-24423"
+  },
+  "doc_071.txt": {
+   "truth": "DIST_1",
+   "original": "dist_inv1",
+   "new_id": "INV-61960"
+  }
+ },
+ "idmap": {
+  "BNK-1001": "BNK-70658",
+  "INV-1001": "INV-63147",
+  "PO-1001": "PO-92645",
+  "LED-1001": "LED-39140",
+  "REC-1001": "REC-98450",
+  "BNK-1002": "BNK-50320",
+  "INV-1002": "INV-93865",
+  "PO-1002": "PO-75791",
+  "LED-1002": "LED-94393",
+  "REC-1002": "REC-64864",
+  "BNK-1003": "BNK-12906",
+  "PO-1003": "PO-16533",
+  "INV-1003-A": "INV-84263",
+  "INV-1003-B": "INV-46281",
+  "LED-1003": "LED-71202",
+  "REC-1003": "REC-86581",
+  "BNK-1004": "BNK-66333",
+  "INV-1004": "INV-13513",
+  "PO-1004": "PO-15226",
+  "LED-1004": "LED-75187",
+  "REC-1004": "REC-21078",
+  "BNK-1005": "BNK-33247",
+  "INV-1005": "INV-90387",
+  "PO-1005": "PO-79855",
+  "LED-1005": "LED-55770",
+  "REC-1005": "REC-20048",
+  "BNK-1006": "BNK-59245",
+  "INV-1006": "INV-98413",
+  "PO-1006": "PO-52232",
+  "LED-1006": "LED-18464",
+  "BNK-1007": "BNK-62846",
+  "INV-1007": "INV-16023",
+  "PO-1007": "PO-41858",
+  "LED-1007": "LED-10898",
+  "REC-1007": "REC-76283",
+  "BNK-1008": "BNK-46510",
+  "INV-1008": "INV-68290",
+  "PO-1008": "PO-77099",
+  "LED-1008": "LED-81419",
+  "REC-1008": "REC-23178",
+  "BNK-1009": "BNK-36557",
+  "PO-1009": "PO-91116",
+  "INV-1009-A": "INV-79746",
+  "INV-1009-B": "INV-31559",
+  "LED-1009": "LED-45247",
+  "BNK-1010": "BNK-55802",
+  "INV-1010": "INV-82776",
+  "PO-1010": "PO-64567",
+  "LED-1010": "LED-79242",
+  "REC-1010": "REC-46301",
+  "BNK-1011": "BNK-29140",
+  "INV-1011": "INV-33619",
+  "PO-1011": "PO-14513",
+  "LED-1011": "LED-61696",
+  "REC-1011": "REC-15268",
+  "BNK-1012": "BNK-74654",
+  "INV-1012": "INV-96326",
+  "PO-1012": "PO-94562",
+  "LED-1012": "LED-85111",
+  "BNK-1013": "BNK-79834",
+  "INV-1013": "INV-44755",
+  "PO-1013": "PO-44811",
+  "LED-1013": "LED-11627",
+  "REC-1013": "REC-79398",
+  "BNK-1014": "BNK-52891",
+  "INV-1014": "INV-35047",
+  "PO-1014": "PO-54952",
+  "LED-1014": "LED-95393",
+  "REC-1014": "REC-44638"
+ }
+}

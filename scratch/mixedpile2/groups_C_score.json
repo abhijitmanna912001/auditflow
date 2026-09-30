@@ -1,0 +1,14 @@
+{
+ "correct": 59,
+ "wrong": 0,
+ "unplaced": 8,
+ "splits": {},
+ "merges": {},
+ "exact_cases": 12,
+ "distractors": {
+  "PO-19740": "unplaced",
+  "INV-24423": "unplaced",
+  "INV-61960": "unplaced"
+ },
+ "false_missing_risk": []
+}

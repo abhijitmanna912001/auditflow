@@ -1,0 +1,8 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-55770
+Posting Date: 2026-08-18
+Vendor: GreenRoute Logistics Pvt. Ltd.
+Invoice Reference: INV-90387
+Account: Freight and Logistics Expense and Input GST
+Debit Amount: INR 59,000.00
+Narration: Settlement of archive-records transport invoice.

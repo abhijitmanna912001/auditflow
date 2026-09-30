@@ -1,0 +1,42 @@
+[
+ {
+  "doc_id": "PO-19740",
+  "type": "purchase_order",
+  "vendor": "CloudDesk Software India Pvt. Ltd.",
+  "amount": 93220.0,
+  "tax_amount": 14220.0,
+  "currency": "INR",
+  "date": "2026-08-04",
+  "references": [],
+  "case_id": "PILE",
+  "extraction_notes": null
+ },
+ {
+  "doc_id": "INV-24423",
+  "type": "invoice",
+  "vendor": "Horizon Office Systems Pvt. Ltd.",
+  "amount": 47495.0,
+  "tax_amount": 7245.0,
+  "currency": "INR",
+  "date": "2026-07-12",
+  "references": [
+   "PO-44324"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": "Also carries supplier invoice number HOS/2026-27/137; PO-44324 referenced does not match any PO in this batch."
+ },
+ {
+  "doc_id": "INV-61960",
+  "type": "invoice",
+  "vendor": "Horizon Office Systems Pvt. Ltd.",
+  "amount": 46905.0,
+  "tax_amount": 7155.0,
+  "currency": "INR",
+  "date": "2026-07-06",
+  "references": [
+   "PO-25840"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": "Also carries supplier invoice number HOS/2026-27/131; PO-25840 referenced does not match any PO in this batch."
+ }
+]

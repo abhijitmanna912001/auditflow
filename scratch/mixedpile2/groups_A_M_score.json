@@ -1,0 +1,17 @@
+{
+ "correct": 52,
+ "wrong": 15,
+ "unplaced": 0,
+ "splits": {},
+ "merges": {
+  "G02": [
+   "CASE_01",
+   "CASE_02",
+   "CASE_04",
+   "CASE_08"
+  ]
+ },
+ "exact_cases": 10,
+ "multi_payment": "in G02 with truths ['CASE_01', 'CASE_02', 'CASE_04', 'CASE_08', 'MULTI:CASE_01,CASE_02,CASE_04,CASE_08']",
+ "false_missing_risk": []
+}

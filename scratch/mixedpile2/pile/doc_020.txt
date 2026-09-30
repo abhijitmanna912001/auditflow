@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-29140
+Transaction Date: 2026-08-12
+Account Holder: AuditFlow Operations
+Beneficiary: Apex Process Systems Pvt. Ltd.
+Narration: NEFT settlement of INV-33619
+Debit Amount: INR 129,800.00
+Status: Successful

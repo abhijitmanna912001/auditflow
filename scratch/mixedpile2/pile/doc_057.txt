@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-62846
+Transaction Date: 2026-07-20
+Account Holder: AuditFlow Operations
+Beneficiary: Orchid Workspace Solutions Pvt. Ltd.
+Narration: NEFT settlement of INV-16023 / PO-41858
+Debit Amount: INR 53,100.00
+Status: Successful

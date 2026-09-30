@@ -1,0 +1,15 @@
+TAX INVOICE
+Document ID: INV-24423
+Supplier Invoice No: HOS/2026-27/137
+Invoice Date: 2026-07-12
+Vendor: Horizon Office Systems Pvt. Ltd.
+Bill To: AuditFlow Operations, Bengaluru
+PO Reference: PO-44324
+
+Description: Height-adjustable desks, walnut top
+Quantity: 5 units at INR 8,050.00 each
+Subtotal: INR 40,250.00
+GST @ 18%: INR 7,245.00
+Invoice Total: INR 47,495.00
+
+Payment Terms: Net 30 days from invoice date.

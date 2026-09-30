@@ -1,0 +1,12 @@
+GENERAL LEDGER ENTRY
+Document ID: LED-11627
+Entry Date: 2026-07-18
+Account: Cloud Infrastructure Expense
+Vendor: Meridian Cloud Services Inc.
+Reference: INV-44755 / PO-44811
+
+Debit: INR 415,000.00
+Credit: Bank - Operating Account
+Currency: INR
+
+Description: Annual cloud infrastructure subscription renewal

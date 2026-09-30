@@ -1,0 +1,23 @@
+[
+ {
+  "doc_id": "BNK-78056",
+  "type": "bank_statement",
+  "vendor": "AuditFlow Operations",
+  "amount": null,
+  "tax_amount": null,
+  "currency": "INR",
+  "date": null,
+  "references": [
+   "INV-13513",
+   "PO-15226",
+   "INV-63147",
+   "PO-92645",
+   "INV-93865",
+   "PO-75791",
+   "INV-68290",
+   "PO-77099"
+  ],
+  "case_id": "PILE",
+  "extraction_notes": "Statement contains 4 separate payment transactions (2026-07-10, 2026-07-25, 2026-09-01, 2026-09-03) to different beneficiaries with different amounts; a single amount/date/vendor cannot be assigned to the whole document. Amounts per transaction: INR 82,500.00 (Vertex Print Solutions), INR 47,200.00 (Horizon Office Systems), INR 94,400.00 (CloudDesk Software India), INR 106,200.00 (BluePeak Training Services). No tax amounts stated in any transaction."
+ }
+]

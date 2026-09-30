@@ -1,0 +1,8 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-55802
+Transaction Date: 2026-09-10
+Account Holder: AuditFlow Operations
+Beneficiary: Beacon IT Consulting Pvt. Ltd.
+Narration: NEFT payment against INV-82776 / PO-64567
+Debit Amount: INR 70,800.00
+Status: Successful

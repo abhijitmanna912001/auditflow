@@ -1,0 +1,12 @@
+BANK STATEMENT EXTRACT
+Transaction Reference: BNK-78056
+Account Holder: AuditFlow Operations
+Statement Period: 2026-07-01 to 2026-09-30
+Payments listed: 4
+
+1. Date: 2026-07-10 | Beneficiary: Vertex Print Solutions Pvt. Ltd. | NEFT payment against INV-13513 / PO-15226 | Debit: INR 82,500.00
+2. Date: 2026-07-25 | Beneficiary: Horizon Office Systems Pvt. Ltd. | NEFT payment against INV-63147 and PO-92645 | Debit: INR 47,200.00
+3. Date: 2026-09-01 | Beneficiary: CloudDesk Software India Pvt. Ltd. | NEFT settlement of INV-93865 / PO-75791 | Debit: INR 94,400.00
+4. Date: 2026-09-03 | Beneficiary: BluePeak Training Services Pvt. Ltd. | NEFT settlement of INV-68290 / PO-77099 | Debit: INR 106,200.00
+
+Status: All payments successful

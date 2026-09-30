@@ -1,0 +1,422 @@
+{
+ "groups": {
+  "G01": [
+   "BNK-12906",
+   "INV-46281",
+   "INV-84263",
+   "LED-71202",
+   "PO-16533",
+   "REC-86581"
+  ],
+  "G02": [
+   "BNK-70658",
+   "INV-63147",
+   "LED-39140",
+   "PO-92645",
+   "REC-98450"
+  ],
+  "G03": [
+   "BNK-74654",
+   "INV-96326",
+   "LED-85111",
+   "PO-94562"
+  ],
+  "G04": [
+   "BNK-79834",
+   "INV-44755",
+   "LED-11627",
+   "PO-44811",
+   "REC-79398"
+  ],
+  "G05": [
+   "BNK-59245",
+   "INV-98413",
+   "LED-18464",
+   "PO-52232"
+  ],
+  "G06": [
+   "BNK-62846",
+   "INV-16023",
+   "LED-10898",
+   "PO-41858",
+   "REC-76283"
+  ],
+  "G07": [
+   "BNK-55802",
+   "INV-82776",
+   "LED-79242",
+   "PO-64567",
+   "REC-46301"
+  ],
+  "G08": [
+   "BNK-50320",
+   "INV-93865",
+   "LED-94393",
+   "PO-75791",
+   "REC-64864"
+  ],
+  "G09": [
+   "BNK-46510",
+   "INV-68290",
+   "LED-81419",
+   "PO-77099",
+   "REC-23178"
+  ],
+  "G10": [
+   "BNK-36557",
+   "INV-31559",
+   "INV-79746",
+   "LED-45247",
+   "PO-91116"
+  ],
+  "G11": [
+   "BNK-66333",
+   "INV-13513",
+   "LED-75187",
+   "PO-15226",
+   "REC-21078"
+  ],
+  "G12": [
+   "BNK-52891",
+   "INV-35047",
+   "LED-95393",
+   "PO-54952",
+   "REC-44638"
+  ]
+ },
+ "unplaced": [
+  "BNK-29140",
+  "BNK-33247",
+  "BNK-78056",
+  "INV-24423",
+  "INV-33619",
+  "INV-61960",
+  "INV-90387",
+  "LED-55770",
+  "LED-61696",
+  "PO-19740",
+  "REC-15268",
+  "REC-20048"
+ ],
+ "method": {
+  "INV-46281": "reference",
+  "INV-84263": "reference",
+  "PO-16533": "reference",
+  "INV-63147": "reference",
+  "PO-92645": "reference",
+  "INV-96326": "reference",
+  "PO-94562": "reference",
+  "INV-44755": "reference",
+  "PO-44811": "reference",
+  "INV-98413": "reference",
+  "PO-52232": "reference",
+  "INV-16023": "reference",
+  "PO-41858": "reference",
+  "INV-82776": "reference",
+  "PO-64567": "reference",
+  "INV-93865": "reference",
+  "PO-75791": "reference",
+  "INV-68290": "reference",
+  "PO-77099": "reference",
+  "INV-31559": "reference",
+  "INV-79746": "reference",
+  "PO-91116": "reference",
+  "INV-13513": "reference",
+  "PO-15226": "reference",
+  "INV-35047": "reference",
+  "PO-54952": "reference",
+  "BNK-12906": "model",
+  "BNK-29140": "unplaced",
+  "BNK-33247": "unplaced",
+  "BNK-36557": "model",
+  "BNK-46510": "model",
+  "BNK-50320": "model",
+  "BNK-52891": "model",
+  "BNK-55802": "model",
+  "BNK-59245": "model",
+  "BNK-62846": "model",
+  "BNK-66333": "model",
+  "BNK-70658": "model",
+  "BNK-74654": "model",
+  "BNK-78056": "unplaced",
+  "BNK-79834": "model",
+  "INV-24423": "unplaced",
+  "INV-33619": "unplaced",
+  "INV-61960": "unplaced",
+  "INV-90387": "unplaced",
+  "LED-10898": "model",
+  "LED-11627": "model",
+  "LED-18464": "model",
+  "LED-39140": "model",
+  "LED-45247": "model",
+  "LED-55770": "unplaced",
+  "LED-61696": "unplaced",
+  "LED-71202": "model",
+  "LED-75187": "model",
+  "LED-79242": "model",
+  "LED-81419": "model",
+  "LED-85111": "model",
+  "LED-94393": "model",
+  "LED-95393": "model",
+  "PO-19740": "unplaced",
+  "REC-15268": "unplaced",
+  "REC-20048": "unplaced",
+  "REC-21078": "model",
+  "REC-23178": "model",
+  "REC-44638": "model",
+  "REC-46301": "model",
+  "REC-64864": "model",
+  "REC-76283": "model",
+  "REC-79398": "model",
+  "REC-86581": "model",
+  "REC-98450": "model"
+ },
+ "model_calls": 1,
+ "model_assignments": [
+  {
+   "doc_id": "BNK-12906",
+   "group": "G01",
+   "reason": "Vendor Sterling Safety Supplies and amount 70800 INR match G01's invoices/PO for the same transaction."
+  },
+  {
+   "doc_id": "BNK-29140",
+   "group": "NONE",
+   "reason": "Vendor Apex Process Systems Pvt. Ltd. has no existing group in the batch to match against."
+  },
+  {
+   "doc_id": "BNK-33247",
+   "group": "NONE",
+   "reason": "Vendor GreenRoute Logistics Pvt. Ltd. has no existing group in the batch to match against."
+  },
+  {
+   "doc_id": "BNK-36557",
+   "group": "G10",
+   "reason": "Vendor Pioneer Industrial Supplies and amount 141600 INR match the invoices in G10 despite the noted PO discrepancy."
+  },
+  {
+   "doc_id": "BNK-46510",
+   "group": "G09",
+   "reason": "Vendor BluePeak Training Services and amount 106200 INR match G09's invoice/PO."
+  },
+  {
+   "doc_id": "BNK-50320",
+   "group": "G08",
+   "reason": "Vendor CloudDesk Software India and amount 94400 INR match G08's invoice/PO."
+  },
+  {
+   "doc_id": "BNK-52891",
+   "group": "G12",
+   "reason": "Vendor Sunrise Packaging Solutions and amount 246000 INR match G12's invoice/PO."
+  },
+  {
+   "doc_id": "BNK-55802",
+   "group": "G07",
+   "reason": "Vendor Beacon IT Consulting and amount 70800 INR match G07's invoice."
+  },
+  {
+   "doc_id": "BNK-59245",
+   "group": "G05",
+   "reason": "Vendor Meridian Network Components and amount 141600 INR match G05's invoice/PO."
+  },
+  {
+   "doc_id": "BNK-62846",
+   "group": "G06",
+   "reason": "Vendor Orchid Workspace Solutions and amount 53100 INR match G06's invoice, and narration references settlement of the invoice/PO."
+  },
+  {
+   "doc_id": "BNK-66333",
+   "group": "G11",
+   "reason": "Vendor Vertex Print Solutions and amount 82500 INR match G11's invoice amount, despite noted discrepancy with the receipt."
+  },
+  {
+   "doc_id": "BNK-70658",
+   "group": "G02",
+   "reason": "Vendor Horizon Office Systems and amount 47200 INR match G02's invoice/PO."
+  },
+  {
+   "doc_id": "BNK-74654",
+   "group": "G03",
+   "reason": "Vendor Nova Archive Storage and amount 236000 INR match G03's invoice/PO."
+  },
+  {
+   "doc_id": "BNK-78056",
+   "group": "NONE",
+   "reason": "This statement bundles four separate payments to different vendors/groups (G02, G08, G09, G11) and cannot be assigned to a single transaction group."
+  },
+  {
+   "doc_id": "BNK-79834",
+   "group": "G04",
+   "reason": "Vendor Meridian Cloud Services and amount 415000 INR match G04's PO-44811 amount, consistent with the noted currency discrepancy."
+  },
+  {
+   "doc_id": "INV-24423",
+   "group": "NONE",
+   "reason": "Vendor Horizon Office Systems but references PO-44324 (not matching G02's PO-92645) and a different amount, indicating a separate transaction."
+  },
+  {
+   "doc_id": "INV-33619",
+   "group": "NONE",
+   "reason": "Vendor Apex Process Systems Pvt. Ltd. has no existing group to match against."
+  },
+  {
+   "doc_id": "INV-61960",
+   "group": "NONE",
+   "reason": "Vendor Horizon Office Systems but references PO-25840 (not matching G02's PO-92645) and a different amount, indicating a separate transaction."
+  },
+  {
+   "doc_id": "INV-90387",
+   "group": "NONE",
+   "reason": "Vendor GreenRoute Logistics Pvt. Ltd. has no existing group to match against."
+  },
+  {
+   "doc_id": "LED-10898",
+   "group": "G06",
+   "reason": "Vendor Orchid Workspace Solutions and amount 53100 INR match G06's invoice."
+  },
+  {
+   "doc_id": "LED-11627",
+   "group": "G04",
+   "reason": "Vendor Meridian Cloud Services and amount 415000 INR match G04's PO amount."
+  },
+  {
+   "doc_id": "LED-18464",
+   "group": "G05",
+   "reason": "Vendor Meridian Network Components and amount 141600 INR match G05's invoice/PO."
+  },
+  {
+   "doc_id": "LED-39140",
+   "group": "G02",
+   "reason": "Vendor Horizon Office Systems and amount 47200 INR match G02's invoice/PO."
+  },
+  {
+   "doc_id": "LED-45247",
+   "group": "G10",
+   "reason": "Vendor Pioneer Industrial Supplies and amount 141600 INR match the invoices in G10."
+  },
+  {
+   "doc_id": "LED-55770",
+   "group": "NONE",
+   "reason": "Vendor GreenRoute Logistics Pvt. Ltd. has no existing group to match against."
+  },
+  {
+   "doc_id": "LED-61696",
+   "group": "NONE",
+   "reason": "Vendor Apex Process Systems Pvt. Ltd. has no existing group to match against."
+  },
+  {
+   "doc_id": "LED-71202",
+   "group": "G01",
+   "reason": "Vendor Sterling Safety Supplies and amount 70800 INR match G01's invoices/PO."
+  },
+  {
+   "doc_id": "LED-75187",
+   "group": "G11",
+   "reason": "Vendor Vertex Print Solutions and amount 82500 INR match G11's invoice amount."
+  },
+  {
+   "doc_id": "LED-79242",
+   "group": "G07",
+   "reason": "Vendor Beacon IT Consulting and amount 70800 INR match G07's invoice."
+  },
+  {
+   "doc_id": "LED-81419",
+   "group": "G09",
+   "reason": "Vendor BluePeak Training Services and amount 106200 INR match G09's invoice/PO."
+  },
+  {
+   "doc_id": "LED-85111",
+   "group": "G03",
+   "reason": "Vendor Nova Archive Storage and amount 236000 INR match G03's invoice/PO."
+  },
+  {
+   "doc_id": "LED-94393",
+   "group": "G08",
+   "reason": "Vendor CloudDesk Software India and amount 94400 INR match G08's invoice/PO."
+  },
+  {
+   "doc_id": "LED-95393",
+   "group": "G12",
+   "reason": "Vendor Sunrise Packaging Solutions and amount 246000 INR match G12's invoice/PO."
+  },
+  {
+   "doc_id": "PO-19740",
+   "group": "NONE",
+   "reason": "Vendor CloudDesk Software India but amount 93220 INR and date differ from G08's PO-75791 (94400 INR), suggesting a distinct purchase order."
+  },
+  {
+   "doc_id": "REC-15268",
+   "group": "NONE",
+   "reason": "Vendor Apex Process Systems Pvt. Ltd. has no existing group to match against."
+  },
+  {
+   "doc_id": "REC-20048",
+   "group": "NONE",
+   "reason": "Vendor GreenRoute Logistics Pvt. Ltd. has no existing group to match against."
+  },
+  {
+   "doc_id": "REC-21078",
+   "group": "G11",
+   "reason": "Vendor Vertex Print Solutions and amount 75000 INR match G11's PO-15226 total."
+  },
+  {
+   "doc_id": "REC-23178",
+   "group": "G09",
+   "reason": "Vendor BluePeak Training Services and amount 106200 INR match G09's invoice/PO."
+  },
+  {
+   "doc_id": "REC-44638",
+   "group": "G12",
+   "reason": "Vendor Sunrise Packaging Solutions and date 2026-08-11 fall within G12's transaction timeline despite missing amount."
+  },
+  {
+   "doc_id": "REC-46301",
+   "group": "G07",
+   "reason": "Vendor Beacon IT Consulting and amount 70800 INR match G07's invoice."
+  },
+  {
+   "doc_id": "REC-64864",
+   "group": "G08",
+   "reason": "Vendor CloudDesk Software India and amount 94400 INR match G08's invoice/PO."
+  },
+  {
+   "doc_id": "REC-76283",
+   "group": "G06",
+   "reason": "Vendor Atlas Facilities Care and amount 53100 INR match G06's PO-41858, the vendor listed on that purchase order."
+  },
+  {
+   "doc_id": "REC-79398",
+   "group": "G04",
+   "reason": "Vendor Meridian Cloud Services and date 2026-07-15 align with G04's invoice date despite missing amount."
+  },
+  {
+   "doc_id": "REC-86581",
+   "group": "G01",
+   "reason": "Vendor Sterling Safety Supplies and amount 70800 INR match G01's invoices/PO."
+  },
+  {
+   "doc_id": "REC-98450",
+   "group": "G02",
+   "reason": "Vendor Horizon Office Systems and amount 47200 INR match G02's invoice/PO."
+  }
+ ],
+ "unresolved_refs": {
+  "G01": [],
+  "G02": [],
+  "G03": [
+   "NAS/2026/Q1/77"
+  ],
+  "G04": [],
+  "G05": [],
+  "G06": [],
+  "G07": [],
+  "G08": [],
+  "G09": [
+   "BPT/2026/0805"
+  ],
+  "G10": [],
+  "G11": [
+   "VPS/2026/0619"
+  ],
+  "G12": []
+ }
+}

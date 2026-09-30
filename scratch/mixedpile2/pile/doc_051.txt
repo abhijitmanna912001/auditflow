@@ -1,0 +1,8 @@
+GENERAL LEDGER ENTRY
+Voucher No: LED-39140
+Posting Date: 2026-07-25
+Vendor: Horizon Office Systems Pvt. Ltd.
+Supporting Documents: PO-92645, INV-63147, REC-98450, BNK-70658
+Account: Office Furniture Expense and Input GST
+Debit Amount: INR 47,200.00
+Narration: Payment for ten ergonomic visitor chairs.
