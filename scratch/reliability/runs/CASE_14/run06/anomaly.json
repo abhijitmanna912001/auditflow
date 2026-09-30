@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "findings": [
+    {
+      "type": "tax_mismatch",
+      "documents": [
+        "INV-1014"
+      ],
+      "severity": "medium",
+      "confidence": 0.76,
+      "explanation": "On the invoice alone, the stated GST of INR 36,000 at 18% implies a subtotal of INR 200,000 and a total of INR 236,000, which does not reconcile with the stated total of INR 246,000 (18% of the implied subtotal 208,474.58 would be 37,525.42), a discrepancy of INR 10,000."
+    }
+  ]
+}

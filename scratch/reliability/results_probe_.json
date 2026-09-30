@@ -1,0 +1,14 @@
+[
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "tax_mismatch"
+    ],
+    "case": "CASE_14",
+    "tag": "probe"
+  }
+]

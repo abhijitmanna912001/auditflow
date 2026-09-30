@@ -1,0 +1,73 @@
+[
+  {
+    "doc_id": "BNK-1014",
+    "type": "bank_statement",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-14",
+    "references": [
+      "INV-1014",
+      "SPS/2026/2208"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "Bank statement does not break out tax separately; payment amount matches invoice total. SPS/2026/2208 is the supplier invoice number cited alongside INV-1014."
+  },
+  {
+    "doc_id": "INV-1014",
+    "type": "invoice",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": 36000.0,
+    "currency": "INR",
+    "date": "2026-08-09",
+    "references": [
+      "PO-1014"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "GST 18% explicitly stated as 36,000.00 on subtotal of 200,000.00; invoice total 246,000.00 confirmed. Supplier's own invoice number SPS/2026/2208 is this document's own identifier, not treated as a reference to another document."
+  },
+  {
+    "doc_id": "LED-1014",
+    "type": "ledger_entry",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-14",
+    "references": [
+      "INV-1014",
+      "PO-1014"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "Ledger entry records debit/credit without separate tax breakdown."
+  },
+  {
+    "doc_id": "PO-1014",
+    "type": "purchase_order",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-01",
+    "references": [],
+    "case_id": "CASE_14",
+    "extraction_notes": "Purchase order amount stated as total 246,000.00 with no separate tax line item shown."
+  },
+  {
+    "doc_id": "REC-1014",
+    "type": "receipt",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": null,
+    "tax_amount": null,
+    "currency": null,
+    "date": "2026-08-11",
+    "references": [
+      "INV-1014",
+      "PO-1014"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "Document is a Goods Receipt Note confirming quantity received; no monetary amount, currency, or tax is stated, so classified under closest available type 'receipt'."
+  }
+]

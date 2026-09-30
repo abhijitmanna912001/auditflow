@@ -1,0 +1,16 @@
+{
+  "transaction_id": "TXN_03",
+  "case_id": "CASE_03",
+  "findings": [
+    {
+      "type": "duplicate_invoice",
+      "documents": [
+        "INV-1003-A",
+        "INV-1003-B"
+      ],
+      "severity": "medium",
+      "confidence": 0.95,
+      "explanation": "Two separate invoice scans (INV-1003-A and INV-1003-B) were received for the identical supplier invoice number SSS/2026/188, same date 2026-07-16 and same amount of 70,800 INR, with no cancellation or explanatory note resolving the duplication, though only one payment (BNK-1003) and one ledger entry (LED-1003) exist so no double payment occurred."
+    }
+  ]
+}

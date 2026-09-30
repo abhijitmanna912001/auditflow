@@ -1,0 +1,74 @@
+[
+  {
+    "doc_id": "BNK-1014",
+    "type": "bank_statement",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-14",
+    "references": [
+      "INV-1014",
+      "SPS/2026/2208"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "Bank statement does not break out tax separately; amount reflects total payment for INV-1014."
+  },
+  {
+    "doc_id": "INV-1014",
+    "type": "invoice",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": 36000.0,
+    "currency": "INR",
+    "date": "2026-08-09",
+    "references": [
+      "PO-1014",
+      "SPS/2026/2208"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "GST @18% explicitly stated as separate line item; supplier's own invoice number SPS/2026/2208 included as an additional identifier/reference."
+  },
+  {
+    "doc_id": "LED-1014",
+    "type": "ledger_entry",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-14",
+    "references": [
+      "INV-1014",
+      "PO-1014"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "Ledger entry records total debit amount; no separate tax line stated."
+  },
+  {
+    "doc_id": "PO-1014",
+    "type": "purchase_order",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-01",
+    "references": [],
+    "case_id": "CASE_14",
+    "extraction_notes": "Purchase order amount is total; no tax breakdown provided. No references to other documents cited on this PO itself."
+  },
+  {
+    "doc_id": "REC-1014",
+    "type": "receipt",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": null,
+    "tax_amount": null,
+    "currency": null,
+    "date": "2026-08-11",
+    "references": [
+      "INV-1014",
+      "PO-1014"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "Document is a goods receipt note confirming delivery of quantities; it does not state a monetary amount, tax, or currency."
+  }
+]

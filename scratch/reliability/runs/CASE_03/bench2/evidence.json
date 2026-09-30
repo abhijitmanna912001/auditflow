@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_03",
+  "case_id": "CASE_03",
+  "documents": [
+    "PO-1003",
+    "INV-1003-A",
+    "INV-1003-B",
+    "REC-1003",
+    "BNK-1003",
+    "LED-1003"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.88,
+  "notes": "Full document chain present: purchase order, goods receipt, bank payment, and ledger entry all reference PO-1003 and supplier invoice SSS/2026/188 with consistent amounts (70,800 INR) and a logical date sequence (PO 07-12, invoice 07-16, receipt 07-19, payment/ledger 08-10). However, two invoice scans (INV-1003-A and INV-1003-B) were received for the same supplier invoice number, date, and amount, flagged by intake as a potential duplicate payment risk. Only one bank transaction (BNK-1003) and one ledger entry (LED-1003) exist, indicating a single payment was made despite the duplicate scans, but the duplication itself is not resolved by any document confirming why two scans were submitted (e.g., no explanation or cancellation note for the duplicate is present), so this is treated as a verification concern rather than a missing document type. All expected supporting document types for this vendor (PO, invoice, receipt, bank statement, ledger entry) are present, so confidence is high but not maximal given the unresolved duplicate-invoice anomaly."
+}

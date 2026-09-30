@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "LED-1014",
+    "BNK-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.97,
+  "notes": "Full document chain present: purchase order (PO-1014), invoice (INV-1014) referencing the PO, goods receipt (REC-1014) referencing both invoice and PO, ledger entry (LED-1014) referencing both, and bank statement (BNK-1014) referencing the invoice and the supplier's own invoice number. Vendor names and amounts (246,000 INR) are consistent across PO, invoice, ledger, and bank statement, and the document dates follow a logical sequence (PO 08-01 -> invoice 08-09 -> receipt 08-11 -> ledger/bank 08-14). Tax amount of 36,000 INR is only explicitly broken out on the invoice, which is normal since other documents state single consolidated amounts rather than separate tax lines. No expected document type is absent, so this transaction is well-supported."
+}

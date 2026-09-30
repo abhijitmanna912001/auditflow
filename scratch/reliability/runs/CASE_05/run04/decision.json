@@ -1,0 +1,31 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "action": "human_review",
+  "confidence": 0.85,
+  "reason": "Flagged for human review because TXN_05 has no purchase order on file despite both the invoice (INV-1005) and receipt (REC-1005) referencing PO-1005, and the receipt is dated 2026-07-18, three days before the invoice it supposedly satisfies (2026-07-21).",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "explanation": "No purchase order document exists in the case file at all, even though both INV-1005 and REC-1005 explicitly reference PO-1005, so the authorizing PO terms cannot be verified against the INR 59,000 payment."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "REC-1005",
+        "INV-1005"
+      ],
+      "severity": "medium",
+      "explanation": "REC-1005 is dated 2026-07-18, three days before the invoice it references (INV-1005, dated 2026-07-21), an illogical sequence where the receipt predates the invoice it purports to satisfy."
+    }
+  ]
+}

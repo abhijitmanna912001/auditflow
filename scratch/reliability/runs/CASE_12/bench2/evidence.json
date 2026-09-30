@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_12",
+  "case_id": "CASE_12",
+  "documents": [
+    "PO-1012",
+    "INV-1012",
+    "BNK-1012",
+    "LED-1012"
+  ],
+  "missing_evidence": [
+    "signed service acceptance receipt (required per invoice payment terms, not present among documents reviewed)"
+  ],
+  "evidence_confidence": 0.7,
+  "notes": "Purchase order, invoice, bank statement, and ledger entry are all present, mutually reference each other (INV-1012, PO-1012), and agree on vendor (Nova Archive Storage Pvt. Ltd.), amount (236000.0 INR), and tax treatment (18% GST of 36000.0 stated separately on PO and invoice, though not broken out on the bank statement or ledger). Dates follow a logical sequence: PO (2026-08-08) -> invoice (2026-08-30) -> bank payment and ledger posting (2026-09-20). However, the invoice explicitly states that payment terms require a signed service acceptance receipt, and no such document was provided. The successful bank payment and ledger entry do not substitute for this required receipt, since a completed payment only shows funds moved, not that the acceptance condition was satisfied. This missing document is the sole basis for reduced confidence; all other expected linkages (PO-invoice-payment-ledger) are internally consistent and fully documented."
+}

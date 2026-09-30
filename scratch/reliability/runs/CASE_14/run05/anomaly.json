@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "findings": [
+    {
+      "type": "tax_mismatch",
+      "documents": [
+        "INV-1014"
+      ],
+      "severity": "medium",
+      "confidence": 0.82,
+      "explanation": "INV-1014 states a total of 246,000 INR with GST @ 18% and a tax line of 36,000 INR, but the implied subtotal of 210,000 INR would yield 37,800 INR of tax (or a 36,000 INR tax implies a 200,000 INR subtotal and 236,000 INR total), so the document's own subtotal, rate, and total do not reconcile."
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "BNK-1009",
+    "type": "bank_statement",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-22",
+    "references": [
+      "PIS/2026/091",
+      "PO-1009"
+    ],
+    "case_id": "CASE_09",
+    "extraction_notes": "Bank statement does not break out tax separately; debit amount reflects total NEFT payment."
+  },
+  {
+    "doc_id": "INV-1009-A",
+    "type": "invoice",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": 21600.0,
+    "currency": "INR",
+    "date": "2026-07-15",
+    "references": [
+      "PIS/2026/091",
+      "PO-1009"
+    ],
+    "case_id": "CASE_09",
+    "extraction_notes": "Document explicitly identified as 'First received scan' of supplier invoice PIS/2026/091; appears to be a duplicate submission alongside INV-1009-B with identical amounts and date."
+  },
+  {
+    "doc_id": "INV-1009-B",
+    "type": "invoice",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": 21600.0,
+    "currency": "INR",
+    "date": "2026-07-15",
+    "references": [
+      "PIS/2026/091",
+      "PO-1009"
+    ],
+    "case_id": "CASE_09",
+    "extraction_notes": "Document explicitly identified as 'Second received scan' of supplier invoice PIS/2026/091; appears to be a duplicate submission alongside INV-1009-A with identical amounts and date."
+  },
+  {
+    "doc_id": "LED-1009",
+    "type": "ledger_entry",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-22",
+    "references": [
+      "PO-1009",
+      "BNK-1009",
+      "PIS/2026/091"
+    ],
+    "case_id": "CASE_09",
+    "extraction_notes": "Ledger entry lists a combined debit for Warehouse Supplies Expense and Input GST accounts without breaking out the tax portion separately."
+  },
+  {
+    "doc_id": "PO-1009",
+    "type": "purchase_order",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 118000.0,
+    "tax_amount": 18000.0,
+    "currency": "INR",
+    "date": "2026-07-03",
+    "references": [],
+    "case_id": "CASE_09",
+    "extraction_notes": "Purchase order total (INR 118,000.00) differs from the subsequently invoiced and paid amount (INR 141,600.00); no reference IDs to other documents are stated within this PO itself."
+  }
+]

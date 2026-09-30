@@ -1,0 +1,80 @@
+Case ID: CASE_11
+Transaction ID: TXN_11
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_11",
+  "case_id": "CASE_11",
+  "documents": [
+    "INV-1011",
+    "BNK-1011",
+    "LED-1011",
+    "REC-1011"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1011 referenced by INV-1011 and REC-1011 but the PO document itself was never provided)"
+  ],
+  "evidence_confidence": 0.45,
+  "notes": "All four core documents (invoice, bank statement, ledger entry, receipt) are present and share consistent vendor identity and cross-references (INV-1011, PO-1011). However, PO-1011 is referenced twice but never supplied as its own document, so the underlying purchase authorization cannot be verified. More significantly, BNK-1011 and LED-1011 both show INR 129,800.00 - an unexplained INR 11,800.00 excess over the INV-1011 invoice total of INR 118,000.00 - with no document in the set accounting for the difference (e.g., additional fees, a second invoice, or FX adjustment). The receipt confirms goods/service acceptance at the original invoice amount (118,000, described as 'including GST') but does not itself verify tax breakdown or reconcile with the higher payment amount. A successful-looking payment flow (bank debit + matching ledger entry) does not by itself establish that the payment terms or GST treatment were correctly satisfied, since neither document states a separate tax figure. Given the unresolved amount discrepancy and the missing PO document, this transaction is only moderately well-supported."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "INV-1011",
+    "type": "invoice",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 118000.0,
+    "tax_amount": 18000.0,
+    "currency": "INR",
+    "date": "2026-07-11",
+    "references": [
+      "PO-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "Supplier's internal invoice number (APS/2026/614) noted on document but not treated as a cross-document reference. GST explicitly stated as 18% (INR 18,000.00) on subtotal of INR 100,000.00."
+  },
+  {
+    "doc_id": "BNK-1011",
+    "type": "bank_statement",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 129800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-12",
+    "references": [
+      "INV-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "No tax amount stated on bank statement. Debit amount (INR 129,800.00) exceeds INV-1011 invoice total (INR 118,000.00) by INR 11,800.00 with no explanation given in this document - potential discrepancy for audit review."
+  },
+  {
+    "doc_id": "LED-1011",
+    "type": "ledger_entry",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 129800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-12",
+    "references": [
+      "INV-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "No separate tax line stated; account label references 'Input GST' but no explicit tax figure is broken out. Amount matches bank debit (INR 129,800.00) rather than invoice total (INR 118,000.00), an unexplained variance of INR 11,800.00."
+  },
+  {
+    "doc_id": "REC-1011",
+    "type": "receipt",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 118000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-18",
+    "references": [
+      "INV-1011",
+      "PO-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "Accepted value stated as INR 118,000.00 'including GST' but tax is not broken out separately on this document, so tax_amount left null."
+  }
+]

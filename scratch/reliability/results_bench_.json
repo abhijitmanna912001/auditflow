@@ -1,0 +1,515 @@
+[
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "auto_clear",
+    "got_types": [],
+    "case": "CASE_01",
+    "tag": "bench0"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "auto_clear",
+    "got_types": [],
+    "case": "CASE_02",
+    "tag": "bench0"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "duplicate_invoice"
+    ],
+    "case": "CASE_03",
+    "tag": "bench0"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "amount_mismatch"
+    ],
+    "case": "CASE_04",
+    "tag": "bench0"
+  },
+  {
+    "types_match": false,
+    "extra": [
+      "date_inconsistency"
+    ],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "missing_po"
+    ],
+    "case": "CASE_05",
+    "tag": "bench0"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "missing_receipt"
+    ],
+    "case": "CASE_06",
+    "tag": "bench0"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "vendor_mismatch"
+    ],
+    "case": "CASE_07",
+    "tag": "bench0"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency"
+    ],
+    "case": "CASE_08",
+    "tag": "bench0"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "amount_mismatch",
+      "duplicate_invoice",
+      "missing_receipt"
+    ],
+    "case": "CASE_09",
+    "tag": "bench0"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "vendor_mismatch"
+    ],
+    "case": "CASE_10",
+    "tag": "bench0"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "amount_mismatch",
+      "missing_po"
+    ],
+    "case": "CASE_11",
+    "tag": "bench0"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "missing_receipt"
+    ],
+    "case": "CASE_12",
+    "tag": "bench0"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "currency_mismatch"
+    ],
+    "case": "CASE_13",
+    "tag": "bench0"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "tax_mismatch"
+    ],
+    "case": "CASE_14",
+    "tag": "bench0"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "auto_clear",
+    "got_types": [],
+    "case": "CASE_01",
+    "tag": "bench1"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "auto_clear",
+    "got_types": [],
+    "case": "CASE_02",
+    "tag": "bench1"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "duplicate_invoice"
+    ],
+    "case": "CASE_03",
+    "tag": "bench1"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "amount_mismatch"
+    ],
+    "case": "CASE_04",
+    "tag": "bench1"
+  },
+  {
+    "types_match": false,
+    "extra": [
+      "date_inconsistency"
+    ],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "missing_po"
+    ],
+    "case": "CASE_05",
+    "tag": "bench1"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "missing_receipt"
+    ],
+    "case": "CASE_06",
+    "tag": "bench1"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "vendor_mismatch"
+    ],
+    "case": "CASE_07",
+    "tag": "bench1"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency"
+    ],
+    "case": "CASE_08",
+    "tag": "bench1"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "amount_mismatch",
+      "duplicate_invoice",
+      "missing_receipt"
+    ],
+    "case": "CASE_09",
+    "tag": "bench1"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "vendor_mismatch"
+    ],
+    "case": "CASE_10",
+    "tag": "bench1"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "amount_mismatch",
+      "missing_po"
+    ],
+    "case": "CASE_11",
+    "tag": "bench1"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "missing_receipt"
+    ],
+    "case": "CASE_12",
+    "tag": "bench1"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "currency_mismatch"
+    ],
+    "case": "CASE_13",
+    "tag": "bench1"
+  },
+  {
+    "types_match": false,
+    "extra": [],
+    "missing": [
+      "tax_mismatch"
+    ],
+    "action_match": false,
+    "action": "auto_clear",
+    "got_types": [],
+    "case": "CASE_14",
+    "tag": "bench1"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "auto_clear",
+    "got_types": [],
+    "case": "CASE_01",
+    "tag": "bench2"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "auto_clear",
+    "got_types": [],
+    "case": "CASE_02",
+    "tag": "bench2"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "duplicate_invoice"
+    ],
+    "case": "CASE_03",
+    "tag": "bench2"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "amount_mismatch"
+    ],
+    "case": "CASE_04",
+    "tag": "bench2"
+  },
+  {
+    "types_match": false,
+    "extra": [
+      "date_inconsistency"
+    ],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "missing_po"
+    ],
+    "case": "CASE_05",
+    "tag": "bench2"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "missing_receipt"
+    ],
+    "case": "CASE_06",
+    "tag": "bench2"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "vendor_mismatch"
+    ],
+    "case": "CASE_07",
+    "tag": "bench2"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency"
+    ],
+    "case": "CASE_08",
+    "tag": "bench2"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "amount_mismatch",
+      "duplicate_invoice",
+      "missing_receipt"
+    ],
+    "case": "CASE_09",
+    "tag": "bench2"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "vendor_mismatch"
+    ],
+    "case": "CASE_10",
+    "tag": "bench2"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "amount_mismatch",
+      "missing_po"
+    ],
+    "case": "CASE_11",
+    "tag": "bench2"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "missing_receipt"
+    ],
+    "case": "CASE_12",
+    "tag": "bench2"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "currency_mismatch"
+    ],
+    "case": "CASE_13",
+    "tag": "bench2"
+  },
+  {
+    "types_match": false,
+    "extra": [],
+    "missing": [
+      "tax_mismatch"
+    ],
+    "action_match": false,
+    "action": "auto_clear",
+    "got_types": [],
+    "case": "CASE_14",
+    "tag": "bench2"
+  }
+]

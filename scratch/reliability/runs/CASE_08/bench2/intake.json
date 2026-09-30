@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "INV-1008",
+    "type": "invoice",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": 16200.0,
+    "currency": "INR",
+    "date": "2026-08-05",
+    "references": [
+      "PO-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Amount is invoice total (subtotal INR 90,000 + GST). Supplier invoice number BPT/2026/0805 also present but doc_id taken as stated Document ID field."
+  },
+  {
+    "doc_id": "PO-1008",
+    "type": "purchase_order",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": 16200.0,
+    "currency": "INR",
+    "date": "2026-08-15",
+    "references": [],
+    "case_id": "CASE_08",
+    "extraction_notes": "PO issue date (2026-08-15) is later than the referenced invoice's date (2026-08-05, INV-1008), which is an unusual sequencing worth flagging for audit review. Amount reflects PO total including GST."
+  },
+  {
+    "doc_id": "REC-1008",
+    "type": "receipt",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-19",
+    "references": [
+      "PO-1008",
+      "INV-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Accepted value stated as INR 106,200.00 including GST but no separate tax line item is broken out, so tax_amount left null per instructions."
+  },
+  {
+    "doc_id": "BNK-1008",
+    "type": "bank_statement",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-03",
+    "references": [
+      "INV-1008",
+      "PO-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "No tax breakdown provided in bank statement narration; tax_amount left null."
+  },
+  {
+    "doc_id": "LED-1008",
+    "type": "ledger_entry",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-03",
+    "references": [
+      "PO-1008",
+      "INV-1008",
+      "REC-1008",
+      "BNK-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Ledger account combines Employee Training Expense and Input GST without a separately stated tax figure, so tax_amount left null."
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_13",
+  "case_id": "CASE_13",
+  "documents": [
+    "BNK-1013",
+    "INV-1013",
+    "LED-1013",
+    "PO-1013",
+    "REC-1013"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.55,
+  "notes": "All five expected document types (purchase_order, invoice, receipt, ledger_entry, bank_statement) are present and cross-reference each other via INV-1013/PO-1013/MCS-2026-4471, and PO, ledger, and bank amounts agree at 415,000 INR with a coherent date sequence (PO 07-02 -> invoice 07-14 -> receipt 07-15 -> ledger/bank 07-18). However, the invoice itself states 4,980.00 USD rather than INR, and no exchange rate or conversion basis is present in any document to reconcile this with the 415,000 INR figure used elsewhere. This currency mismatch is unresolved and cannot be assumed away; it is flagged rather than corrected. Additionally, no document in the set states a tax_amount, so tax treatment cannot be verified from the evidence provided. The receipt confirms service acceptance but carries no monetary value, so it cannot independently corroborate the invoice amount. Because the core financial figure on the invoice is inconsistent with the rest of the transaction and no supporting basis for that inconsistency exists, confidence is moderate despite full document coverage."
+}

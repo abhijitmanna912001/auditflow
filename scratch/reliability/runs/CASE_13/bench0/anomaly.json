@@ -1,0 +1,18 @@
+{
+  "transaction_id": "TXN_13",
+  "case_id": "CASE_13",
+  "findings": [
+    {
+      "type": "currency_mismatch",
+      "documents": [
+        "INV-1013",
+        "PO-1013",
+        "LED-1013",
+        "BNK-1013"
+      ],
+      "severity": "high",
+      "confidence": 0.95,
+      "explanation": "INV-1013 is denominated in USD 4,980.00 while PO-1013, LED-1013, and BNK-1013 all state INR 415,000.00, with no conversion rate or reconciliation note in any document."
+    }
+  ]
+}

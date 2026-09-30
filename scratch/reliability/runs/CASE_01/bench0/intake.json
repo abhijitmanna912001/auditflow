@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "BNK-1001",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+      "INV-1001",
+      "PO-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Bank statement narration references INV-1001 and PO-1001; no tax breakout provided on a payment transaction."
+  },
+  {
+    "doc_id": "INV-1001",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+      "PO-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Supplier's internal invoice number HOS/2026-27/118 also appears on document but primary Document ID field used as doc_id. GST amount explicitly stated."
+  },
+  {
+    "doc_id": "LED-1001",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+      "PO-1001",
+      "INV-1001",
+      "REC-1001",
+      "BNK-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Ledger entry lists combined account for Office Furniture Expense and Input GST but does not break out a separate tax amount."
+  },
+  {
+    "doc_id": "PO-1001",
+    "type": "purchase_order",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-01",
+    "references": [],
+    "case_id": "CASE_01",
+    "extraction_notes": "Purchase order does not reference any other document IDs; GST amount explicitly stated."
+  },
+  {
+    "doc_id": "REC-1001",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+      "PO-1001",
+      "INV-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Document is a Goods Receipt Note (delivery/acceptance confirmation), mapped to closest available type 'receipt'; total value stated as including GST but no separate tax line item given."
+  }
+]

@@ -1,0 +1,146 @@
+[
+  {
+    "types_match": false,
+    "extra": [
+      "date_inconsistency"
+    ],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "missing_po"
+    ],
+    "case": "CASE_05",
+    "tag": "run00"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "missing_po"
+    ],
+    "case": "CASE_05",
+    "tag": "run01"
+  },
+  {
+    "types_match": false,
+    "extra": [
+      "date_inconsistency"
+    ],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "missing_po"
+    ],
+    "case": "CASE_05",
+    "tag": "run02"
+  },
+  {
+    "types_match": false,
+    "extra": [
+      "date_inconsistency"
+    ],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "missing_po"
+    ],
+    "case": "CASE_05",
+    "tag": "run03"
+  },
+  {
+    "types_match": false,
+    "extra": [
+      "date_inconsistency"
+    ],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "missing_po"
+    ],
+    "case": "CASE_05",
+    "tag": "run04"
+  },
+  {
+    "types_match": false,
+    "extra": [
+      "date_inconsistency"
+    ],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "missing_po"
+    ],
+    "case": "CASE_05",
+    "tag": "run05"
+  },
+  {
+    "types_match": true,
+    "extra": [],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "missing_po"
+    ],
+    "case": "CASE_05",
+    "tag": "run06"
+  },
+  {
+    "types_match": false,
+    "extra": [
+      "date_inconsistency"
+    ],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "missing_po"
+    ],
+    "case": "CASE_05",
+    "tag": "run07"
+  },
+  {
+    "types_match": false,
+    "extra": [
+      "date_inconsistency"
+    ],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "missing_po"
+    ],
+    "case": "CASE_05",
+    "tag": "run08"
+  },
+  {
+    "types_match": false,
+    "extra": [
+      "date_inconsistency"
+    ],
+    "missing": [],
+    "action_match": true,
+    "action": "human_review",
+    "got_types": [
+      "date_inconsistency",
+      "missing_po"
+    ],
+    "case": "CASE_05",
+    "tag": "run09"
+  }
+]

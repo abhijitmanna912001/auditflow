@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "BNK-1001",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+      "INV-1001",
+      "PO-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Tax amount not broken out separately on bank statement; narration cites INV-1001 and PO-1001 as references."
+  },
+  {
+    "doc_id": "INV-1001",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+      "PO-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Document ID field used as doc_id; supplier's own invoice number (HOS/2026-27/118) noted separately but not used as doc_id per instructions."
+  },
+  {
+    "doc_id": "LED-1001",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+      "PO-1001",
+      "INV-1001",
+      "REC-1001",
+      "BNK-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Ledger entry combines expense and input GST accounts but does not break out tax amount separately."
+  },
+  {
+    "doc_id": "PO-1001",
+    "type": "purchase_order",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-01",
+    "references": [],
+    "case_id": "CASE_01",
+    "extraction_notes": "Purchase order does not cite other document references, though it is referenced by other documents in the case."
+  },
+  {
+    "doc_id": "REC-1001",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+      "PO-1001",
+      "INV-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Accepted value stated as inclusive of GST but tax portion is not itemized separately, so tax_amount left null."
+  }
+]

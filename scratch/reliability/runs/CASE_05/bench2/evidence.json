@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "BNK-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "PO-1005 (purchase order document itself; referenced by both INV-1005 and REC-1005 but never actually provided)"
+  ],
+  "evidence_confidence": 0.55,
+  "notes": "Invoice, bank statement, ledger entry, and receipt all agree on vendor (GreenRoute Logistics Pvt. Ltd.), amount (59,000 INR), and currency, and the bank/ledger entries both tie back to INV-1005, giving reasonable payment-side support. However, the underlying PO-1005 document is only referenced, never supplied, so the purchase authorization cannot be independently verified. Additionally, REC-1005 is dated 2026-07-18, three days before the invoice date (2026-07-21) it purports to support, which is a logically inverted sequence (receipt preceding the invoice it references) and raises doubt about whether this receipt genuinely evidences satisfaction of the invoice's terms rather than an unrelated or misdated event. The successful bank settlement (BNK-1005) confirms funds moved but does not, by itself, confirm that any receipt-based payment condition was actually met - only REC-1005 could establish that, and its date inconsistency undermines confidence in it doing so. Tax amount (9,000 INR) is stated only on the invoice and not corroborated by any other document, which is a minor extraction gap rather than a missing-document issue."
+}

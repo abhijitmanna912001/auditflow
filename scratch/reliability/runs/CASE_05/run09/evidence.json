@@ -1,0 +1,16 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "BNK-1005",
+    "INV-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "Purchase order PO-1005 referenced by both the invoice (INV-1005) and the receipt (REC-1005) is not present in the case file, so the underlying order terms and authorized amount cannot be independently verified.",
+    "No document in the set provides a standalone tax breakdown consistent with the invoice's stated GST of 9,000 (bank statement has no tax line, ledger lumps freight expense and input GST together, and the receipt only asserts GST is included without itemizing it)."
+  ],
+  "evidence_confidence": 0.55,
+  "notes": "All four documents cross-reference INV-1005 and share vendor GreenRoute Logistics Pvt. Ltd. and amount 59,000 INR, giving reasonable internal consistency. However, the referenced purchase order (PO-1005) itself is absent, so the transaction's originating authorization cannot be confirmed from evidence alone. Additionally, REC-1005 is dated 2026-07-18, which precedes the invoice date (2026-07-21) it references, an unusual sequence that raises questions about the receipt's role (e.g., goods receipt vs. payment receipt) rather than confirming payment-terms compliance. The receipt's claim that GST is 'included' is not independently verifiable since no tax line item is broken out on it, so it cannot be used to confirm the invoice's tax figure. The bank statement and ledger entry support settlement of the invoice amount but do not substitute for the missing PO or a itemized tax-bearing document."
+}

@@ -1,0 +1,24 @@
+{
+  "transaction_id": "TXN_06",
+  "case_id": "CASE_06",
+  "action": "human_review",
+  "confidence": 0.8,
+  "reason": "This transaction requires human review because there is no goods receipt or delivery confirmation document verifying that the goods covered by PO-1006/INV-1006 were actually received before the 2026-08-28 payment was made, a medium-severity finding with 0.8 confidence.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_receipt",
+      "documents": [
+        "PO-1006",
+        "INV-1006",
+        "BNK-1006",
+        "LED-1006"
+      ],
+      "severity": "medium",
+      "explanation": "No goods receipt or delivery confirmation document exists anywhere in the transaction evidence, so there is nothing verifying the goods covered by PO-1006/INV-1006 were actually received before the 2026-08-28 payment."
+    }
+  ]
+}

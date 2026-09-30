@@ -1,0 +1,28 @@
+{
+  "transaction_id": "TXN_11",
+  "case_id": "CASE_11",
+  "findings": [
+    {
+      "type": "amount_mismatch",
+      "documents": [
+        "INV-1011",
+        "REC-1011",
+        "BNK-1011",
+        "LED-1011"
+      ],
+      "severity": "high",
+      "confidence": 0.96,
+      "explanation": "The invoice and receipt both state INR 118,000.00 while the bank statement and ledger entry both record a debit of INR 129,800.00, an unexplained overpayment of INR 11,800.00 with no debit note or revised invoice supporting it."
+    },
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1011",
+        "REC-1011"
+      ],
+      "severity": "medium",
+      "confidence": 0.9,
+      "explanation": "PO-1011 is referenced by both the invoice and the receipt but no purchase order document was supplied at all, so approved amount, terms, and vendor cannot be verified."
+    }
+  ]
+}

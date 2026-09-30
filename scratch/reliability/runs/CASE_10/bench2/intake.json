@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "BNK-1010",
+    "type": "bank_statement",
+    "vendor": "Beacon IT Consulting Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-10",
+    "references": [
+      "INV-1010",
+      "PO-1010"
+    ],
+    "case_id": "CASE_10",
+    "extraction_notes": "Tax amount not broken out separately in bank statement narration."
+  },
+  {
+    "doc_id": "INV-1010",
+    "type": "invoice",
+    "vendor": "Beacon IT Consulting Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": 10800.0,
+    "currency": "INR",
+    "date": "2026-09-20",
+    "references": [
+      "PO-1010"
+    ],
+    "case_id": "CASE_10",
+    "extraction_notes": "Supplier Invoice No BIC/2026/920 is an internal vendor reference, not a cross-document ID, so not included in references."
+  },
+  {
+    "doc_id": "LED-1010",
+    "type": "ledger_entry",
+    "vendor": "Beacon IT Consulting Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-10",
+    "references": [
+      "PO-1010",
+      "INV-1010",
+      "REC-1010",
+      "BNK-1010"
+    ],
+    "case_id": "CASE_10",
+    "extraction_notes": "Tax amount not broken out separately in ledger entry; total debit includes GST per supporting invoice."
+  },
+  {
+    "doc_id": "PO-1010",
+    "type": "purchase_order",
+    "vendor": "Crestline Data Services Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": 10800.0,
+    "currency": "INR",
+    "date": "2026-08-01",
+    "references": [],
+    "case_id": "CASE_10",
+    "extraction_notes": "Discrepancy noted: PO-1010 lists supplier as Crestline Data Services Pvt. Ltd., while all related documents (INV-1010, REC-1010, LED-1010, BNK-1010) reference Beacon IT Consulting Pvt. Ltd. as the vendor. This mismatch may indicate a vendor substitution or data entry error requiring audit follow-up."
+  },
+  {
+    "doc_id": "REC-1010",
+    "type": "receipt",
+    "vendor": "Beacon IT Consulting Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-03",
+    "references": [
+      "PO-1010",
+      "INV-1010"
+    ],
+    "case_id": "CASE_10",
+    "extraction_notes": "Accepted value stated as including GST but tax amount not separately itemized on this document."
+  }
+]

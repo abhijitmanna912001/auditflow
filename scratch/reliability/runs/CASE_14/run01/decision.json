@@ -1,0 +1,12 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "action": "auto_clear",
+  "confidence": 1.0,
+  "reason": "No anomaly findings were identified for TXN_14, indicating the transaction is clean. It has been auto-cleared with a confidence of 1.0.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": []
+}

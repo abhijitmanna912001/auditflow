@@ -1,0 +1,98 @@
+Case ID: CASE_04
+Transaction ID: TXN_04
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_04",
+  "case_id": "CASE_04",
+  "documents": [
+    "PO-1004",
+    "INV-1004",
+    "REC-1004",
+    "BNK-1004",
+    "LED-1004"
+  ],
+  "missing_evidence": [
+    "No PO amendment, change order, or written authorization is present to explain why INV-1004 (82,500) exceeds the originally issued PO-1004 value (75,000).",
+    "No reconciliation document exists explaining why REC-1004 states an accepted value of 75,000 (matching the original PO) while the invoice, bank statement, and ledger all reflect 82,500 \u2014 i.e., no evidence that the higher amount was ever formally accepted."
+  ],
+  "evidence_confidence": 0.4,
+  "notes": "All five expected document types for a standard purchase-to-pay cycle (purchase order, invoice, receipt, bank statement, ledger entry) are present and cross-reference one another, so the transaction is structurally complete. However, the amounts are internally inconsistent: PO-1004 and REC-1004 agree on 75,000, while INV-1004, BNK-1004, and LED-1004 agree on 82,500. The presence of a successful bank payment and matching ledger entry at 82,500 does not establish that the higher amount was properly authorized or that the receipt's stated acceptance value was superseded \u2014 only a document such as a PO amendment or updated acceptance/receipt would establish that. Because the receipt (the document meant to confirm accepted value/quantity) does not match the amount actually invoiced and paid, and no supplementary authorization document is present, confidence in this transaction being fully and correctly supported is low-to-moderate."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "PO-1004",
+    "type": "purchase_order",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 75000.0,
+    "tax_amount": 11440.68,
+    "currency": "INR",
+    "date": "2026-06-03",
+    "references": [],
+    "case_id": "CASE_04",
+    "extraction_notes": null
+  },
+  {
+    "doc_id": "INV-1004",
+    "type": "invoice",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 82500.0,
+    "tax_amount": 12584.75,
+    "currency": "INR",
+    "date": "2026-06-12",
+    "references": [
+      "PO-1004"
+    ],
+    "case_id": "CASE_04",
+    "extraction_notes": "Invoice total (82,500) exceeds referenced PO-1004 total (75,000); discrepancy flagged for review."
+  },
+  {
+    "doc_id": "REC-1004",
+    "type": "receipt",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 75000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-06-16",
+    "references": [
+      "PO-1004",
+      "INV-1004"
+    ],
+    "case_id": "CASE_04",
+    "extraction_notes": "Document states 'Accepted Purchase Order Value: INR 75,000.00 including GST' as a single inclusive figure; no separate tax line item given. This amount matches PO-1004 but not INV-1004, a discrepancy flagged for review."
+  },
+  {
+    "doc_id": "BNK-1004",
+    "type": "bank_statement",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 82500.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-10",
+    "references": [
+      "INV-1004",
+      "PO-1004"
+    ],
+    "case_id": "CASE_04",
+    "extraction_notes": "Bank statement narration cites both INV-1004 and PO-1004; no tax breakdown provided in transaction record."
+  },
+  {
+    "doc_id": "LED-1004",
+    "type": "ledger_entry",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 82500.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-10",
+    "references": [
+      "PO-1004",
+      "INV-1004",
+      "REC-1004",
+      "BNK-1004"
+    ],
+    "case_id": "CASE_04",
+    "extraction_notes": "Ledger entry posts a single debit amount matching invoice total; no separate tax line item stated in this entry."
+  }
+]

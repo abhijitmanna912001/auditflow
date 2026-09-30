@@ -1,0 +1,95 @@
+Case ID: CASE_02
+Transaction ID: TXN_02
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_02",
+  "case_id": "CASE_02",
+  "documents": [
+    "PO-1002",
+    "INV-1002",
+    "REC-1002",
+    "BNK-1002",
+    "LED-1002"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Full document chain present: purchase order, invoice, receipt, bank statement, and ledger entry all reference each other consistently, with matching vendor (CloudDesk Software India Pvt. Ltd.), matching total amount (94,400.00 INR), and a logical date sequence (PO 2026-08-01 -> Invoice 2026-08-02 -> Receipt 2026-08-04 -> Bank debit/Ledger posting 2026-09-01). PO and Invoice both explicitly state tax_amount of 14,400.00 INR (18% GST on subtotal), which is internally consistent with the total. The Receipt, Bank Statement, and Ledger Entry report only the combined inclusive amount without breaking out tax separately, but this appears to be a documentation convention for those record types rather than a missing document - no document type expected for this transaction is absent. No PO-exemption pattern applies here since a PO is present and referenced throughout. Confidence is high due to the completeness and mutual consistency of the evidence chain, though full certainty is withheld since consistency among present documents cannot itself prove satisfaction of any unstated payment terms beyond what the documents explicitly show."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "BNK-1002",
+    "type": "bank_statement",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-01",
+    "references": [
+      "INV-1002",
+      "PO-1002"
+    ],
+    "case_id": "CASE_02",
+    "extraction_notes": "Bank statement shows single debit amount; no separate tax line stated."
+  },
+  {
+    "doc_id": "INV-1002",
+    "type": "invoice",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": 14400.0,
+    "currency": "INR",
+    "date": "2026-08-02",
+    "references": [
+      "PO-1002"
+    ],
+    "case_id": "CASE_02",
+    "extraction_notes": "Document ID field used as doc_id; supplier's internal invoice number (CDS/BLR/0826/441) also present but not used as primary ID. GST explicitly stated at 18% on subtotal."
+  },
+  {
+    "doc_id": "LED-1002",
+    "type": "ledger_entry",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-01",
+    "references": [
+      "PO-1002",
+      "INV-1002",
+      "REC-1002",
+      "BNK-1002"
+    ],
+    "case_id": "CASE_02",
+    "extraction_notes": "Ledger entry posts a single debit amount to a combined 'Software Subscriptions and Input GST' account; tax is not broken out separately in this entry."
+  },
+  {
+    "doc_id": "PO-1002",
+    "type": "purchase_order",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": 14400.0,
+    "currency": "INR",
+    "date": "2026-08-01",
+    "references": [],
+    "case_id": "CASE_02",
+    "extraction_notes": "GST explicitly stated at 18% on subtotal; no prior references cited as this is the originating purchase order."
+  },
+  {
+    "doc_id": "REC-1002",
+    "type": "receipt",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-04",
+    "references": [
+      "PO-1002",
+      "INV-1002"
+    ],
+    "case_id": "CASE_02",
+    "extraction_notes": "Accepted value stated as inclusive of GST but tax amount is not broken out separately on this document."
+  }
+]

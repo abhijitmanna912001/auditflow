@@ -1,0 +1,21 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "action": "human_review",
+  "confidence": 0.95,
+  "reason": "Flagged for human review because invoice INV-1014 shows a tax mismatch: the subtotal of 200,000.00 plus 18% GST of 36,000.00 should total 236,000.00, but the invoice states 246,000.00, a 10,000.00 discrepancy (high severity, confidence 0.95).",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "tax_mismatch",
+      "documents": [
+        "INV-1014"
+      ],
+      "severity": "high",
+      "explanation": "INV-1014's own figures do not reconcile: a subtotal of 200,000.00 plus the stated 18% GST of 36,000.00 equals 236,000.00, yet the invoice total is stated as 246,000.00, a 10,000.00 arithmetic discrepancy."
+    }
+  ]
+}

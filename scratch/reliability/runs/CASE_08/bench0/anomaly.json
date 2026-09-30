@@ -1,0 +1,16 @@
+{
+  "transaction_id": "TXN_08",
+  "case_id": "CASE_08",
+  "findings": [
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "PO-1008",
+        "INV-1008"
+      ],
+      "severity": "medium",
+      "confidence": 0.95,
+      "explanation": "The purchase order PO-1008 is dated 2026-08-15, after the invoice INV-1008 it is referenced by (dated 2026-08-05), an illogical sequence for a PO-driven procurement flow that suggests a retroactively created or backdated PO."
+    }
+  ]
+}

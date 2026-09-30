@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "PO-1008",
+    "type": "purchase_order",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": 16200.0,
+    "currency": "INR",
+    "date": "2026-08-15",
+    "references": [],
+    "case_id": "CASE_08",
+    "extraction_notes": "Purchase order issue date (2026-08-15) is after the referenced invoice date (2026-08-05); noted as-is without alteration."
+  },
+  {
+    "doc_id": "INV-1008",
+    "type": "invoice",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": 16200.0,
+    "currency": "INR",
+    "date": "2026-08-05",
+    "references": [
+      "PO-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Supplier invoice number BPT/2026/0805 also present but doc_id taken as document ID INV-1008 per header."
+  },
+  {
+    "doc_id": "REC-1008",
+    "type": "receipt",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-19",
+    "references": [
+      "PO-1008",
+      "INV-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Accepted value stated as 'including GST' but no separate tax line item provided, so tax_amount left null."
+  },
+  {
+    "doc_id": "BNK-1008",
+    "type": "bank_statement",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-03",
+    "references": [
+      "INV-1008",
+      "PO-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Bank statement shows total debit amount only; no separate tax breakdown provided."
+  },
+  {
+    "doc_id": "LED-1008",
+    "type": "ledger_entry",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-03",
+    "references": [
+      "PO-1008",
+      "INV-1008",
+      "REC-1008",
+      "BNK-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Ledger entry references combined 'Employee Training Expense and Input GST' account but does not break out a separate tax amount."
+  }
+]

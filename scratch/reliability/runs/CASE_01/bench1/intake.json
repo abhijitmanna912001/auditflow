@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "BNK-1001",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+      "INV-1001",
+      "PO-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "No tax amount stated separately on bank statement; narration references INV-1001 and PO-1001."
+  },
+  {
+    "doc_id": "INV-1001",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200,
+    "tax_amount": 7200,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+      "PO-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Supplier invoice no HOS/2026-27/118 noted but Document ID INV-1001 used as doc_id. GST @ 18% explicitly stated as INR 7,200.00."
+  },
+  {
+    "doc_id": "LED-1001",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+      "PO-1001",
+      "INV-1001",
+      "REC-1001",
+      "BNK-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Ledger entry combines office furniture expense and input GST accounts without breaking out separate tax figure."
+  },
+  {
+    "doc_id": "PO-1001",
+    "type": "purchase_order",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200,
+    "tax_amount": 7200,
+    "currency": "INR",
+    "date": "2026-07-01",
+    "references": [],
+    "case_id": "CASE_01",
+    "extraction_notes": "GST @ 18% explicitly stated as INR 7,200.00. No references to other documents present on the PO itself."
+  },
+  {
+    "doc_id": "REC-1001",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+      "PO-1001",
+      "INV-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Accepted Value stated as INR 47,200.00 including GST, but tax portion is not broken out separately on this goods receipt note."
+  }
+]

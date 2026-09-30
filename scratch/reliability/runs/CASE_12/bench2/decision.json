@@ -1,0 +1,23 @@
+{
+  "transaction_id": "TXN_12",
+  "case_id": "CASE_12",
+  "action": "human_review",
+  "confidence": 0.78,
+  "reason": "This transaction is flagged for human review because no receipt document exists across INV-1012, BNK-1012, or LED-1012, despite the invoice's payment terms requiring a signed service acceptance receipt; the bank payment and ledger entry only confirm funds movement, not that the acceptance condition was met (medium severity, confidence 0.78).",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_receipt",
+      "documents": [
+        "INV-1012",
+        "BNK-1012",
+        "LED-1012"
+      ],
+      "severity": "medium",
+      "explanation": "No receipt document of any kind exists for this transaction even though INV-1012's payment terms require a signed service acceptance receipt, and the completed bank payment and ledger posting only evidence funds movement rather than satisfaction of the acceptance condition."
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+Case ID: CASE_03
+Transaction ID: TXN_03
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_03",
+  "case_id": "CASE_03",
+  "documents": [
+    "PO-1003",
+    "INV-1003-A",
+    "INV-1003-B",
+    "REC-1003",
+    "BNK-1003",
+    "LED-1003"
+  ],
+  "missing_evidence": [
+    "No documentation resolving or explaining the duplicate invoice submission (INV-1003-A and INV-1003-B share identical amount, date, and reference SSS/2026/188) - absent a credit note, cancellation notice, or vendor confirmation, it cannot be established that only one of the two invoice scans was actually processed for payment rather than both."
+  ],
+  "evidence_confidence": 0.72,
+  "notes": "All core document types for a standard purchase-to-pay cycle are present and internally consistent: PO-1003 (2026-07-12, INR 70,800 incl. 10,800 tax) is referenced by both invoice scans, the goods receipt REC-1003 (2026-07-19), the bank debit BNK-1003 (2026-08-10), and the ledger entry LED-1003, all sharing the common reference SSS/2026/188 and matching total amount of 70,800 INR. The date sequence (PO -> invoice -> receipt -> payment -> ledger) is logical and amounts reconcile across documents. However, two invoice records (INV-1003-A and INV-1003-B) are identical in vendor, amount, tax, date, and references, explicitly flagged by intake as a likely duplicate scan of the same underlying supplier invoice. This duplication does not by itself prove double payment occurred, but it also is not proof that it did not - only a single bank debit (BNK-1003) and single ledger entry (LED-1003) are present, which is consistent with a single payment having been made, though this cannot be treated as definitive reconciliation absent explicit documentation tying the payment to exactly one of the two invoice scans. Additionally, tax_amount is not separately broken out in the bank statement, receipt, or ledger entry (all leave tax_amount null), so the 10,800 tax figure is only independently corroborated by the PO and the two invoice scans, not by downstream financial records. Confidence is moderated downward from a near-complete evidence set due to the unresolved duplicate invoice issue and the lack of separate tax substantiation in the payment/ledger trail."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "BNK-1003",
+    "type": "bank_statement",
+    "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-10",
+    "references": [
+      "SSS/2026/188",
+      "PO-1003"
+    ],
+    "case_id": "CASE_03",
+    "extraction_notes": "Tax amount not broken out separately in bank statement narration; total debit amount recorded only."
+  },
+  {
+    "doc_id": "INV-1003-A",
+    "type": "invoice",
+    "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": 10800.0,
+    "currency": "INR",
+    "date": "2026-07-16",
+    "references": [
+      "PO-1003",
+      "SSS/2026/188"
+    ],
+    "case_id": "CASE_03",
+    "extraction_notes": "Ingestion note indicates this is the first received scan of supplier invoice SSS/2026/188; an identical second scan (INV-1003-B) also exists for the same supplier invoice number, suggesting a potential duplicate submission that may need reconciliation to avoid double payment or double posting."
+  },
+  {
+    "doc_id": "INV-1003-B",
+    "type": "invoice",
+    "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": 10800.0,
+    "currency": "INR",
+    "date": "2026-07-16",
+    "references": [
+      "PO-1003",
+      "SSS/2026/188"
+    ],
+    "case_id": "CASE_03",
+    "extraction_notes": "Ingestion note indicates this is the second received scan of supplier invoice SSS/2026/188, identical in content to INV-1003-A; flagged as a likely duplicate scan of the same underlying invoice rather than a separate transaction."
+  },
+  {
+    "doc_id": "LED-1003",
+    "type": "ledger_entry",
+    "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-10",
+    "references": [
+      "PO-1003",
+      "REC-1003",
+      "BNK-1003",
+      "SSS/2026/188"
+    ],
+    "case_id": "CASE_03",
+    "extraction_notes": "Ledger account name references both expense and Input GST combined, but no separate tax figure is stated; only a single debit total is given, so tax_amount is left null rather than derived."
+  },
+  {
+    "doc_id": "PO-1003",
+    "type": "purchase_order",
+    "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": 10800.0,
+    "currency": "INR",
+    "date": "2026-07-12",
+    "references": [],
+    "case_id": "CASE_03",
+    "extraction_notes": "No explicit references to other document IDs found on the purchase order itself."
+  },
+  {
+    "doc_id": "REC-1003",
+    "type": "receipt",
+    "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-19",
+    "references": [
+      "PO-1003",
+      "SSS/2026/188"
+    ],
+    "case_id": "CASE_03",
+    "extraction_notes": "Document is a Goods Receipt Note; accepted value is stated as inclusive of GST but no separate GST figure is broken out, so tax_amount is left null."
+  }
+]

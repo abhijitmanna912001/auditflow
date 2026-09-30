@@ -1,0 +1,95 @@
+Case ID: CASE_01
+Transaction ID: TXN_01
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_01",
+  "case_id": "CASE_01",
+  "documents": [
+    "PO-1001",
+    "INV-1001",
+    "REC-1001",
+    "BNK-1001",
+    "LED-1001"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Full document chain present: purchase order, invoice, receipt, bank statement, and ledger entry, all cross-referencing one another (PO-1001, INV-1001, REC-1001, BNK-1001) with consistent vendor name (Horizon Office Systems Pvt. Ltd.), consistent total amount (47,200.00 INR), and a logical date progression (PO 2026-07-01 -> Invoice 2026-07-05 -> Receipt 2026-07-09 -> Payment/Ledger 2026-07-25). Tax amount of 7,200.00 is explicitly itemized on both the PO and invoice and is consistent with the totals on the bank statement, receipt, and ledger entry, which bundle tax into the gross amount without breaking it out separately - this is a plausible extraction limitation rather than an inconsistency. No document type expected for a standard PO-based purchase-to-pay cycle appears to be absent, and no vendor-specific pattern (e.g., PO-exemption) needs to be inferred since a PO is present. Confidence is high but not absolute, since the underlying source documents were not independently verified beyond the structured extraction provided."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "BNK-1001",
+    "type": "bank_statement",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+      "INV-1001",
+      "PO-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Tax amount not broken out separately on bank statement; narration cites INV-1001 and PO-1001 as references."
+  },
+  {
+    "doc_id": "INV-1001",
+    "type": "invoice",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-05",
+    "references": [
+      "PO-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Document ID field used as doc_id; supplier's own invoice number (HOS/2026-27/118) noted separately but not used as doc_id per instructions."
+  },
+  {
+    "doc_id": "LED-1001",
+    "type": "ledger_entry",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-25",
+    "references": [
+      "PO-1001",
+      "INV-1001",
+      "REC-1001",
+      "BNK-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Ledger entry combines expense and input GST accounts but does not break out tax amount separately."
+  },
+  {
+    "doc_id": "PO-1001",
+    "type": "purchase_order",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": 7200.0,
+    "currency": "INR",
+    "date": "2026-07-01",
+    "references": [],
+    "case_id": "CASE_01",
+    "extraction_notes": "Purchase order does not cite other document references, though it is referenced by other documents in the case."
+  },
+  {
+    "doc_id": "REC-1001",
+    "type": "receipt",
+    "vendor": "Horizon Office Systems Pvt. Ltd.",
+    "amount": 47200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-09",
+    "references": [
+      "PO-1001",
+      "INV-1001"
+    ],
+    "case_id": "CASE_01",
+    "extraction_notes": "Accepted value stated as inclusive of GST but tax portion is not itemized separately, so tax_amount left null."
+  }
+]

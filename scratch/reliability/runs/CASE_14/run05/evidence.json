@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "LED-1014",
+    "BNK-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Full evidentiary chain present: purchase order (PO-1014), invoice (INV-1014) referencing the PO and supplier invoice number SPS/2026/2208, goods receipt (REC-1014) referencing both invoice and PO, ledger entry (LED-1014) referencing invoice and PO, and bank statement (BNK-1014) referencing invoice and supplier invoice number. Amounts are internally consistent (246,000 INR) across PO, invoice, ledger, and bank statement, and dates follow a logical sequence (PO 08/01 -> Invoice 08/09 -> Receipt 08/11 -> Ledger/Payment 08/14). Note that the receipt confirms goods delivery only (no monetary value stated) and does not by itself prove any payment-terms condition was satisfied; the successful bank payment likewise does not independently substitute for the receipt document. No document type appears to be missing from the expected set for this vendor based on the pattern of documents provided."
+}

@@ -1,0 +1,30 @@
+{
+  "transaction_id": "TXN_10",
+  "case_id": "CASE_10",
+  "findings": [
+    {
+      "type": "vendor_mismatch",
+      "documents": [
+        "PO-1010",
+        "INV-1010",
+        "REC-1010",
+        "LED-1010",
+        "BNK-1010"
+      ],
+      "severity": "high",
+      "confidence": 0.95,
+      "explanation": "PO-1010 names the supplier as 'Crestline Data Services Pvt. Ltd.' while the invoice, receipt, ledger entry, and bank statement all name 'Beacon IT Consulting Pvt. Ltd.', so it is unclear whether the purchase order actually authorizes this payment."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "INV-1010",
+        "REC-1010",
+        "BNK-1010"
+      ],
+      "severity": "medium",
+      "confidence": 0.85,
+      "explanation": "The receipt (2026-09-03) and the bank payment (2026-09-10) both predate the invoice they reference (INV-1010, dated 2026-09-20), which contradicts the expected PO-to-receipt-to-invoice-to-payment sequence."
+    }
+  ]
+}

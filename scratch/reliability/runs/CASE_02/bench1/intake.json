@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "BNK-1002",
+    "type": "bank_statement",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-01",
+    "references": [
+      "INV-1002",
+      "PO-1002"
+    ],
+    "case_id": "CASE_02",
+    "extraction_notes": "Bank statement shows single debit amount; no separate tax line stated."
+  },
+  {
+    "doc_id": "INV-1002",
+    "type": "invoice",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": 14400.0,
+    "currency": "INR",
+    "date": "2026-08-02",
+    "references": [
+      "PO-1002"
+    ],
+    "case_id": "CASE_02",
+    "extraction_notes": "Document ID field used as doc_id; supplier's internal invoice number (CDS/BLR/0826/441) also present but not used as primary ID. GST explicitly stated at 18% on subtotal."
+  },
+  {
+    "doc_id": "LED-1002",
+    "type": "ledger_entry",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-01",
+    "references": [
+      "PO-1002",
+      "INV-1002",
+      "REC-1002",
+      "BNK-1002"
+    ],
+    "case_id": "CASE_02",
+    "extraction_notes": "Ledger entry posts a single debit amount to a combined 'Software Subscriptions and Input GST' account; tax is not broken out separately in this entry."
+  },
+  {
+    "doc_id": "PO-1002",
+    "type": "purchase_order",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": 14400.0,
+    "currency": "INR",
+    "date": "2026-08-01",
+    "references": [],
+    "case_id": "CASE_02",
+    "extraction_notes": "GST explicitly stated at 18% on subtotal; no prior references cited as this is the originating purchase order."
+  },
+  {
+    "doc_id": "REC-1002",
+    "type": "receipt",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-04",
+    "references": [
+      "PO-1002",
+      "INV-1002"
+    ],
+    "case_id": "CASE_02",
+    "extraction_notes": "Accepted value stated as inclusive of GST but tax amount is not broken out separately on this document."
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "BNK-1005",
+    "INV-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005 is referenced by both INV-1005 and REC-1005 but the actual PO document itself was never provided)"
+  ],
+  "evidence_confidence": 0.6,
+  "notes": "All four provided documents (invoice, receipt, ledger entry, bank statement) agree on vendor (GreenRoute Logistics Pvt. Ltd.), currency (INR), and total amount (59,000), which supports the payment cycle for INV-1005. However, PO-1005 is cited as a reference on both the invoice and the receipt but no purchase order document has actually been supplied, so procurement authorization cannot be independently confirmed - the presence of consistent references to it does not substitute for the document itself. Additionally, REC-1005 is dated 2026-07-18, three days before the invoice date of 2026-07-21, an unusual sequence (receipt predating invoice) that is not explained by any document on file. The invoice states an explicit GST breakdown (9,000 tax on 50,000 subtotal), but neither the ledger entry, the receipt, nor the bank statement separately corroborates this tax split - the ledger posts a combined debit and the receipt only asserts the total is 'including GST' without itemization, so the tax treatment rests solely on the invoice's own assertion. The bank statement's narration reference to INV-1005 and matching amount supports that a payment was made, but this successful settlement does not by itself confirm that PO-1005 existed or that any purchase-order-based approval condition was met."
+}

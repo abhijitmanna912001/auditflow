@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_13",
+  "case_id": "CASE_13",
+  "documents": [
+    "PO-1013",
+    "INV-1013",
+    "REC-1013",
+    "LED-1013",
+    "BNK-1013"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.45,
+  "notes": "All five expected document types are present (purchase order, invoice, receipt, ledger entry, bank statement) and are linked via shared references (PO-1013, INV-1013, MCS-2026-4471), so no document type is structurally missing. However, there is a significant unresolved currency/amount discrepancy: INV-1013 states USD 4,980.00 while PO-1013, LED-1013, and BNK-1013 all reflect INR 415,000.00 for what appears to be the same transaction. No conversion rate, reconciliation note, or dual-currency support is present in any document to justify this mismatch. The service acceptance receipt (REC-1013) confirms activation occurred but carries no monetary amount, so it cannot independently corroborate the payment amount or currency. The successful bank statement entry confirms funds moved, but does not by itself validate that the invoiced amount/currency was correctly satisfied. Given the presence of all document types but the unresolved core amount/currency conflict at the heart of the transaction, evidence confidence is moderate-low."
+}

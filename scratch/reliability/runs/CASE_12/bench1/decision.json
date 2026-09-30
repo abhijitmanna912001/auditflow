@@ -1,0 +1,21 @@
+{
+  "transaction_id": "TXN_12",
+  "case_id": "CASE_12",
+  "action": "human_review",
+  "confidence": 0.85,
+  "reason": "Flagged for human review because invoice INV-1012 is missing its required signed service acceptance receipt, yet payment was already made per the ledger and bank records, a medium-severity finding with 0.85 confidence.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_receipt",
+      "documents": [
+        "INV-1012"
+      ],
+      "severity": "medium",
+      "explanation": "No receipt document of any kind exists for this transaction even though the invoice's payment terms explicitly require a signed service acceptance receipt before payment, which was nonetheless made per the ledger and bank records."
+    }
+  ]
+}

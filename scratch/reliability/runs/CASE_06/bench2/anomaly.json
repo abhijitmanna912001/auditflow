@@ -1,0 +1,18 @@
+{
+  "transaction_id": "TXN_06",
+  "case_id": "CASE_06",
+  "findings": [
+    {
+      "type": "missing_receipt",
+      "documents": [
+        "PO-1006",
+        "INV-1006",
+        "BNK-1006",
+        "LED-1006"
+      ],
+      "severity": "low",
+      "confidence": 0.5,
+      "explanation": "No goods-receipt or delivery acceptance document exists anywhere in this transaction's evidence set, so delivery cannot be independently confirmed, though the matching PO, invoice, bank settlement and ledger entry substantially mitigate the risk."
+    }
+  ]
+}

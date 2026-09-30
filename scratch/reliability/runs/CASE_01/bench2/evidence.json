@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_01",
+  "case_id": "CASE_01",
+  "documents": [
+    "PO-1001",
+    "INV-1001",
+    "REC-1001",
+    "BNK-1001",
+    "LED-1001"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Full document chain present: purchase order, invoice, receipt, bank statement, and ledger entry, all cross-referencing one another (PO-1001, INV-1001, REC-1001, BNK-1001) with consistent vendor name (Horizon Office Systems Pvt. Ltd.), consistent total amount (47,200.00 INR), and a logical date progression (PO 2026-07-01 -> Invoice 2026-07-05 -> Receipt 2026-07-09 -> Payment/Ledger 2026-07-25). Tax amount of 7,200.00 is explicitly itemized on both the PO and invoice and is consistent with the totals on the bank statement, receipt, and ledger entry, which bundle tax into the gross amount without breaking it out separately - this is a plausible extraction limitation rather than an inconsistency. No document type expected for a standard PO-based purchase-to-pay cycle appears to be absent, and no vendor-specific pattern (e.g., PO-exemption) needs to be inferred since a PO is present. Confidence is high but not absolute, since the underlying source documents were not independently verified beyond the structured extraction provided."
+}

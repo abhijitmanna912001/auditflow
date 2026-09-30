@@ -1,0 +1,24 @@
+{
+  "transaction_id": "TXN_13",
+  "case_id": "CASE_13",
+  "action": "human_review",
+  "confidence": 0.95,
+  "reason": "Flagged for human review due to a high-severity currency mismatch: the invoice INV-1013 shows 4,980.00 USD while the linked PO-1013, LED-1013, and BNK-1013 all show 415,000.00 INR, with no conversion rate or reconciliation documented (confidence 0.95).",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "currency_mismatch",
+      "documents": [
+        "INV-1013",
+        "PO-1013",
+        "LED-1013",
+        "BNK-1013"
+      ],
+      "severity": "high",
+      "explanation": "The invoice states 4,980.00 USD while the linked purchase order, ledger entry, and bank statement all state 415,000.00 INR, with no stated conversion rate or reconciliation on any document."
+    }
+  ]
+}

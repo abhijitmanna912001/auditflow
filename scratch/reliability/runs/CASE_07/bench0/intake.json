@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "BNK-1007",
+    "type": "bank_statement",
+    "vendor": "Orchid Workspace Solutions Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-20",
+    "references": [
+      "INV-1007",
+      "PO-1007"
+    ],
+    "case_id": "CASE_07",
+    "extraction_notes": "Debit amount represents full settlement; no separate tax line stated on bank statement."
+  },
+  {
+    "doc_id": "INV-1007",
+    "type": "invoice",
+    "vendor": "Orchid Workspace Solutions Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": 8100.0,
+    "currency": "INR",
+    "date": "2026-06-28",
+    "references": [
+      "PO-1007"
+    ],
+    "case_id": "CASE_07",
+    "extraction_notes": "Vendor name on this invoice (Orchid Workspace Solutions Pvt. Ltd.) differs from the vendor named on the referenced PO-1007 (Atlas Facilities Care Pvt. Ltd.) - possible vendor mismatch or fraud indicator."
+  },
+  {
+    "doc_id": "LED-1007",
+    "type": "ledger_entry",
+    "vendor": "Orchid Workspace Solutions Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-20",
+    "references": [
+      "PO-1007",
+      "INV-1007",
+      "REC-1007",
+      "BNK-1007"
+    ],
+    "case_id": "CASE_07",
+    "extraction_notes": "Ledger entry aggregates expense and input GST but does not break out the GST amount separately; total debit shown only."
+  },
+  {
+    "doc_id": "PO-1007",
+    "type": "purchase_order",
+    "vendor": "Atlas Facilities Care Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": 8100.0,
+    "currency": "INR",
+    "date": "2026-06-10",
+    "references": [],
+    "case_id": "CASE_07",
+    "extraction_notes": "Vendor name (Atlas Facilities Care Pvt. Ltd.) differs from vendor on INV-1007, REC-1007 payment context, BNK-1007, and LED-1007 (Orchid Workspace Solutions Pvt. Ltd.) despite matching PO reference - possible vendor mismatch or fraud indicator."
+  },
+  {
+    "doc_id": "REC-1007",
+    "type": "receipt",
+    "vendor": "Atlas Facilities Care Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-06-30",
+    "references": [
+      "PO-1007",
+      "INV-1007"
+    ],
+    "case_id": "CASE_07",
+    "extraction_notes": "Accepted value stated as inclusive of GST but GST amount not separately broken out on this document; vendor name (Atlas Facilities Care Pvt. Ltd.) differs from vendor on INV-1007 (Orchid Workspace Solutions Pvt. Ltd.) despite matching invoice reference - possible vendor mismatch."
+  }
+]

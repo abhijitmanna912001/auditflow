@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "BNK-1008",
+    "type": "bank_statement",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-03",
+    "references": [
+      "INV-1008",
+      "PO-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Tax amount not broken out separately in bank statement narration; only total debit amount stated."
+  },
+  {
+    "doc_id": "INV-1008",
+    "type": "invoice",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200,
+    "tax_amount": 16200,
+    "currency": "INR",
+    "date": "2026-08-05",
+    "references": [
+      "PO-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Invoice date (2026-08-05) precedes referenced PO-1008 issue date (2026-08-15); noted as potential inconsistency but not altered. Supplier's internal invoice number (BPT/2026/0805) recorded separately from document ID."
+  },
+  {
+    "doc_id": "LED-1008",
+    "type": "ledger_entry",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-03",
+    "references": [
+      "PO-1008",
+      "INV-1008",
+      "REC-1008",
+      "BNK-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Ledger entry lists a single debit amount combining expense and input GST; tax portion not separately stated."
+  },
+  {
+    "doc_id": "PO-1008",
+    "type": "purchase_order",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200,
+    "tax_amount": 16200,
+    "currency": "INR",
+    "date": "2026-08-15",
+    "references": [],
+    "case_id": "CASE_08",
+    "extraction_notes": "No references to other documents found on the purchase order itself."
+  },
+  {
+    "doc_id": "REC-1008",
+    "type": "receipt",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-19",
+    "references": [
+      "PO-1008",
+      "INV-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Accepted value stated as including GST but tax portion not separately broken out."
+  }
+]

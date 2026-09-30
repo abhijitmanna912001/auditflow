@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_08",
+  "case_id": "CASE_08",
+  "documents": [
+    "INV-1008",
+    "PO-1008",
+    "REC-1008",
+    "BNK-1008",
+    "LED-1008"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.7,
+  "notes": "All five expected document types are present (invoice, purchase order, receipt, bank statement, ledger entry) and all amounts are internally consistent at INR 106,200.00 (INR 90,000 + INR 16,200 GST) across every document that reports a total. However, a significant chronological anomaly exists: PO-1008 is dated 2026-08-15, ten days after INV-1008 (dated 2026-08-05), yet the invoice references the PO as if it pre-existed. This reversed sequencing undermines confidence in the procurement trail's authenticity/order of operations, even though no document type is outright missing. The receipt (REC-1008, dated 2026-08-19) establishes that goods/services were accepted, and the bank statement (BNK-1008, dated 2026-09-03) confirms payment matching the invoiced amount, with the ledger entry (LED-1008) tying all four other documents together on the same date as the bank transaction. Because internal amount consistency and a successful payment do not resolve or excuse the PO/invoice date inversion, and no explanation for the anomaly is present in any document, evidence confidence is reduced from what full document coverage would otherwise support."
+}

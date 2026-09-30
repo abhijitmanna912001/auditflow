@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_12",
+  "case_id": "CASE_12",
+  "documents": [
+    "INV-1012",
+    "PO-1012",
+    "LED-1012",
+    "BNK-1012"
+  ],
+  "missing_evidence": [
+    "signed service acceptance receipt (required by invoice payment terms, not provided)"
+  ],
+  "evidence_confidence": 0.62,
+  "notes": "Transaction includes a matched PO, invoice, ledger entry, and bank statement with consistent vendor (Nova Archive Storage Pvt. Ltd.), amount (236,000 INR), and tax (36,000 INR) across documents, and a logical date sequence (PO 08-08, invoice 08-30, ledger/bank 09-20). However, the invoice's extraction notes explicitly state that payment requires a signed service acceptance receipt, and no such receipt document was provided in the case file. The successful bank payment and ledger posting do not substitute for this required receipt - only the receipt itself can establish that the payment-terms condition was satisfied. This is a genuine missing evidence item rather than an inferred exemption, since no pattern in the provided documents suggests this vendor is exempt from the receipt requirement. All other expected documents (PO, invoice, ledger, bank) are present and mutually consistent."
+}

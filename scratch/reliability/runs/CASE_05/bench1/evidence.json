@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "REC-1005",
+    "BNK-1005",
+    "LED-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005 is referenced by both the invoice and the receipt but the PO document itself was never provided)"
+  ],
+  "evidence_confidence": 0.55,
+  "notes": "All four provided documents (invoice, receipt, bank statement, ledger entry) share consistent vendor (GreenRoute Logistics Pvt. Ltd.), currency (INR), and amount (INR 59,000 total, with INV-1005 explicitly breaking out INR 50,000 subtotal + INR 9,000 GST). However, PO-1005 is referenced by both INV-1005 and REC-1005 but no purchase order document was supplied, so its existence and terms cannot be verified - internal consistency among the other documents does not establish that the PO was ever issued or that its terms were met. Additionally, REC-1005 is dated 2026-07-18, three days before the invoice date of 2026-07-21, an unusual sequence (receipt preceding invoice) that is noted but not resolved by any of the available documents. The bank statement and ledger entry both show settlement/posting on 2026-08-18 referencing INV-1005, and their agreement on amount and date with each other is a positive signal, but neither document breaks out the tax component (tax_amount is null on REC-1005, BNK-1005, and LED-1005), so tax treatment downstream of the invoice is only asserted, not independently confirmed. The successful bank settlement does not by itself confirm that any payment-terms condition (e.g., prior receipt/acceptance) was properly satisfied - only REC-1005 itself, despite its date anomaly, speaks to that."
+}

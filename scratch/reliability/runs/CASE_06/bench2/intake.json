@@ -1,0 +1,57 @@
+[
+  {
+    "doc_id": "BNK-1006",
+    "type": "bank_statement",
+    "vendor": "Meridian Network Components Pvt. Ltd.",
+    "amount": 141600,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-28",
+    "references": [
+      "INV-1006",
+      "PO-1006"
+    ],
+    "case_id": "CASE_06",
+    "extraction_notes": "Bank statement does not break out tax separately."
+  },
+  {
+    "doc_id": "INV-1006",
+    "type": "invoice",
+    "vendor": "Meridian Network Components Pvt. Ltd.",
+    "amount": 141600,
+    "tax_amount": 21600,
+    "currency": "INR",
+    "date": "2026-08-14",
+    "references": [
+      "PO-1006"
+    ],
+    "case_id": "CASE_06",
+    "extraction_notes": "Also carries supplier invoice number MNC/BLR/2026/354, but doc_id taken from Document ID field."
+  },
+  {
+    "doc_id": "LED-1006",
+    "type": "ledger_entry",
+    "vendor": "Meridian Network Components Pvt. Ltd.",
+    "amount": 141600,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-28",
+    "references": [
+      "INV-1006"
+    ],
+    "case_id": "CASE_06",
+    "extraction_notes": "Ledger entry does not separately state tax amount."
+  },
+  {
+    "doc_id": "PO-1006",
+    "type": "purchase_order",
+    "vendor": "Meridian Network Components Pvt. Ltd.",
+    "amount": 141600,
+    "tax_amount": 21600,
+    "currency": "INR",
+    "date": "2026-08-05",
+    "references": [],
+    "case_id": "CASE_06",
+    "extraction_notes": null
+  }
+]

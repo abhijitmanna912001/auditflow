@@ -1,0 +1,17 @@
+{
+  "transaction_id": "TXN_12",
+  "case_id": "CASE_12",
+  "findings": [
+    {
+      "type": "missing_receipt",
+      "documents": [
+        "INV-1012",
+        "BNK-1012",
+        "LED-1012"
+      ],
+      "severity": "medium",
+      "confidence": 0.82,
+      "explanation": "No receipt document of any kind exists for this transaction, even though INV-1012's payment terms explicitly require a signed service acceptance receipt before payment, which was nonetheless released per BNK-1012 and LED-1012."
+    }
+  ]
+}

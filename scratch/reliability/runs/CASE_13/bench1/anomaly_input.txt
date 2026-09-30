@@ -1,0 +1,94 @@
+Case ID: CASE_13
+Transaction ID: TXN_13
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_13",
+  "case_id": "CASE_13",
+  "documents": [
+    "BNK-1013",
+    "INV-1013",
+    "LED-1013",
+    "PO-1013",
+    "REC-1013"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.55,
+  "notes": "All five expected document types (purchase_order, invoice, receipt, ledger_entry, bank_statement) are present and cross-reference each other via INV-1013/PO-1013/MCS-2026-4471, and PO, ledger, and bank amounts agree at 415,000 INR with a coherent date sequence (PO 07-02 -> invoice 07-14 -> receipt 07-15 -> ledger/bank 07-18). However, the invoice itself states 4,980.00 USD rather than INR, and no exchange rate or conversion basis is present in any document to reconcile this with the 415,000 INR figure used elsewhere. This currency mismatch is unresolved and cannot be assumed away; it is flagged rather than corrected. Additionally, no document in the set states a tax_amount, so tax treatment cannot be verified from the evidence provided. The receipt confirms service acceptance but carries no monetary value, so it cannot independently corroborate the invoice amount. Because the core financial figure on the invoice is inconsistent with the rest of the transaction and no supporting basis for that inconsistency exists, confidence is moderate despite full document coverage."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "BNK-1013",
+    "type": "bank_statement",
+    "vendor": "Meridian Cloud Services Inc.",
+    "amount": 415000,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-18",
+    "references": [
+      "INV-1013",
+      "MCS-2026-4471"
+    ],
+    "case_id": "CASE_13",
+    "extraction_notes": "No tax amount explicitly stated on bank statement."
+  },
+  {
+    "doc_id": "INV-1013",
+    "type": "invoice",
+    "vendor": "Meridian Cloud Services Inc.",
+    "amount": 4980,
+    "tax_amount": null,
+    "currency": "USD",
+    "date": "2026-07-14",
+    "references": [
+      "PO-1013",
+      "MCS-2026-4471"
+    ],
+    "case_id": "CASE_13",
+    "extraction_notes": "Invoice states amount in USD (4980.00), while related PO, ledger entry, and bank statement for the same transaction are in INR (415,000.00). This currency discrepancy could not be resolved from the document content; flagging for review rather than converting or assuming an exchange rate. No tax amount explicitly stated on invoice."
+  },
+  {
+    "doc_id": "LED-1013",
+    "type": "ledger_entry",
+    "vendor": "Meridian Cloud Services Inc.",
+    "amount": 415000,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-18",
+    "references": [
+      "INV-1013",
+      "PO-1013"
+    ],
+    "case_id": "CASE_13",
+    "extraction_notes": "No tax amount explicitly stated on ledger entry."
+  },
+  {
+    "doc_id": "PO-1013",
+    "type": "purchase_order",
+    "vendor": "Meridian Cloud Services Inc.",
+    "amount": 415000,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-02",
+    "references": [],
+    "case_id": "CASE_13",
+    "extraction_notes": "No tax amount explicitly stated on purchase order. No external references cited (this document is the PO being referenced by others)."
+  },
+  {
+    "doc_id": "REC-1013",
+    "type": "receipt",
+    "vendor": "Meridian Cloud Services Inc.",
+    "amount": null,
+    "tax_amount": null,
+    "currency": null,
+    "date": "2026-07-15",
+    "references": [
+      "INV-1013",
+      "PO-1013"
+    ],
+    "case_id": "CASE_13",
+    "extraction_notes": "Service acceptance receipt does not state a monetary amount, tax amount, or currency."
+  }
+]

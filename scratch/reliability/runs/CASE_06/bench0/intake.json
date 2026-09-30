@@ -1,0 +1,57 @@
+[
+  {
+    "doc_id": "BNK-1006",
+    "type": "bank_statement",
+    "vendor": "Meridian Network Components Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-28",
+    "references": [
+      "INV-1006",
+      "PO-1006"
+    ],
+    "case_id": "CASE_06",
+    "extraction_notes": "Tax amount not broken out separately in bank statement narration."
+  },
+  {
+    "doc_id": "INV-1006",
+    "type": "invoice",
+    "vendor": "Meridian Network Components Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": 21600.0,
+    "currency": "INR",
+    "date": "2026-08-14",
+    "references": [
+      "PO-1006"
+    ],
+    "case_id": "CASE_06",
+    "extraction_notes": "Supplier invoice number MNC/BLR/2026/354 present but Document ID INV-1006 used as doc_id."
+  },
+  {
+    "doc_id": "LED-1006",
+    "type": "ledger_entry",
+    "vendor": "Meridian Network Components Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-28",
+    "references": [
+      "INV-1006"
+    ],
+    "case_id": "CASE_06",
+    "extraction_notes": "Ledger entry lists combined account (Network Equipment Expense and Input GST) without separate tax figure."
+  },
+  {
+    "doc_id": "PO-1006",
+    "type": "purchase_order",
+    "vendor": "Meridian Network Components Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": 21600.0,
+    "currency": "INR",
+    "date": "2026-08-05",
+    "references": [],
+    "case_id": "CASE_06",
+    "extraction_notes": null
+  }
+]

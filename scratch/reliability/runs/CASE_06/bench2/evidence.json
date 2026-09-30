@@ -1,0 +1,13 @@
+{
+  "transaction_id": "TXN_06",
+  "case_id": "CASE_06",
+  "documents": [
+    "PO-1006",
+    "INV-1006",
+    "BNK-1006",
+    "LED-1006"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.9,
+  "notes": "All four core document types are present and mutually consistent: PO-1006 (2026-08-05, 141600 INR incl. 21600 tax) precedes INV-1006 (2026-08-14, same amount/tax), which is settled by BNK-1006 and recorded in LED-1006 (both dated 2026-08-28, same total amount). Vendor name and amounts match across all documents, and the date sequence (PO -> Invoice -> Bank/Ledger) is logically consistent. No goods-receipt/delivery document is present, but with only this single case as reference there is no established pattern indicating such a document is normally required for this vendor, so its absence is not flagged as missing evidence rather than simply unverifiable. Confidence is not set to 1.0 because the successful bank settlement and matching ledger entry, while consistent, cannot independently confirm that any underlying delivery or acceptance condition tied to payment terms was met - only a receipt document itself could establish that, and none was provided."
+}

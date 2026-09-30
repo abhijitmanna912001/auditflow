@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_02",
+  "case_id": "CASE_02",
+  "documents": [
+    "PO-1002",
+    "INV-1002",
+    "REC-1002",
+    "BNK-1002",
+    "LED-1002"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Full document chain present: purchase order, invoice, receipt, bank statement, and ledger entry all reference each other consistently, with matching vendor (CloudDesk Software India Pvt. Ltd.), matching total amount (94,400.00 INR), and a logical date sequence (PO 2026-08-01 -> Invoice 2026-08-02 -> Receipt 2026-08-04 -> Bank debit/Ledger posting 2026-09-01). PO and Invoice both explicitly state tax_amount of 14,400.00 INR (18% GST on subtotal), which is internally consistent with the total. The Receipt, Bank Statement, and Ledger Entry report only the combined inclusive amount without breaking out tax separately, but this appears to be a documentation convention for those record types rather than a missing document - no document type expected for this transaction is absent. No PO-exemption pattern applies here since a PO is present and referenced throughout. Confidence is high due to the completeness and mutual consistency of the evidence chain, though full certainty is withheld since consistency among present documents cannot itself prove satisfaction of any unstated payment terms beyond what the documents explicitly show."
+}

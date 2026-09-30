@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "BNK-1014",
+    "LED-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Full document chain present: purchase order (PO-1014) establishes the commitment, invoice (INV-1014) references the PO, goods receipt (REC-1014) references both PO and invoice confirming delivery, bank statement (BNK-1014) matches invoice amount via supplier invoice number cross-reference, and ledger entry (LED-1014) references both invoice and PO with matching debit amount. Dates follow a logical sequence (PO 08-01, invoice 08-09, receipt 08-11, payment/ledger 08-14). Amounts are consistent across PO, invoice, bank statement, and ledger (246000 INR), with invoice separately breaking out tax (36000 INR). No document type appears to be missing given the pattern of PO-based procurement observed for this vendor. Note that the receipt lacking a monetary amount is expected for a goods receipt note and does not indicate missing evidence; however, internal consistency and successful bank settlement do not independently verify that any specific payment-term condition (e.g., receipt-before-payment) was contractually required or satisfied beyond what the documents themselves show."
+}

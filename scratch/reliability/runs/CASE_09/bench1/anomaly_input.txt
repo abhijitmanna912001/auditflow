@@ -1,0 +1,96 @@
+Case ID: CASE_09
+Transaction ID: TXN_09
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_09",
+  "case_id": "CASE_09",
+  "documents": [
+    "PO-1009",
+    "INV-1009-A",
+    "INV-1009-B",
+    "BNK-1009",
+    "LED-1009"
+  ],
+  "missing_evidence": [
+    "goods_receipt_note (no GRN or delivery confirmation present to verify goods/services received matching PO-1009 and invoiced amount)",
+    "payment_remittance_advice (no separate remittance/payment authorization document distinct from the bank statement)"
+  ],
+  "evidence_confidence": 0.42,
+  "notes": "Transaction is supported by a PO, two invoice scans, a bank statement, and a ledger entry, but several unresolved issues limit confidence. (1) INV-1009-A and INV-1009-B are identical duplicate scans of the same supplier invoice (PIS/2026/091, same date/amount) - this raises a double-billing/duplicate-submission risk; only one payment (BNK-1009) matches the invoiced amount, so no double payment is evidenced, but the duplicate document itself is unresolved. (2) The invoiced/paid/ledgered amount (INR 141,600.00) exceeds PO-1009's authorized total (INR 118,000.00) by INR 23,600.00 - internal consistency among invoice, bank statement, and ledger does not resolve this discrepancy against the PO, which remains a possible pricing/overbilling issue requiring explanation (e.g., a change order or PO amendment, none of which is present). (3) No goods receipt or delivery confirmation document is present in this case to independently verify that goods/services matching the PO and invoiced amount were actually received; the successful bank payment does not substitute for this. (4) The ledger entry corroborates the payment but cannot break out tax separately, so tax reconciliation relies solely on the invoice figures, which themselves are the duplicated/discrepant documents."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "BNK-1009",
+    "type": "bank_statement",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-22",
+    "references": [
+      "PIS/2026/091",
+      "PO-1009"
+    ],
+    "case_id": "CASE_09",
+    "extraction_notes": "No separate tax line item stated on bank statement; amount matches invoice total INR 141,600.00."
+  },
+  {
+    "doc_id": "INV-1009-A",
+    "type": "invoice",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": 21600.0,
+    "currency": "INR",
+    "date": "2026-07-15",
+    "references": [
+      "PO-1009"
+    ],
+    "case_id": "CASE_09",
+    "extraction_notes": "This is the first of two identical scans (INV-1009-A and INV-1009-B) received for the same Supplier Invoice No PIS/2026/091, same amounts and date - flagged as potential duplicate submission/possible double-payment risk. Also, invoice total (INR 141,600.00) exceeds the referenced PO-1009 total (INR 118,000.00) by INR 23,600.00, indicating a possible discrepancy between ordered and invoiced amounts."
+  },
+  {
+    "doc_id": "INV-1009-B",
+    "type": "invoice",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": 21600.0,
+    "currency": "INR",
+    "date": "2026-07-15",
+    "references": [
+      "PO-1009"
+    ],
+    "case_id": "CASE_09",
+    "extraction_notes": "This is the second of two identical scans (INV-1009-A and INV-1009-B) received for the same Supplier Invoice No PIS/2026/091, same amounts and date - flagged as potential duplicate submission/possible double-payment risk. Also, invoice total (INR 141,600.00) exceeds the referenced PO-1009 total (INR 118,000.00) by INR 23,600.00, indicating a possible discrepancy between ordered and invoiced amounts."
+  },
+  {
+    "doc_id": "LED-1009",
+    "type": "ledger_entry",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-22",
+    "references": [
+      "PO-1009",
+      "BNK-1009",
+      "PIS/2026/091"
+    ],
+    "case_id": "CASE_09",
+    "extraction_notes": "Ledger combines Warehouse Supplies Expense and Input GST into a single debit account without breaking out the tax portion separately, so tax_amount cannot be determined from this document."
+  },
+  {
+    "doc_id": "PO-1009",
+    "type": "purchase_order",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 118000.0,
+    "tax_amount": 18000.0,
+    "currency": "INR",
+    "date": "2026-07-03",
+    "references": [],
+    "case_id": "CASE_09",
+    "extraction_notes": "PO total (INR 118,000.00) is lower than the amounts invoiced and paid for this order (INR 141,600.00 across INV-1009-A/B, BNK-1009, and LED-1009) - flagged for review as a possible pricing discrepancy or unauthorized overbilling."
+  }
+]

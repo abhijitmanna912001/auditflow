@@ -1,0 +1,21 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "action": "human_review",
+  "confidence": 0.82,
+  "reason": "Flagged for human review because invoice INV-1014 has an internal tax mismatch: the stated 246,000 INR total with 36,000 INR GST at 18% doesn't reconcile with the implied subtotal of 210,000 INR, which would require 37,800 INR in tax at that rate. This medium-severity discrepancy (confidence 0.82) means the transaction cannot be auto-cleared and requires manual verification.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "tax_mismatch",
+      "documents": [
+        "INV-1014"
+      ],
+      "severity": "medium",
+      "explanation": "INV-1014 states a total of 246,000 INR with GST @18% of 36,000 INR, but an 18% rate on the implied subtotal of 210,000 INR would be 37,800 INR (and a 36,000 INR tax at 18% implies a 236,000 INR total), so the document's own subtotal, rate, and total do not reconcile."
+    }
+  ]
+}

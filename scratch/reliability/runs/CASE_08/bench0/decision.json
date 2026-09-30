@@ -1,0 +1,22 @@
+{
+  "transaction_id": "TXN_08",
+  "case_id": "CASE_08",
+  "action": "human_review",
+  "confidence": 0.95,
+  "reason": "Flagged for human review because a date inconsistency was found between PO-1008 (dated 2026-08-15) and INV-1008 (dated 2026-08-05) \u2014 the purchase order postdates the invoice it supposedly precedes, suggesting the PO may have been backdated or created retroactively. This medium-severity finding has a confidence of 0.95.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "PO-1008",
+        "INV-1008"
+      ],
+      "severity": "medium",
+      "explanation": "The purchase order PO-1008 is dated 2026-08-15, after the invoice INV-1008 it is referenced by (dated 2026-08-05), an illogical sequence for a PO-driven procurement flow that suggests a retroactively created or backdated PO."
+    }
+  ]
+}

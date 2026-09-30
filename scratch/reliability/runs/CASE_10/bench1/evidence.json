@@ -1,0 +1,16 @@
+{
+  "transaction_id": "TXN_10",
+  "case_id": "CASE_10",
+  "documents": [
+    "BNK-1010",
+    "INV-1010",
+    "LED-1010",
+    "PO-1010",
+    "REC-1010"
+  ],
+  "missing_evidence": [
+    "Vendor-consistent purchase order: the only PO present (PO-1010) names 'Crestline Data Services Pvt. Ltd.' as supplier, while every other linked document (invoice, receipt, ledger, bank statement) names 'Beacon IT Consulting Pvt. Ltd.' A PO actually issued to/from the correct vendor is effectively absent."
+  ],
+  "evidence_confidence": 0.4,
+  "notes": "All five core document types (PO, invoice, receipt, ledger entry, bank statement) are nominally present and cross-referenced, but the transaction has significant unresolved inconsistencies. (1) Vendor mismatch: PO-1010 names Crestline Data Services Pvt. Ltd. as supplier, contradicting the vendor name on INV-1010, REC-1010, LED-1010, and BNK-1010, all of which say Beacon IT Consulting Pvt. Ltd. This is not merely a formatting issue but calls into question whether PO-1010 truly authorizes this purchase, or whether a correctly vendor-matched PO is missing. (2) Illogical date sequence: REC-1010 is dated 2026-09-03 and BNK-1010 (payment) is dated 2026-09-10, both preceding INV-1010 dated 2026-09-20 - i.e., the receipt and payment appear to predate the invoice that presumably triggered them, which is inconsistent with a normal PO->delivery/receipt->invoice->payment flow and cannot be explained by the documents provided. (3) Tax itemization is inconsistent: INV-1010 and PO-1010 explicitly break out INR 10,800 tax (18% GST) on a 70,800 total, but LED-1010, REC-1010, and BNK-1010 report only the combined inclusive amount with no separate tax line, so the tax component cannot be independently confirmed outside the invoice/PO. Amounts (70,800) and case linkage via shared reference IDs are otherwise internally consistent, but per audit policy this consistency does not resolve the vendor mismatch or confirm that no required document is missing or improperly matched. Given the unresolved vendor discrepancy on the PO and the anomalous date ordering, confidence in this transaction is moderate-to-low pending manual review/clarification."
+}

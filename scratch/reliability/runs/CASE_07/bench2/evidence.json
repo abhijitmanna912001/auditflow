@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_07",
+  "case_id": "CASE_07",
+  "documents": [
+    "PO-1007",
+    "INV-1007",
+    "REC-1007",
+    "BNK-1007",
+    "LED-1007"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.35,
+  "notes": "All five expected document types are present (purchase_order, invoice, receipt, bank_statement, ledger_entry), amounts (53,100.00 INR) and dates form a plausible sequence (PO 06-10 -> INV 06-28 -> REC 06-30 -> BNK/LED 07-20). However, there is a persistent and unresolved vendor name discrepancy across the chain: PO-1007 and REC-1007 name 'Atlas Facilities Care Pvt. Ltd.' as vendor, while INV-1007, BNK-1007, and LED-1007 name 'Orchid Workspace Solutions Pvt. Ltd.'. This is a material inconsistency - two different legal entities appear interchangeably as the counterparty across linked documents - which is a strong fraud/error indicator and cannot be resolved by the presence of matching amounts or reference chains alone. Additionally, REC-1007's tax_amount is not separately stated (bundled into a GST-inclusive total), and BNK-1007/LED-1007 lack explicit tax line items, so tax consistency cannot be independently verified beyond PO-1007 and INV-1007. The successful bank payment and ledger posting do not, by themselves, confirm the vendor identity discrepancy was resolved or that payment terms (e.g., correct receipt acknowledgment tied to the correct vendor) were properly satisfied. Confidence is lowered substantially due to the unresolved vendor mismatch spanning multiple independent document sources."
+}

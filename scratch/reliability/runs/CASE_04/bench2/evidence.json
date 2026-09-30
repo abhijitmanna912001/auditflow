@@ -1,0 +1,17 @@
+{
+  "transaction_id": "TXN_04",
+  "case_id": "CASE_04",
+  "documents": [
+    "PO-1004",
+    "INV-1004",
+    "REC-1004",
+    "BNK-1004",
+    "LED-1004"
+  ],
+  "missing_evidence": [
+    "No PO amendment, change order, or written authorization is present to explain why INV-1004 (82,500) exceeds the originally issued PO-1004 value (75,000).",
+    "No reconciliation document exists explaining why REC-1004 states an accepted value of 75,000 (matching the original PO) while the invoice, bank statement, and ledger all reflect 82,500 \u2014 i.e., no evidence that the higher amount was ever formally accepted."
+  ],
+  "evidence_confidence": 0.4,
+  "notes": "All five expected document types for a standard purchase-to-pay cycle (purchase order, invoice, receipt, bank statement, ledger entry) are present and cross-reference one another, so the transaction is structurally complete. However, the amounts are internally inconsistent: PO-1004 and REC-1004 agree on 75,000, while INV-1004, BNK-1004, and LED-1004 agree on 82,500. The presence of a successful bank payment and matching ledger entry at 82,500 does not establish that the higher amount was properly authorized or that the receipt's stated acceptance value was superseded \u2014 only a document such as a PO amendment or updated acceptance/receipt would establish that. Because the receipt (the document meant to confirm accepted value/quantity) does not match the amount actually invoiced and paid, and no supplementary authorization document is present, confidence in this transaction being fully and correctly supported is low-to-moderate."
+}

@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "LED-1014",
+    "BNK-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "All five expected document types are present: purchase order (PO-1014), invoice (INV-1014), goods receipt note confirming delivery (REC-1014), ledger entry (LED-1014), and bank statement (BNK-1014). Vendor name is consistent across all documents. Amounts align: PO, invoice total, ledger debit, and bank payment all show 246000.0 INR, with the invoice separately itemizing 36000.0 tax (18% GST) consistent with the total. Dates follow a logical sequence: PO issued 2026-08-01, invoice dated 2026-08-09, goods receipt confirming delivery 2026-08-11, and ledger/bank settlement both on 2026-08-14. Cross-references (PO-1014, INV-1014, and supplier's own invoice number SPS/2026/2208) tie the documents together coherently. No document type is absent, so no evidentiary gap exists; the goods receipt itself (not merely the successful bank payment) substantiates that delivery-related conditions were met."
+}

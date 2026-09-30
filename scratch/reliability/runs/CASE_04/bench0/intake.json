@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "PO-1004",
+    "type": "purchase_order",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 75000.0,
+    "tax_amount": 11440.68,
+    "currency": "INR",
+    "date": "2026-06-03",
+    "references": [],
+    "case_id": "CASE_04",
+    "extraction_notes": null
+  },
+  {
+    "doc_id": "INV-1004",
+    "type": "invoice",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 82500.0,
+    "tax_amount": 12584.75,
+    "currency": "INR",
+    "date": "2026-06-12",
+    "references": [
+      "PO-1004"
+    ],
+    "case_id": "CASE_04",
+    "extraction_notes": "Invoice total (82,500) exceeds the referenced PO-1004 total (75,000) by 7,500; document also cites a separate supplier invoice number VPS/2026/0619 not used as doc_id."
+  },
+  {
+    "doc_id": "REC-1004",
+    "type": "receipt",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 75000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-06-16",
+    "references": [
+      "PO-1004",
+      "INV-1004"
+    ],
+    "case_id": "CASE_04",
+    "extraction_notes": "Amount reflects 'Accepted Purchase Order Value' stated as including GST, but tax is not broken out separately on this document; note discrepancy with INV-1004 total of 82,500."
+  },
+  {
+    "doc_id": "BNK-1004",
+    "type": "bank_statement",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 82500.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-10",
+    "references": [
+      "INV-1004",
+      "PO-1004"
+    ],
+    "case_id": "CASE_04",
+    "extraction_notes": "Bank statement does not break out tax separately; debit matches INV-1004 total, not PO-1004 total."
+  },
+  {
+    "doc_id": "LED-1004",
+    "type": "ledger_entry",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 82500.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-10",
+    "references": [
+      "PO-1004",
+      "INV-1004",
+      "REC-1004",
+      "BNK-1004"
+    ],
+    "case_id": "CASE_04",
+    "extraction_notes": "Ledger entry does not break out tax separately; posted value matches invoice total (82,500), which exceeds original PO total (75,000) - potential discrepancy to flag for audit review."
+  }
+]

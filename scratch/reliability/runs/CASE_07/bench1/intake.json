@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "PO-1007",
+    "type": "purchase_order",
+    "vendor": "Atlas Facilities Care Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": 8100.0,
+    "currency": "INR",
+    "date": "2026-06-10",
+    "references": [],
+    "case_id": "CASE_07",
+    "extraction_notes": "Vendor listed as 'Atlas Facilities Care Pvt. Ltd.' on this PO, which differs from the vendor name 'Orchid Workspace Solutions Pvt. Ltd.' used on the corresponding invoice, ledger entry, and bank statement for the same PO/INV reference - possible vendor mismatch or naming discrepancy worth investigating."
+  },
+  {
+    "doc_id": "INV-1007",
+    "type": "invoice",
+    "vendor": "Orchid Workspace Solutions Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": 8100.0,
+    "currency": "INR",
+    "date": "2026-06-28",
+    "references": [
+      "PO-1007"
+    ],
+    "case_id": "CASE_07",
+    "extraction_notes": "Vendor name 'Orchid Workspace Solutions Pvt. Ltd.' differs from 'Atlas Facilities Care Pvt. Ltd.' named as supplier on the referenced PO-1007 - possible vendor mismatch."
+  },
+  {
+    "doc_id": "REC-1007",
+    "type": "receipt",
+    "vendor": "Atlas Facilities Care Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-06-30",
+    "references": [
+      "PO-1007",
+      "INV-1007"
+    ],
+    "case_id": "CASE_07",
+    "extraction_notes": "Amount stated as 'including GST' but no separate tax line item is broken out, so tax_amount is null. Vendor listed as 'Atlas Facilities Care Pvt. Ltd.' which differs from the vendor name on the referenced invoice (Orchid Workspace Solutions Pvt. Ltd.) - possible vendor mismatch."
+  },
+  {
+    "doc_id": "BNK-1007",
+    "type": "bank_statement",
+    "vendor": "Orchid Workspace Solutions Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-20",
+    "references": [
+      "INV-1007",
+      "PO-1007"
+    ],
+    "case_id": "CASE_07",
+    "extraction_notes": "Bank statement does not break out tax separately, so tax_amount is null."
+  },
+  {
+    "doc_id": "LED-1007",
+    "type": "ledger_entry",
+    "vendor": "Orchid Workspace Solutions Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-20",
+    "references": [
+      "PO-1007",
+      "INV-1007",
+      "REC-1007",
+      "BNK-1007"
+    ],
+    "case_id": "CASE_07",
+    "extraction_notes": "Ledger references 'Input GST' in the account name but does not state a separate tax amount figure, so tax_amount is null."
+  }
+]

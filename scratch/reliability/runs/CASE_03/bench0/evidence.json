@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_03",
+  "case_id": "CASE_03",
+  "documents": [
+    "BNK-1003",
+    "INV-1003-A",
+    "INV-1003-B",
+    "LED-1003",
+    "PO-1003",
+    "REC-1003"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.55,
+  "notes": "PO, receipt, invoice, bank statement, and ledger entry all present and consistent in amount (70800.0), vendor, and reference chain (PO-1003 / SSS/2026/188), supporting a well-documented single transaction. However, two invoice scans (INV-1003-A and INV-1003-B) exist for the same supplier invoice number SSS/2026/188 with identical amounts and dates, raising a duplicate invoice/potential duplicate payment concern. The ledger entry narration indicates only one payment was posted despite two invoice records, and the bank statement shows only one outgoing payment of 70800.0, so there is no evidence of an actual duplicate disbursement - but the duplicate invoice scan itself is an anomaly requiring review and lowers confidence pending clarification (e.g., confirmation that INV-1003-B is merely a re-scan and not a separate unpaid/paid invoice). Tax amount breakdowns are consistently absent on bank statement, ledger, and receipt, which is normal for these document types and not treated as missing evidence."
+}

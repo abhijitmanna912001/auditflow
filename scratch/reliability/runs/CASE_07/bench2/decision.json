@@ -1,0 +1,25 @@
+{
+  "transaction_id": "TXN_07",
+  "case_id": "CASE_07",
+  "action": "human_review",
+  "confidence": 0.95,
+  "reason": "This transaction was flagged for human review due to a high-severity vendor mismatch finding (confidence 0.95): PO-1007 and REC-1007 identify the counterparty as 'Atlas Facilities Care Pvt. Ltd.', while INV-1007, BNK-1007, and LED-1007 identify it as 'Orchid Workspace Solutions Pvt. Ltd.', with no document reconciling the discrepancy between these two legal entities.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "vendor_mismatch",
+      "documents": [
+        "PO-1007",
+        "INV-1007",
+        "REC-1007",
+        "BNK-1007",
+        "LED-1007"
+      ],
+      "severity": "high",
+      "explanation": "Two different legal entities appear as the counterparty across the linked chain, with PO-1007 and REC-1007 naming 'Atlas Facilities Care Pvt. Ltd.' while INV-1007, BNK-1007, and LED-1007 name 'Orchid Workspace Solutions Pvt. Ltd.', and no document reconciles the two names."
+    }
+  ]
+}

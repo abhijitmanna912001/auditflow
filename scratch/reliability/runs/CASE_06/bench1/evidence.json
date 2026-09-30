@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_06",
+  "case_id": "CASE_06",
+  "documents": [
+    "PO-1006",
+    "INV-1006",
+    "BNK-1006",
+    "LED-1006"
+  ],
+  "missing_evidence": [
+    "goods_receipt_or_delivery_confirmation"
+  ],
+  "evidence_confidence": 0.82,
+  "notes": "All four core documents (purchase order, invoice, bank statement, ledger entry) are present and interlinked via matching references (PO-1006 -> INV-1006 -> BNK-1006/LED-1006), with consistent vendor name, amount (141600.0 INR), and a logical date progression (PO 2026-08-05, Invoice 2026-08-14, Bank/Ledger 2026-08-28). Tax amount of 21600.0 is explicitly stated on both PO and Invoice, though the bank statement and ledger entry do not break tax out separately - this is a formatting difference, not a discrepancy. No goods receipt or delivery confirmation document is present for this transaction, and none of the other documents establish that goods/services were actually received; the successful bank payment does not substitute for this. No prior pattern in this dataset indicates this vendor is exempt from requiring such documentation, so its absence is flagged as missing evidence rather than assumed non-applicable."
+}

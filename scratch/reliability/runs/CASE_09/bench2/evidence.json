@@ -1,0 +1,18 @@
+{
+  "transaction_id": "TXN_09",
+  "case_id": "CASE_09",
+  "documents": [
+    "PO-1009",
+    "INV-1009-A",
+    "INV-1009-B",
+    "BNK-1009",
+    "LED-1009"
+  ],
+  "missing_evidence": [
+    "goods_receipt_note",
+    "PO_amendment_or_change_order_explaining_price_increase",
+    "duplicate_invoice_resolution_or_cancellation_record"
+  ],
+  "evidence_confidence": 0.5,
+  "notes": "All documents share the same supplier invoice reference PIS/2026/091 and PO-1009, so they are grouped into a single transaction. The purchase order's subtotal (100,000) and GST (18,000) do not match the invoiced subtotal (120,000) and GST (21,600) under the same supplier invoice number, and no PO amendment, change order, or credit note is present to explain this discrepancy - internal consistency between the invoice, bank statement, and ledger does not resolve or excuse the unexplained mismatch against the original PO. Two invoice scans (INV-1009-A and INV-1009-B) are recorded as duplicates of the same supplier invoice; only one bank debit (BNK-1009) and one ledger entry (LED-1009) of 141,600 exist, suggesting payment was made only once, but there is no explicit cancellation, void marking, or reconciliation note clarifying why two invoice copies were retained in the case file, leaving open the possibility of unresolved duplicate billing risk. No goods receipt or delivery confirmation document is present to substantiate that the goods/services underlying the PO and invoice were actually received before payment was made - the successful bank debit alone does not establish this. Given the unexplained PO/invoice amount mismatch and the unresolved duplicate invoice issue, evidence confidence is moderate."
+}

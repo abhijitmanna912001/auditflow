@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "PO-1009",
+    "type": "purchase_order",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 118000.0,
+    "tax_amount": 18000.0,
+    "currency": "INR",
+    "date": "2026-07-03",
+    "references": [],
+    "case_id": "CASE_09",
+    "extraction_notes": "PO subtotal (100,000) and GST (18,000) differ from the amounts later invoiced (120,000 subtotal / 21,600 GST) under the same supplier invoice PIS/2026/091 - possible quantity/price change or discrepancy to investigate."
+  },
+  {
+    "doc_id": "INV-1009-A",
+    "type": "invoice",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": 21600.0,
+    "currency": "INR",
+    "date": "2026-07-15",
+    "references": [
+      "PO-1009",
+      "PIS/2026/091"
+    ],
+    "case_id": "CASE_09",
+    "extraction_notes": "Marked as first received scan of supplier invoice PIS/2026/091; appears to be a duplicate of INV-1009-B (identical amounts, date, and supplier invoice number)."
+  },
+  {
+    "doc_id": "INV-1009-B",
+    "type": "invoice",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": 21600.0,
+    "currency": "INR",
+    "date": "2026-07-15",
+    "references": [
+      "PO-1009",
+      "PIS/2026/091"
+    ],
+    "case_id": "CASE_09",
+    "extraction_notes": "Marked as second received scan of supplier invoice PIS/2026/091; appears to be a duplicate of INV-1009-A (identical amounts, date, and supplier invoice number) - potential duplicate payment risk if both are processed."
+  },
+  {
+    "doc_id": "BNK-1009",
+    "type": "bank_statement",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-22",
+    "references": [
+      "PIS/2026/091",
+      "PO-1009"
+    ],
+    "case_id": "CASE_09",
+    "extraction_notes": "Bank statement does not break out tax separately; amount reflects total debit for the transaction."
+  },
+  {
+    "doc_id": "LED-1009",
+    "type": "ledger_entry",
+    "vendor": "Pioneer Industrial Supplies Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-22",
+    "references": [
+      "PO-1009",
+      "BNK-1009",
+      "PIS/2026/091"
+    ],
+    "case_id": "CASE_09",
+    "extraction_notes": "Ledger entry records a combined debit to Warehouse Supplies Expense and Input GST accounts without breaking out the tax portion separately."
+  }
+]

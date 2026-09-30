@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "REC-1005",
+    "LED-1005",
+    "BNK-1005"
+  ],
+  "missing_evidence": [
+    "PO-1005 (purchase order document itself, referenced by both INV-1005 and REC-1005, was never provided)"
+  ],
+  "evidence_confidence": 0.72,
+  "notes": "Invoice, receipt, ledger entry, and bank statement are all present and internally consistent: vendor name (GreenRoute Logistics Pvt. Ltd.), amount (59,000.00 INR), and reference chain (INV-1005) line up across documents, and the date sequence (receipt 2026-07-18, invoice 2026-07-21, bank settlement 2026-08-18) is logically ordered. However, PO-1005 is cited as a reference on both the invoice and the receipt but the PO document itself was never supplied, so procurement authorization cannot be independently confirmed - this internal consistency does not substitute for the missing PO. Tax amount (9,000.00 GST) is explicitly stated only on the invoice; the ledger and bank statement bundle it into a single figure without separate breakout, which is a minor documentation gap but not treated as missing evidence since it's a presentation choice rather than an absent document type. The successful bank settlement confirms payment occurred but does not itself validate any payment-terms condition beyond what the receipt document independently shows."
+}

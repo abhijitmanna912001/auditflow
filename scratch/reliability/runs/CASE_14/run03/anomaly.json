@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "findings": [
+    {
+      "type": "tax_mismatch",
+      "documents": [
+        "INV-1014"
+      ],
+      "severity": "medium",
+      "confidence": 0.88,
+      "explanation": "INV-1014's internal figures do not reconcile: a total of INR 246,000.00 with stated GST of INR 36,000.00 implies a subtotal of INR 210,000.00, but 18% of that subtotal would be INR 37,800.00 (or, at INR 36,000.00 tax, the total should be INR 236,000.00)."
+    }
+  ]
+}

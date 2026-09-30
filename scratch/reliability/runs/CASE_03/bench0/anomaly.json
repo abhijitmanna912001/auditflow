@@ -1,0 +1,16 @@
+{
+  "transaction_id": "TXN_03",
+  "case_id": "CASE_03",
+  "findings": [
+    {
+      "type": "duplicate_invoice",
+      "documents": [
+        "INV-1003-A",
+        "INV-1003-B"
+      ],
+      "severity": "medium",
+      "confidence": 0.92,
+      "explanation": "INV-1003-A and INV-1003-B carry the same supplier invoice number SSS/2026/188 with identical vendor, amount (70,800.00 INR), date (2026-07-16), and PO reference, indicating a duplicate invoice record, though the ledger and bank statement show only one payment was disbursed."
+    }
+  ]
+}

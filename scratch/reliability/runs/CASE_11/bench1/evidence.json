@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_11",
+  "case_id": "CASE_11",
+  "documents": [
+    "INV-1011",
+    "BNK-1011",
+    "LED-1011",
+    "REC-1011"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1011 referenced by INV-1011 and REC-1011 but never supplied)"
+  ],
+  "evidence_confidence": 0.35,
+  "notes": "Invoice INV-1011 (INR 118,000.00 incl. 18% GST) is referenced by a receipt (REC-1011, same INR 118,000.00) dated prior to payment, but the bank statement (BNK-1011) and ledger entry (LED-1011) both show a debit of INR 129,800.00 - INR 11,800.00 more than the invoice total - on the same date, an unexplained and unreconciled discrepancy. The bank and ledger amounts agree with each other but not with the invoice, and no document explains the additional INR 11,800.00 (e.g., no revised invoice, debit note, or additional charges documentation was provided). Additionally, PO-1011 is referenced by two documents (invoice and receipt) but the purchase order itself was never supplied, so it cannot be confirmed that the invoiced amount, terms, or vendor match an approved PO. The receipt's mention of an amount 'including GST' cannot be verified against a tax breakdown since no tax_amount is stated on that document. Successful settlement (bank/ledger) does not establish that the receipt's condition or the PO terms were properly satisfied - only the underlying documents can, and here the amounts conflict rather than corroborate. Overall, internal consistency exists only between the bank and ledger records, while the invoice and receipt form a separate, lower, mutually consistent pair; the transaction is not fully supported due to the unexplained amount gap and the absent PO."
+}

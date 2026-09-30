@@ -1,0 +1,16 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "LED-1014",
+    "BNK-1014"
+  ],
+  "missing_evidence": [
+    "Formal payment receipt - REC-1014 is explicitly a goods receipt/delivery confirmation, not a payment receipt, so documentary proof of payment completion (beyond the bank statement) is absent"
+  ],
+  "evidence_confidence": 0.78,
+  "notes": "All core document types for a standard PO-based purchase are present: PO-1014 (2026-08-01), INV-1014 (2026-08-09, references PO-1014), REC-1014 (2026-08-11, goods receipt note referencing both INV-1014 and PO-1014), LED-1014 (2026-08-14, referencing INV-1014 and PO-1014), and BNK-1014 (2026-08-14, referencing INV-1014). Amounts of 246000 INR are consistent across PO, INV, LED, and BNK; the 36000 tax amount appears only on the invoice, which is explained by extraction notes stating other documents omit tax breakdowns rather than indicating a discrepancy. The date sequence (PO -> INV -> goods receipt -> ledger/bank) is mostly logical, though the invoice date (08-09) precedes the goods receipt date (08-11), meaning the invoice was issued before delivery was confirmed - this is noted but not treated as proof of an anomaly, only as a pattern worth flagging. REC-1014 is explicitly labeled a goods receipt (delivery confirmation) rather than a payment receipt and carries no monetary amount, so it cannot corroborate transaction value or serve as proof that any payment-terms condition requiring a payment receipt was satisfied. While BNK-1014 shows a matching bank transaction consistent with payment having occurred, per audit convention a successful payment/bank entry does not itself substitute for a required payment receipt document if one is expected under the vendor's terms; no such document is present in this set. No pattern across the provided documents indicates this vendor is exempt from requiring a payment receipt, so its absence is flagged as missing evidence rather than assumed acceptable. Overall the transaction is well-documented and internally consistent across PO, invoice, ledger, and bank records, but the ambiguity around the receipt document's true nature (goods receipt vs. payment receipt) prevents full confidence."
+}

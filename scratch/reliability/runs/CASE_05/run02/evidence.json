@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "REC-1005",
+    "BNK-1005",
+    "LED-1005"
+  ],
+  "missing_evidence": [
+    "PO-1005 (purchase order document itself is referenced by both INV-1005 and REC-1005 but was never provided in the evidence set)"
+  ],
+  "evidence_confidence": 0.5,
+  "notes": "All four documents cross-reference INV-1005 and share a consistent amount of 59,000 INR (invoice subtotal 50,000 + GST 9,000; bank debit, ledger entry, and receipt all match this total), which suggests a coherent financial trail. However, this internal amount consistency does not establish that the missing PO-1005 ever existed or was compliant, since both the invoice and the receipt explicitly reference a purchase order that is absent from the record - its non-existence cannot be inferred as 'PO-exempt' from a single case with no comparative vendor pattern. Separately, REC-1005 is dated 2026-07-18, three days before its own referenced invoice INV-1005 (2026-07-21), producing an illogical sequence: a receipt purportedly confirming acceptance of goods/services tied to an invoice that had not yet been issued. This anomaly cannot be explained away by the fact that the bank settlement (BNK-1005) and ledger entry (LED-1005), both dated 2026-08-18, occur logically after the invoice - the successful settlement only proves payment occurred, not that any receipt-based payment-term condition was properly satisfied given the receipt's out-of-sequence date. Confidence is moderated to reflect the missing PO document and the unresolved date-sequence inconsistency in the receipt."
+}

@@ -1,0 +1,94 @@
+Case ID: CASE_14
+Transaction ID: TXN_14
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "LED-1014",
+    "BNK-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.93,
+  "notes": "Complete document chain present: purchase order (PO-1014), invoice (INV-1014) with explicit 18% GST breakdown, a goods receipt/delivery confirmation (REC-1014, not a monetary receipt), a ledger entry (LED-1014), and a bank statement line (BNK-1014) all cross-reference one another (PO-1014, INV-1014, and supplier invoice number SPS/2026/2208) with consistent vendor and amount (INR 246,000.00) and a logical date sequence (PO 08-01 -> INV 08-09 -> goods receipt 08-11 -> ledger/bank settlement 08-14). No document type is absent, so no gaps to flag as missing evidence. Note that REC-1014 is a delivery confirmation, not proof of payment terms compliance, and the bank statement's successful settlement does not itself substitute for or verify the tax breakdown, which is only established by INV-1014; these internal consistencies support but do not independently confirm items no longer required to be tracked separately."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "BNK-1014",
+    "type": "bank_statement",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-14",
+    "references": [
+      "INV-1014",
+      "SPS/2026/2208"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "Bank statement line item; no separate tax amount stated. Reference includes supplier invoice number SPS/2026/2208 cited in description."
+  },
+  {
+    "doc_id": "INV-1014",
+    "type": "invoice",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": 36000.0,
+    "currency": "INR",
+    "date": "2026-08-09",
+    "references": [
+      "PO-1014",
+      "SPS/2026/2208"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "GST @ 18% explicitly stated as INR 36,000.00. Supplier's own invoice number (SPS/2026/2208) listed alongside PO reference."
+  },
+  {
+    "doc_id": "LED-1014",
+    "type": "ledger_entry",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-14",
+    "references": [
+      "INV-1014",
+      "PO-1014"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "Ledger entry does not break out tax separately from the total debit amount."
+  },
+  {
+    "doc_id": "PO-1014",
+    "type": "purchase_order",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-01",
+    "references": [],
+    "case_id": "CASE_14",
+    "extraction_notes": "No explicit tax breakdown provided on the purchase order; amount appears to be a total figure."
+  },
+  {
+    "doc_id": "REC-1014",
+    "type": "receipt",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": null,
+    "tax_amount": null,
+    "currency": null,
+    "date": "2026-08-11",
+    "references": [
+      "INV-1014",
+      "PO-1014"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "This is a goods receipt/delivery confirmation note, not a monetary receipt; no amount, tax, or currency is stated in the document."
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_01",
+  "case_id": "CASE_01",
+  "documents": [
+    "PO-1001",
+    "INV-1001",
+    "REC-1001",
+    "BNK-1001",
+    "LED-1001"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.93,
+  "notes": "Full document chain present: purchase order, invoice, goods receipt/acceptance confirmation, bank payment, and ledger entry, all cross-referencing one another (PO-1001, INV-1001, REC-1001, BNK-1001) with a logical date progression (PO 07-01 -> INV 07-05 -> REC 07-09 -> payment/ledger 07-25). Amounts are consistent across all documents at 47200.0 INR, and tax amount (7200.0) matches between PO-1001 and INV-1001 where explicitly stated. The bank statement and ledger entry lack a separate tax breakout, but this is a formatting detail rather than a missing document type, since both consolidate the GST into the total/combined account. No expected document type appears absent, so evidence is strongly supported; confidence is not set to 1.0 because the ledger's combined account treatment and the bank statement's lack of tax detail slightly reduce granular traceability of the tax component itself."
+}

@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_08",
+  "case_id": "CASE_08",
+  "documents": [
+    "PO-1008",
+    "INV-1008",
+    "REC-1008",
+    "BNK-1008",
+    "LED-1008"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.88,
+  "notes": "All five expected document types are present: purchase order, invoice, receipt, bank statement, and ledger entry, all cross-referencing each other and sharing a consistent total amount of 106200 INR. However, the invoice date (2026-08-05) precedes the PO issue date (2026-08-15), an internal sequencing anomaly that does not itself indicate a missing document but slightly undermines confidence in the documented process flow. Additionally, tax_amount (16200) is only explicitly broken out on the PO and invoice; the bank statement, ledger entry, and receipt bundle tax into the total without separate disclosure, which is a minor extraction limitation rather than evidence of an actual discrepancy. The receipt's presence supports that a payment-terms condition (goods/services acceptance) was documented, but this is based solely on REC-1008 itself, not inferred from the successful bank payment. No evidence of vendor being PO-exempt is relevant here since a PO is present. Overall the transaction is well-supported with only minor date-sequencing and granularity concerns."
+}

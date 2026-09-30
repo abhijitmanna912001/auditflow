@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "BNK-1005",
+    "INV-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "PO-1005 (purchase order referenced by both INV-1005 and REC-1005 but not supplied in the document set)"
+  ],
+  "evidence_confidence": 0.6,
+  "notes": "Invoice, bank statement, ledger entry, and receipt all agree on vendor (GreenRoute Logistics Pvt. Ltd.), currency (INR), and total amount (59,000.00), and the bank/ledger entries explicitly reference INV-1005, giving reasonable internal consistency. However, both INV-1005 and REC-1005 cite PO-1005 as a governing reference, yet no purchase order document was provided in this case, so the underlying authorization for the purchase cannot be verified from the evidence on hand. Additionally, REC-1005 is dated 2026-07-18, three days before INV-1005 (2026-07-21), an inverted sequence (receipt preceding invoice) that is unusual and not explained by any document; this internal inconsistency does not itself confirm or rule out whether PO-1005 exists, it merely flags a dating anomaly. The successful bank settlement (BNK-1005) confirms payment occurred but does not by itself establish that any payment-term condition tied to the missing PO was satisfied. Confidence is moderate: amounts reconcile across invoice, ledger, and bank records, and a receipt is present, but the absent PO and the anomalous date ordering limit full assurance."
+}

@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "BNK-1014",
+    "LED-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Full document chain present: purchase order (PO-1014), invoice (INV-1014) referencing the PO, a goods receipt (REC-1014) referencing both the invoice and PO, a bank statement (BNK-1014) referencing the invoice and vendor's own invoice number, and a ledger entry (LED-1014) referencing both invoice and PO. Amounts are consistent across PO, invoice, bank statement, and ledger (246,000.00 INR), with invoice breaking out a 36,000.00 tax amount not separately stated elsewhere, which is a normal omission rather than a missing document. The receipt lacks a monetary amount/currency, but as a goods receipt note this is expected - it establishes physical receipt of goods, not payment terms. Date sequence (PO 08-01, invoice 08-09, receipt 08-11, payment/ledger 08-14) is logical. No document type appears to be missing given the pattern seen for this vendor; confidence is high but not maximal since the receipt's lack of amount prevents a full three-way monetary match."
+}

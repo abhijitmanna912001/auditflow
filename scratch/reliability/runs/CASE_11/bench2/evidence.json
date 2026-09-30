@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_11",
+  "case_id": "CASE_11",
+  "documents": [
+    "INV-1011",
+    "BNK-1011",
+    "LED-1011",
+    "REC-1011"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1011 referenced by INV-1011 and REC-1011 but the PO document itself was not provided)"
+  ],
+  "evidence_confidence": 0.35,
+  "notes": "Invoice, bank statement, ledger entry, and receipt are all present and reference a common PO-1011, but the PO document itself is absent from the case file, so the underlying agreed price/terms cannot be independently verified. More significantly, there is an unexplained amount discrepancy: INV-1011 and REC-1011 both show INR 118,000.00 (100,000 + 18,000 GST), while BNK-1011 and LED-1011 both show INR 129,800.00 - a difference of 11,800.00 with no supporting document (e.g., a debit note, additional invoice, or fee schedule) to explain it. The receipt predates the bank/ledger entries and matches the invoice, but its existence does not confirm that the larger bank/ledger amount was contractually correct, nor does the successful-looking payment flow prove any payment-terms condition was met. Given the unresolved amount mismatch and the missing PO, evidence support for this transaction is weak despite having four related documents."
+}

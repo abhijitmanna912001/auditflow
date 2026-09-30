@@ -1,0 +1,59 @@
+[
+  {
+    "doc_id": "INV-1011",
+    "type": "invoice",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 118000.0,
+    "tax_amount": 18000.0,
+    "currency": "INR",
+    "date": "2026-07-11",
+    "references": [
+      "PO-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "Supplier invoice no APS/2026/614 also referenced on document; amount taken as Invoice Total (subtotal 100,000 + GST 18,000)."
+  },
+  {
+    "doc_id": "BNK-1011",
+    "type": "bank_statement",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 129800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-12",
+    "references": [
+      "INV-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "Debit amount of INR 129,800.00 does not match INV-1011 total of INR 118,000.00; discrepancy flagged, no tax amount stated separately on bank statement."
+  },
+  {
+    "doc_id": "LED-1011",
+    "type": "ledger_entry",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 129800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-12",
+    "references": [
+      "INV-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "Ledger debit matches bank statement amount (129,800.00) rather than invoice total (118,000.00); no separate tax line stated, so tax_amount left null despite account name mentioning 'Input GST'."
+  },
+  {
+    "doc_id": "REC-1011",
+    "type": "receipt",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 118000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-18",
+    "references": [
+      "INV-1011",
+      "PO-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "Accepted value stated as 'including GST' without separate tax breakdown, so tax_amount left null."
+  }
+]

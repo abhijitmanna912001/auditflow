@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_10",
+  "case_id": "CASE_10",
+  "documents": [
+    "BNK-1010",
+    "INV-1010",
+    "LED-1010",
+    "PO-1010",
+    "REC-1010"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.4,
+  "notes": "All five expected document types (purchase order, invoice, receipt, ledger entry, bank statement) are present and cross-referenced consistently by ID (PO-1010, INV-1010, REC-1010, BNK-1010 all interlink). Amounts (70,800.00) and the 18% GST breakdown (10,800.00 on 60,000.00 subtotal) agree between PO-1010 and INV-1010, though the bank statement, ledger entry, and receipt do not separately break out tax - this is a normal limitation of those document types rather than evidence of an error. However, two significant unresolved discrepancies prevent a high confidence rating: (1) PO-1010 names the vendor as 'Crestline Data Services Pvt. Ltd.' while every other document referencing this same PO (invoice, receipt, ledger, bank statement) names the vendor as 'Beacon IT Consulting Pvt. Ltd.' - this vendor identity conflict is not resolved by any document in hand and requires manual investigation; the presence of consistent vendor naming across the other four documents does not itself establish which vendor name is correct or that the PO was properly matched. (2) The document date sequence is anomalous: PO-1010 is dated 2026-08-01, REC-1010 (receipt of goods/services) is dated 2026-09-03, the bank payment (BNK-1010) and ledger entry (LED-1010) are both dated 2026-09-10, but INV-1010 is dated 2026-09-20 - meaning payment appears to have occurred before the invoice was issued. A successful payment recorded in the bank statement and ledger does not itself confirm the invoice terms or receipt conditions were properly satisfied in the correct order; only the documents' own dates can establish that, and here they suggest an out-of-sequence process. No document type is missing, so missing_evidence is empty, but these unresolved internal conflicts materially reduce confidence in the transaction's integrity."
+}

@@ -1,0 +1,26 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "confidence": 0.9,
+      "explanation": "No purchase order document exists in the evidence set at all \u2014 PO-1005 is only cited as a reference on the invoice and receipt, so procurement authorization cannot be independently verified."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "REC-1005",
+        "INV-1005"
+      ],
+      "severity": "medium",
+      "confidence": 0.8,
+      "explanation": "REC-1005 is dated 2026-07-18, three days before the invoice INV-1005 dated 2026-07-21, an unexplained sequence in which the receipt predates the invoice it references."
+    }
+  ]
+}

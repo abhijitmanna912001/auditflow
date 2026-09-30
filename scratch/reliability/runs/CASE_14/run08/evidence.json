@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "LED-1014",
+    "BNK-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.93,
+  "notes": "Full document chain present: purchase order (PO-1014), invoice (INV-1014) with explicit 18% GST breakdown, goods receipt note (REC-1014) confirming receipt of goods, ledger entry (LED-1014), and bank statement (BNK-1014) evidencing payment. All amounts (246,000.00 INR) and vendor names are consistent across documents, and the date sequence (PO 08-01 -> Invoice 08-09 -> Receipt 08-11 -> Ledger/Bank 08-14) is logical. No document type expected for this transaction pattern is absent. Note that this internal consistency and the successful bank payment do not themselves prove any payment-terms condition (e.g., receipt-before-payment) was contractually satisfied - that is inferred only from the receipt document's own presence and date, which does precede the ledger/payment date here."
+}

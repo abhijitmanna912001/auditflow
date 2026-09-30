@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "LED-1014",
+    "BNK-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Complete document chain present: purchase order (PO-1014) precedes invoice (INV-1014), which precedes goods receipt (REC-1014), followed by ledger debit (LED-1014) and bank payment (BNK-1014). Dates form a logical sequence (PO 08-01 -> Invoice 08-09 -> Receipt 08-11 -> Ledger/Payment 08-14). Amounts are consistent at 246000 INR across invoice, ledger, and bank statement, with invoice explicitly itemizing 36000 INR GST while ledger and bank figures reflect total (tax-inclusive) amounts, which is consistent rather than contradictory. The receipt lacks monetary detail but does confirm quantities received, satisfying the goods-receipt condition referenced by invoice/PO. No document type expected for this transaction pattern (PO-based vendor with receipt requirement) appears to be missing. Note that while the bank statement shows a successful payment, this alone does not independently verify the receipt condition was met - only REC-1014 itself establishes that, and it is present here."
+}

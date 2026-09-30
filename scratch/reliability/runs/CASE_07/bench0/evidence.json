@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_07",
+  "case_id": "CASE_07",
+  "documents": [
+    "PO-1007",
+    "INV-1007",
+    "REC-1007",
+    "BNK-1007",
+    "LED-1007"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.15,
+  "notes": "All five expected document types (purchase order, invoice, receipt, bank statement, ledger entry) are present and cross-referenced consistently by ID, and all amounts (53100.0 INR total, 8100.0 tax where stated) align. However, there is a severe and unresolved vendor identity inconsistency: PO-1007 and REC-1007 list the vendor as 'Atlas Facilities Care Pvt. Ltd.', while INV-1007, BNK-1007, and LED-1007 list the vendor as 'Orchid Workspace Solutions Pvt. Ltd.', despite all documents referencing the same PO/invoice chain. This is a strong fraud indicator - it suggests either a fraudulent invoice substitution after PO approval and goods receipt, or a data integrity error, and cannot be explained away by the otherwise consistent amounts, dates, or successful payment settlement. The bank statement's successful debit and the ledger's clean aggregation do not verify that the receipt's acceptance conditions were properly matched to the correct invoicing vendor. This mismatch is the dominant factor suppressing confidence in this transaction despite document completeness."
+}

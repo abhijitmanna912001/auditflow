@@ -1,0 +1,78 @@
+Case ID: CASE_12
+Transaction ID: TXN_12
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_12",
+  "case_id": "CASE_12",
+  "documents": [
+    "PO-1012",
+    "INV-1012",
+    "BNK-1012",
+    "LED-1012"
+  ],
+  "missing_evidence": [
+    "signed service acceptance receipt (required by invoice payment terms, not present)"
+  ],
+  "evidence_confidence": 0.68,
+  "notes": "Purchase order, invoice, bank statement, and ledger entry are all present and mutually consistent: vendor (Nova Archive Storage Pvt. Ltd.), amount (INR 236,000.00 total, INR 200,000.00 subtotal + INR 36,000.00 GST@18%), and reference chain (PO-1012 -> INV-1012 -> BNK-1012/LED-1012) all align, and the date sequence (PO 2026-08-08, INV 2026-08-30, payment/ledger 2026-09-20) is logical. However, the invoice explicitly states that payment terms require a signed service acceptance receipt, and no such document was provided among the reviewed records. The successful bank payment and matching ledger debit confirm funds moved but do not, by themselves, establish that the acceptance condition was satisfied, since only the receipt itself could confirm that. This missing required document lowers confidence despite otherwise strong internal consistency across amounts, vendor, and dates."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "BNK-1012",
+    "type": "bank_statement",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-20",
+    "references": [
+      "INV-1012",
+      "PO-1012"
+    ],
+    "case_id": "CASE_12",
+    "extraction_notes": "Bank statement narration references INV-1012 and PO-1012; no separate tax line stated."
+  },
+  {
+    "doc_id": "INV-1012",
+    "type": "invoice",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000,
+    "tax_amount": 36000,
+    "currency": "INR",
+    "date": "2026-08-30",
+    "references": [
+      "PO-1012"
+    ],
+    "case_id": "CASE_12",
+    "extraction_notes": "GST @18% explicitly stated as INR 36,000.00 on subtotal of INR 200,000.00; total INR 236,000.00. Payment terms require signed service acceptance receipt, which was not provided among the documents reviewed."
+  },
+  {
+    "doc_id": "LED-1012",
+    "type": "ledger_entry",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-20",
+    "references": [
+      "INV-1012"
+    ],
+    "case_id": "CASE_12",
+    "extraction_notes": "Ledger entry records total debit amount matching invoice total; no separate tax line item stated in this document."
+  },
+  {
+    "doc_id": "PO-1012",
+    "type": "purchase_order",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000,
+    "tax_amount": 36000,
+    "currency": "INR",
+    "date": "2026-08-08",
+    "references": [],
+    "case_id": "CASE_12",
+    "extraction_notes": "GST @18% explicitly stated as INR 36,000.00 on subtotal of INR 200,000.00; total INR 236,000.00. No reference IDs to other documents found on the PO itself."
+  }
+]

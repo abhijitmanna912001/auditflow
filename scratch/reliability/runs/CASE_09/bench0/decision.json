@@ -1,0 +1,45 @@
+{
+  "transaction_id": "TXN_09",
+  "case_id": "CASE_09",
+  "action": "human_review",
+  "confidence": 0.94,
+  "reason": "Flagged for human review due to a duplicate invoice submission (INV-1009-A and INV-1009-B for the same PIS/2026/091 invoice), a high-severity amount mismatch where PO-1009 authorized INR 118,000.00 but INR 141,600.00 was invoiced, debited, and ledgered without any change order, and a missing goods receipt to confirm delivery before payment.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "duplicate_invoice",
+      "documents": [
+        "INV-1009-A",
+        "INV-1009-B"
+      ],
+      "severity": "high",
+      "explanation": "INV-1009-A and INV-1009-B are explicitly labeled the first and second scans of supplier invoice PIS/2026/091 with identical vendor, amount (INR 141,600.00), tax, date, and references, indicating the same invoice was submitted twice."
+    },
+    {
+      "type": "amount_mismatch",
+      "documents": [
+        "PO-1009",
+        "INV-1009-A",
+        "INV-1009-B",
+        "BNK-1009",
+        "LED-1009"
+      ],
+      "severity": "high",
+      "explanation": "The purchase order authorizes INR 118,000.00 while the invoices, bank debit, and ledger entry all record INR 141,600.00, an unexplained INR 23,600.00 overage with no amendment or change order in the evidence set."
+    },
+    {
+      "type": "missing_receipt",
+      "documents": [
+        "PO-1009",
+        "INV-1009-A",
+        "BNK-1009",
+        "LED-1009"
+      ],
+      "severity": "medium",
+      "explanation": "No goods receipt note or delivery confirmation document exists anywhere in the transaction to evidence that the goods under PO-1009 were received before payment was made."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_11",
+  "case_id": "CASE_11",
+  "documents": [
+    "INV-1011",
+    "BNK-1011",
+    "LED-1011",
+    "REC-1011"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1011 referenced by INV-1011 and REC-1011 but the PO document itself was never provided)"
+  ],
+  "evidence_confidence": 0.45,
+  "notes": "All four core documents (invoice, bank statement, ledger entry, receipt) are present and share consistent vendor identity and cross-references (INV-1011, PO-1011). However, PO-1011 is referenced twice but never supplied as its own document, so the underlying purchase authorization cannot be verified. More significantly, BNK-1011 and LED-1011 both show INR 129,800.00 - an unexplained INR 11,800.00 excess over the INV-1011 invoice total of INR 118,000.00 - with no document in the set accounting for the difference (e.g., additional fees, a second invoice, or FX adjustment). The receipt confirms goods/service acceptance at the original invoice amount (118,000, described as 'including GST') but does not itself verify tax breakdown or reconcile with the higher payment amount. A successful-looking payment flow (bank debit + matching ledger entry) does not by itself establish that the payment terms or GST treatment were correctly satisfied, since neither document states a separate tax figure. Given the unresolved amount discrepancy and the missing PO document, this transaction is only moderately well-supported."
+}

@@ -1,0 +1,28 @@
+{
+  "transaction_id": "TXN_11",
+  "case_id": "CASE_11",
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1011",
+        "REC-1011"
+      ],
+      "severity": "medium",
+      "confidence": 0.9,
+      "explanation": "PO-1011 is referenced by both the invoice and the receipt but no purchase order document exists in the case file, so the agreed price and terms cannot be independently verified."
+    },
+    {
+      "type": "amount_mismatch",
+      "documents": [
+        "INV-1011",
+        "REC-1011",
+        "BNK-1011",
+        "LED-1011"
+      ],
+      "severity": "high",
+      "confidence": 0.95,
+      "explanation": "The invoice and receipt both state INR 118,000.00 while the bank statement and ledger entry both record INR 129,800.00, an unexplained difference of INR 11,800.00 with no supporting document."
+    }
+  ]
+}

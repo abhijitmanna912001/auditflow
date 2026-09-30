@@ -1,0 +1,40 @@
+{
+  "transaction_id": "TXN_09",
+  "case_id": "CASE_09",
+  "action": "human_review",
+  "confidence": 0.95,
+  "reason": "Flagged for human review because this transaction shows a high-severity amount mismatch where PO-1009 authorized INR 118,000.00 but INR 141,600.00 was invoiced, paid, and recorded with no change order to explain the INR 23,600.00 overage. Additional findings include duplicate invoice scans (INV-1009-A and INV-1009-B) for the same supplier invoice raising double-payment risk, and a missing goods receipt note preventing verification that the billed items were actually received.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "duplicate_invoice",
+      "documents": [
+        "INV-1009-A",
+        "INV-1009-B"
+      ],
+      "severity": "medium",
+      "explanation": "INV-1009-A and INV-1009-B are identical scans of the same supplier invoice PIS/2026/091 (same vendor, date 2026-07-15, amount INR 141,600.00, tax INR 21,600.00), creating a duplicate-submission and double-payment risk, though only a single matching payment (BNK-1009) is evidenced."
+    },
+    {
+      "type": "amount_mismatch",
+      "documents": [
+        "PO-1009",
+        "INV-1009-A",
+        "INV-1009-B",
+        "BNK-1009",
+        "LED-1009"
+      ],
+      "severity": "high",
+      "explanation": "PO-1009 authorizes INR 118,000.00 but the invoices, bank payment, and ledger entry all record INR 141,600.00, an unexplained overage of INR 23,600.00 with no change order or PO amendment present."
+    },
+    {
+      "type": "missing_receipt",
+      "documents": [],
+      "severity": "medium",
+      "explanation": "No goods receipt note or delivery confirmation document exists anywhere in this transaction to independently verify that the goods/services billed and paid were actually received."
+    }
+  ]
+}

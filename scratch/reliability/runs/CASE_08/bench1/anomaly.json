@@ -1,0 +1,16 @@
+{
+  "transaction_id": "TXN_08",
+  "case_id": "CASE_08",
+  "findings": [
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "INV-1008",
+        "PO-1008"
+      ],
+      "severity": "medium",
+      "confidence": 0.92,
+      "explanation": "The invoice INV-1008 is dated 2026-08-05, ten days before the purchase order PO-1008 it references was issued (2026-08-15), indicating the invoice was raised before the PO authorized the purchase."
+    }
+  ]
+}

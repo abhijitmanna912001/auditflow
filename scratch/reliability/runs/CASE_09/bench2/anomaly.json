@@ -1,0 +1,42 @@
+{
+  "transaction_id": "TXN_09",
+  "case_id": "CASE_09",
+  "findings": [
+    {
+      "type": "duplicate_invoice",
+      "documents": [
+        "INV-1009-A",
+        "INV-1009-B"
+      ],
+      "severity": "high",
+      "confidence": 0.95,
+      "explanation": "INV-1009-A and INV-1009-B are two scans of the same supplier invoice PIS/2026/091 with identical vendor, date (2026-07-15), and amount (141,600 INR), and no cancellation or void record exists to resolve the duplicate."
+    },
+    {
+      "type": "amount_mismatch",
+      "documents": [
+        "PO-1009",
+        "INV-1009-A",
+        "INV-1009-B",
+        "BNK-1009",
+        "LED-1009"
+      ],
+      "severity": "high",
+      "confidence": 0.93,
+      "explanation": "The purchase order totals 118,000 INR (100,000 subtotal + 18,000 GST) while the invoiced, paid, and posted amount is 141,600 INR (120,000 subtotal + 21,600 GST), a 23,600 INR excess with no amendment or change order explaining it."
+    },
+    {
+      "type": "missing_receipt",
+      "documents": [
+        "PO-1009",
+        "INV-1009-A",
+        "INV-1009-B",
+        "BNK-1009",
+        "LED-1009"
+      ],
+      "severity": "medium",
+      "confidence": 0.88,
+      "explanation": "No goods receipt note or delivery confirmation document exists anywhere in the transaction to substantiate that the goods were received before the 141,600 INR payment was made."
+    }
+  ]
+}

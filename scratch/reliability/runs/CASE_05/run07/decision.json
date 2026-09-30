@@ -1,0 +1,31 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "action": "human_review",
+  "confidence": 0.88,
+  "reason": "Flagged for human review because INV-1005 and REC-1005 both reference PO-1005, yet no purchase order document is present to support the procurement (medium severity, confidence 0.88), and additionally REC-1005 is dated three days before the invoice it references, an unusual sequencing worth verifying (low severity, confidence 0.55).",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "explanation": "Both INV-1005 and REC-1005 reference PO-1005, but no purchase order document exists anywhere in this transaction's evidence, leaving the procurement authorization unsupported."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "REC-1005",
+        "INV-1005"
+      ],
+      "severity": "low",
+      "explanation": "REC-1005 is dated 2026-07-18, three days before the invoice it references (INV-1005, dated 2026-07-21), which is unusual sequencing though plausible for goods received prior to billing."
+    }
+  ]
+}

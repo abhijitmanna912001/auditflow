@@ -1,0 +1,74 @@
+[
+  {
+    "doc_id": "BNK-1013",
+    "type": "bank_statement",
+    "vendor": "Meridian Cloud Services Inc.",
+    "amount": 415000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-18",
+    "references": [
+      "INV-1013",
+      "MCS-2026-4471"
+    ],
+    "case_id": "CASE_13",
+    "extraction_notes": "No tax amount stated separately on bank statement. Transaction date used as statement does not indicate a distinct posting date."
+  },
+  {
+    "doc_id": "INV-1013",
+    "type": "invoice",
+    "vendor": "Meridian Cloud Services Inc.",
+    "amount": 4980.0,
+    "tax_amount": null,
+    "currency": "USD",
+    "date": "2026-07-14",
+    "references": [
+      "PO-1013",
+      "MCS-2026-4471"
+    ],
+    "case_id": "CASE_13",
+    "extraction_notes": "No tax/GST line item explicitly stated on invoice, so tax_amount left null. Currency stated as USD on invoice, which differs from INR amounts on linked PO, ledger entry, and bank statement (415,000 INR) - flagging possible currency conversion discrepancy or data entry inconsistency for review; amount not adjusted or guessed."
+  },
+  {
+    "doc_id": "LED-1013",
+    "type": "ledger_entry",
+    "vendor": "Meridian Cloud Services Inc.",
+    "amount": 415000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-18",
+    "references": [
+      "INV-1013",
+      "PO-1013"
+    ],
+    "case_id": "CASE_13",
+    "extraction_notes": "No tax amount broken out separately in ledger entry."
+  },
+  {
+    "doc_id": "PO-1013",
+    "type": "purchase_order",
+    "vendor": "Meridian Cloud Services Inc.",
+    "amount": 415000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-02",
+    "references": [],
+    "case_id": "CASE_13",
+    "extraction_notes": "No tax amount stated separately on purchase order. No references to other document IDs found (PO number is self-referential)."
+  },
+  {
+    "doc_id": "REC-1013",
+    "type": "receipt",
+    "vendor": "Meridian Cloud Services Inc.",
+    "amount": null,
+    "tax_amount": null,
+    "currency": null,
+    "date": "2026-07-15",
+    "references": [
+      "INV-1013",
+      "PO-1013"
+    ],
+    "case_id": "CASE_13",
+    "extraction_notes": "Service acceptance receipt does not state a monetary amount, tax amount, or currency; document confirms service activation only."
+  }
+]

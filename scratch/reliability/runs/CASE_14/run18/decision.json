@@ -1,0 +1,21 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "action": "human_review",
+  "confidence": 0.88,
+  "reason": "Flagged for human review because invoice INV-1014 shows a tax mismatch: the stated 36,000 INR GST at an 18% rate doesn't reconcile with the 246,000 INR total, indicating an internal arithmetic inconsistency (medium severity, confidence 0.88).",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "tax_mismatch",
+      "documents": [
+        "INV-1014"
+      ],
+      "severity": "medium",
+      "explanation": "INV-1014's own figures do not reconcile arithmetically: a total of 246,000 INR with 36,000 INR stated as 18% GST implies a subtotal of 210,000 (which would yield 37,800 tax) or a tax-inclusive base of 208,474.58 (yielding 37,525.42 tax), so the stated 36,000 is internally inconsistent with the 18% rate and total."
+    }
+  ]
+}

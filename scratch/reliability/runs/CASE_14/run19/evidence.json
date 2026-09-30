@@ -1,0 +1,16 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "LED-1014",
+    "BNK-1014"
+  ],
+  "missing_evidence": [
+    "payment_receipt"
+  ],
+  "evidence_confidence": 0.82,
+  "notes": "All five documents share cross-references (PO-1014, INV-1014) and consistent vendor (Sunrise Packaging Solutions Pvt. Ltd.) and amount (INR 246,000), forming a coherent chain: PO (2026-08-01) -> Invoice (2026-08-09) -> Goods Receipt Note (2026-08-11) -> Bank Statement & Ledger Entry (2026-08-14). Note that REC-1014 is explicitly a Goods Receipt Note confirming delivery, not a payment receipt, so no document confirming vendor acknowledgment of payment is present - this is flagged as missing evidence even though the bank statement shows funds moved, since a completed bank transaction does not itself prove a payment receipt/acknowledgment was issued or that any payment-terms condition requiring one was satisfied. Tax amount (INR 36,000, 18% GST) is only itemized on the invoice; PO, ledger, and bank statement show only totals without tax breakdown, which is a common and not inherently suspicious omission across those document types. Amounts and vendor names are internally consistent and dates follow a logical sequence, supporting a fairly high confidence score, but the absence of a genuine payment receipt document prevents a higher score."
+}

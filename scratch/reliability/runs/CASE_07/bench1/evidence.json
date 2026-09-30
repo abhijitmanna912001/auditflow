@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_07",
+  "case_id": "CASE_07",
+  "documents": [
+    "PO-1007",
+    "INV-1007",
+    "REC-1007",
+    "BNK-1007",
+    "LED-1007"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.45,
+  "notes": "All five expected document types (purchase order, invoice, receipt, bank statement, ledger entry) are present and cross-reference one another, and amounts/tax figures align consistently across documents. However, there is a significant unresolved vendor identity discrepancy: PO-1007 and REC-1007 name the vendor as 'Atlas Facilities Care Pvt. Ltd.', while INV-1007, BNK-1007, and LED-1007 name the vendor as 'Orchid Workspace Solutions Pvt. Ltd.' for the same transaction chain. This split (2 documents vs. 3 documents) does not resolve in favor of either name and raises the possibility of vendor impersonation, incorrect PO issuance, or a merged/renamed entity that has not been documented. Internal consistency of amounts and dates does not resolve or excuse this mismatch. The receipt's tax_amount is null because it states 'including GST' without a separate line item, and the bank statement/ledger also lack a broken-out tax figure - these are inherent to the documents as provided rather than missing documents, so they are not flagged as missing evidence, but they mean tax treatment cannot be independently verified beyond the PO and invoice figures. The successful bank payment does not itself validate which vendor name is correct. This vendor mismatch is the dominant factor suppressing confidence despite full documentary coverage of the transaction lifecycle."
+}

@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_02",
+  "case_id": "CASE_02",
+  "documents": [
+    "PO-1002",
+    "INV-1002",
+    "REC-1002",
+    "BNK-1002",
+    "LED-1002"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.93,
+  "notes": "Full document chain present: purchase order, invoice, receipt, bank statement, and ledger entry all cross-reference each other (PO-1002/INV-1002/REC-1002/BNK-1002 chain) with matching vendor (CloudDesk Software India Pvt. Ltd.), matching total amount (94,400.00 INR), and a logical date sequence (PO 2026-08-01 -> Invoice 2026-08-02 -> Receipt 2026-08-04 -> Bank settlement/Ledger posting 2026-09-01). Tax amount (14,400.00 GST) is explicitly and consistently stated on both the PO and the invoice; the receipt, bank statement, and ledger entry state amounts inclusive of GST without a separate tax line, which is a presentation difference rather than a missing document. No expected supporting document type is absent, so no missing_evidence items are flagged. Confidence is high but not maximal since the internal consistency of amounts/dates does not itself independently verify that payment terms or GST compliance conditions were substantively met beyond what each document states."
+}

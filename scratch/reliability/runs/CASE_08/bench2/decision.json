@@ -1,0 +1,22 @@
+{
+  "transaction_id": "TXN_08",
+  "case_id": "CASE_08",
+  "action": "human_review",
+  "confidence": 0.93,
+  "reason": "Flagged for human review because PO-1008 is dated ten days after INV-1008, even though the invoice references it as a pre-existing authorization, creating a reversed procurement sequence with no explanation (confidence 0.93).",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "INV-1008",
+        "PO-1008"
+      ],
+      "severity": "medium",
+      "explanation": "PO-1008 is dated 2026-08-15, ten days after INV-1008 (2026-08-05) which references it as a pre-existing authorization, indicating a reversed procurement sequence with no stated explanation."
+    }
+  ]
+}

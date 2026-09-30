@@ -1,0 +1,31 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "action": "human_review",
+  "confidence": 0.9,
+  "reason": "Flagged for human review because the transaction references PO-1005 in both the invoice and receipt, yet no purchase order document exists to verify authorization, and additionally the receipt is dated three days before the invoice it references, an inconsistent sequence of dates.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "explanation": "Both the invoice and receipt reference PO-1005, but no purchase order document exists in the transaction evidence at all, so the underlying purchase authorization cannot be verified."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "REC-1005",
+        "INV-1005"
+      ],
+      "severity": "low",
+      "explanation": "The receipt is dated 2026-07-18, three days before the invoice it references (2026-07-21), an out-of-sequence ordering for an acceptance/payment receipt."
+    }
+  ]
+}

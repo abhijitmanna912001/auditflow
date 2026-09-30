@@ -1,0 +1,23 @@
+{
+  "transaction_id": "TXN_12",
+  "case_id": "CASE_12",
+  "action": "human_review",
+  "confidence": 0.82,
+  "reason": "Flagged for human review because a missing_receipt finding (medium severity, confidence 0.82) shows no signed service acceptance receipt was obtained for TXN_12 despite INV-1012 requiring one before payment, yet BNK-1012 and LED-1012 confirm the payment was released anyway.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_receipt",
+      "documents": [
+        "INV-1012",
+        "BNK-1012",
+        "LED-1012"
+      ],
+      "severity": "medium",
+      "explanation": "No receipt document of any kind exists for this transaction, even though INV-1012's payment terms explicitly require a signed service acceptance receipt before payment, which was nonetheless released per BNK-1012 and LED-1012."
+    }
+  ]
+}

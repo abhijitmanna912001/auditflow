@@ -1,0 +1,16 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "confidence": 0.95,
+      "explanation": "No purchase order document exists for this transaction at all \u2014 PO-1005 is cited as a reference on both the invoice and the receipt but was never provided, so procurement authorization cannot be independently verified."
+    }
+  ]
+}

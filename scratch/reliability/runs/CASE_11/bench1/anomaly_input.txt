@@ -1,0 +1,80 @@
+Case ID: CASE_11
+Transaction ID: TXN_11
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_11",
+  "case_id": "CASE_11",
+  "documents": [
+    "INV-1011",
+    "BNK-1011",
+    "LED-1011",
+    "REC-1011"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1011 referenced by INV-1011 and REC-1011 but never supplied)"
+  ],
+  "evidence_confidence": 0.35,
+  "notes": "Invoice INV-1011 (INR 118,000.00 incl. 18% GST) is referenced by a receipt (REC-1011, same INR 118,000.00) dated prior to payment, but the bank statement (BNK-1011) and ledger entry (LED-1011) both show a debit of INR 129,800.00 - INR 11,800.00 more than the invoice total - on the same date, an unexplained and unreconciled discrepancy. The bank and ledger amounts agree with each other but not with the invoice, and no document explains the additional INR 11,800.00 (e.g., no revised invoice, debit note, or additional charges documentation was provided). Additionally, PO-1011 is referenced by two documents (invoice and receipt) but the purchase order itself was never supplied, so it cannot be confirmed that the invoiced amount, terms, or vendor match an approved PO. The receipt's mention of an amount 'including GST' cannot be verified against a tax breakdown since no tax_amount is stated on that document. Successful settlement (bank/ledger) does not establish that the receipt's condition or the PO terms were properly satisfied - only the underlying documents can, and here the amounts conflict rather than corroborate. Overall, internal consistency exists only between the bank and ledger records, while the invoice and receipt form a separate, lower, mutually consistent pair; the transaction is not fully supported due to the unexplained amount gap and the absent PO."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "INV-1011",
+    "type": "invoice",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 118000.0,
+    "tax_amount": 18000.0,
+    "currency": "INR",
+    "date": "2026-07-11",
+    "references": [
+      "PO-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "Supplier's own invoice number (APS/2026/614) noted on document but not treated as a cross-document reference. GST explicitly stated as 18% (INR 18,000.00) on subtotal of INR 100,000.00, totaling INR 118,000.00."
+  },
+  {
+    "doc_id": "BNK-1011",
+    "type": "bank_statement",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 129800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-12",
+    "references": [
+      "INV-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "Debit amount of INR 129,800.00 does not match INV-1011 total of INR 118,000.00; discrepancy flagged for review. No tax amount stated separately on bank statement."
+  },
+  {
+    "doc_id": "LED-1011",
+    "type": "ledger_entry",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 129800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-12",
+    "references": [
+      "INV-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "Ledger debit amount (INR 129,800.00) matches bank statement BNK-1011 but exceeds INV-1011 invoice total of INR 118,000.00 by INR 11,800.00; discrepancy flagged. No separate tax amount stated on this document (account is a combined expense/Input GST account, but no breakout given)."
+  },
+  {
+    "doc_id": "REC-1011",
+    "type": "receipt",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 118000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-18",
+    "references": [
+      "INV-1011",
+      "PO-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "Accepted value stated as 'including GST' but tax amount is not broken out separately on this document, so tax_amount left null."
+  }
+]

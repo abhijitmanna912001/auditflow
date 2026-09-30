@@ -1,0 +1,18 @@
+{
+  "transaction_id": "TXN_13",
+  "case_id": "CASE_13",
+  "findings": [
+    {
+      "type": "currency_mismatch",
+      "documents": [
+        "INV-1013",
+        "PO-1013",
+        "LED-1013",
+        "BNK-1013"
+      ],
+      "severity": "high",
+      "confidence": 0.95,
+      "explanation": "The invoice states 4,980.00 USD while the purchase order, ledger entry, and bank statement all state 415,000 INR, and no exchange rate or conversion basis appears in any document to reconcile the two currencies."
+    }
+  ]
+}

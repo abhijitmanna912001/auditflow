@@ -1,0 +1,19 @@
+{
+  "transaction_id": "TXN_04",
+  "case_id": "CASE_04",
+  "findings": [
+    {
+      "type": "amount_mismatch",
+      "documents": [
+        "PO-1004",
+        "INV-1004",
+        "REC-1004",
+        "BNK-1004",
+        "LED-1004"
+      ],
+      "severity": "high",
+      "confidence": 0.97,
+      "explanation": "PO-1004 and REC-1004 both state INR 75,000 while INV-1004, BNK-1004, and LED-1004 all state INR 82,500, a 7,500 overage that was invoiced, paid, and posted with no PO amendment or updated acceptance document reconciling it."
+    }
+  ]
+}

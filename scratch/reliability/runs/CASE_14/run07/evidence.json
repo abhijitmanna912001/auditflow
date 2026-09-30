@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "LED-1014",
+    "BNK-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Full document chain present: purchase order (PO-1014), invoice (INV-1014) referencing the PO, a goods receipt/delivery confirmation (REC-1014) referencing both invoice and PO, a ledger entry (LED-1014) referencing both, and a bank statement (BNK-1014) referencing the invoice and the supplier's own invoice identifier. Amounts are consistent at 246000.0 INR across PO, invoice, ledger, and bank statement, and the date sequence (PO 08-01 -> Invoice 08-09 -> Goods receipt 08-11 -> Ledger/Bank 08-14) is logically ordered. Invoice tax breakdown (36000.0) is not repeated on ledger or bank statement, but this is noted as expected omission rather than a missing document. REC-1014 is a goods receipt, not a monetary payment receipt, so it does not itself establish satisfaction of any payment-terms condition beyond confirming delivery; the bank statement's successful status likewise does not independently prove any such condition was met, but no additional document type appears to be missing based on the pattern of documents provided for this vendor."
+}

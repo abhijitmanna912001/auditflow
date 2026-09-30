@@ -1,0 +1,78 @@
+Case ID: CASE_06
+Transaction ID: TXN_06
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_06",
+  "case_id": "CASE_06",
+  "documents": [
+    "PO-1006",
+    "INV-1006",
+    "BNK-1006",
+    "LED-1006"
+  ],
+  "missing_evidence": [
+    "goods_receipt_or_delivery_confirmation"
+  ],
+  "evidence_confidence": 0.82,
+  "notes": "All four core documents (purchase order, invoice, bank statement, ledger entry) are present and internally consistent: amounts (141600.0 INR) and tax figures (21600.0 where broken out) align across PO and invoice, vendor name matches throughout, and dates follow a logical sequence (PO 2026-08-05, invoice 2026-08-14, bank/ledger settlement 2026-08-28). However, no goods receipt or delivery confirmation document was provided to verify that the goods/services covered by PO-1006 and INV-1006 were actually received before payment was issued. The bank statement and ledger entry do not break out the tax amount separately, but this is a presentation limitation, not evidence of a missing document. Because only one transaction is available for this case, there is no cross-case pattern to confirm this vendor is exempt from requiring delivery/receipt documentation, so its absence is flagged rather than assumed acceptable. The successful bank payment confirms funds moved but does not itself substitute for a receipt document establishing that any payment-terms condition (e.g., delivery acceptance) was met."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "BNK-1006",
+    "type": "bank_statement",
+    "vendor": "Meridian Network Components Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-28",
+    "references": [
+      "INV-1006",
+      "PO-1006"
+    ],
+    "case_id": "CASE_06",
+    "extraction_notes": "Tax amount not broken out separately in bank statement narration."
+  },
+  {
+    "doc_id": "INV-1006",
+    "type": "invoice",
+    "vendor": "Meridian Network Components Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": 21600.0,
+    "currency": "INR",
+    "date": "2026-08-14",
+    "references": [
+      "PO-1006"
+    ],
+    "case_id": "CASE_06",
+    "extraction_notes": "Supplier invoice number MNC/BLR/2026/354 present but Document ID INV-1006 used as doc_id."
+  },
+  {
+    "doc_id": "LED-1006",
+    "type": "ledger_entry",
+    "vendor": "Meridian Network Components Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-28",
+    "references": [
+      "INV-1006"
+    ],
+    "case_id": "CASE_06",
+    "extraction_notes": "Ledger entry lists combined account (Network Equipment Expense and Input GST) without separate tax figure."
+  },
+  {
+    "doc_id": "PO-1006",
+    "type": "purchase_order",
+    "vendor": "Meridian Network Components Pvt. Ltd.",
+    "amount": 141600.0,
+    "tax_amount": 21600.0,
+    "currency": "INR",
+    "date": "2026-08-05",
+    "references": [],
+    "case_id": "CASE_06",
+    "extraction_notes": null
+  }
+]

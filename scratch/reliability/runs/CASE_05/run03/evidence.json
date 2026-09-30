@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "BNK-1005",
+    "INV-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "purchase_order (PO-1005 explicitly referenced by both INV-1005 and REC-1005 but not provided)"
+  ],
+  "evidence_confidence": 0.62,
+  "notes": "Invoice, receipt, ledger entry, and bank statement all cross-reference each other and share consistent vendor (GreenRoute Logistics Pvt. Ltd.), amount (59,000 INR), and currency, giving reasonable internal consistency. However, PO-1005 is explicitly cited as a reference on both the invoice and the receipt yet no purchase order document was supplied, so its absence appears to be a genuine evidentiary gap rather than an inferred PO-exemption pattern (no other documents in this case suggest PO-exempt vendor behavior). Additionally, REC-1005 is dated 2026-07-18, three days before INV-1005 (2026-07-21), an unusual sequence for a receipt referencing that invoice; this date anomaly does not itself prove any document is fabricated or missing, but it is noted as a consistency flag rather than resolved. Tax amount is only explicitly broken out on INV-1005 (9,000 INR); the ledger and bank statement do not separately confirm the tax component, and the receipt's 'including GST' notation is not itemized, so the tax treatment cannot be independently corroborated. The successful bank settlement (BNK-1005) confirms payment occurred but does not by itself establish that any payment-term condition (e.g., prior receipt of goods) was satisfied - only REC-1005 itself, despite its date anomaly, provides that evidence."
+}

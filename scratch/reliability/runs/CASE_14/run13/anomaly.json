@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "findings": [
+    {
+      "type": "tax_mismatch",
+      "documents": [
+        "INV-1014"
+      ],
+      "severity": "medium",
+      "confidence": 0.92,
+      "explanation": "INV-1014's own stated figures do not reconcile: a subtotal of INR 200,000.00 plus 18% GST of INR 36,000.00 sums to INR 236,000.00, not the stated invoice total of INR 246,000.00 (a INR 10,000.00 discrepancy)."
+    }
+  ]
+}

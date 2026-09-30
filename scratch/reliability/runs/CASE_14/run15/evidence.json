@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "BNK-1014",
+    "LED-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Complete document chain present: purchase order (PO-1014), invoice (INV-1014) referencing the PO, goods receipt (REC-1014) referencing both PO and invoice, bank statement (BNK-1014) referencing the invoice and the vendor's own supplier invoice number, and ledger entry (LED-1014) referencing PO and invoice. Amounts of 246000 INR are consistent across PO, invoice, bank statement, and ledger entry; only the invoice breaks out tax (36000) explicitly, which is consistent with extraction notes indicating other documents show total values only. Dates follow a logical sequence (PO 08-01 -> invoice 08-09 -> receipt 08-11 -> bank/ledger 08-14). The receipt lacks amount, tax, and currency fields, which appears to be a goods-receipt-note format limitation rather than a missing document. No document type expected for this transaction pattern (PO-based purchase with goods receipt and payment) appears absent."
+}

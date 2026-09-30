@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "BNK-1014",
+    "LED-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.94,
+  "notes": "Full document chain present: purchase order (PO-1014, 2026-08-01) precedes invoice (INV-1014, 2026-08-09) which references it, goods receipt (REC-1014, 2026-08-11) confirms delivery referencing both PO and invoice, and bank statement (BNK-1014) plus ledger entry (LED-1014) both dated 2026-08-14 confirm payment of the full invoice amount (246,000 INR) referencing the invoice/PO. Amounts are consistent across PO, invoice, bank, and ledger (246,000 INR total, with invoice separately breaking out 36,000 INR GST as expected since totals-only documents like PO/bank/ledger don't itemize tax). Date sequence is logical (PO -> Invoice -> Receipt -> Payment/Ledger). The vendor's own invoice numbering (SPS/2026/2208) is correctly identified as an internal reference, not a separate missing document. Minor limitation: the receipt note lacks a stated monetary amount/currency, so it confirms quantity/delivery but not value reconciliation; the successful bank payment also does not by itself prove any payment-terms condition beyond what the receipt document establishes. No document type appears absent relative to the expected pattern for this vendor's transactions."
+}

@@ -1,0 +1,94 @@
+Case ID: CASE_14
+Transaction ID: TXN_14
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "LED-1014",
+    "BNK-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.93,
+  "notes": "Full document chain present: PO-1014 (2026-08-01) precedes INV-1014 (2026-08-09, referencing PO-1014 and supplier invoice no SPS/2026/2208), REC-1014 (2026-08-11, goods receipt confirming quantity received, referencing both INV-1014 and PO-1014), LED-1014 (2026-08-14, ledger entry referencing INV-1014 and PO-1014) and BNK-1014 (2026-08-14, bank statement referencing INV-1014 and supplier invoice no), all with consistent vendor (Sunrise Packaging Solutions Pvt. Ltd.), consistent total amount (INR 246,000) and a logical date sequence (PO -> Invoice -> Receipt -> Ledger/Payment). Invoice explicitly breaks out GST of INR 36,000; other documents state totals inclusive of tax without separate breakout, which is consistent and not a discrepancy. Note that REC-1014 confirms quantity received but does not state a monetary amount or currency, so while the document itself is present (satisfying the goods-receipt requirement), it cannot independently corroborate the transaction's monetary value - this slightly limits, but does not eliminate, confidence. The successful bank payment does not itself prove any payment-terms condition beyond what the receipt document states; here the receipt document is present and confirms receipt, so this condition is satisfied by the document itself, not merely inferred from payment success. No document types appear to be missing based on the pattern of this transaction (PO, invoice, receipt, ledger, and bank statement all present and cross-referenced)."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "BNK-1014",
+    "type": "bank_statement",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-14",
+    "references": [
+      "INV-1014",
+      "SPS/2026/2208"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "No tax amount broken out on bank statement; transaction date used as document date."
+  },
+  {
+    "doc_id": "INV-1014",
+    "type": "invoice",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": 36000.0,
+    "currency": "INR",
+    "date": "2026-08-09",
+    "references": [
+      "PO-1014",
+      "SPS/2026/2208"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "GST 18% explicitly stated as INR 36,000; Supplier Invoice No SPS/2026/2208 recorded as reference alongside PO."
+  },
+  {
+    "doc_id": "LED-1014",
+    "type": "ledger_entry",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-14",
+    "references": [
+      "INV-1014",
+      "PO-1014"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "Ledger entry does not separately state tax amount; total debit amount used."
+  },
+  {
+    "doc_id": "PO-1014",
+    "type": "purchase_order",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": 246000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-01",
+    "references": [],
+    "case_id": "CASE_14",
+    "extraction_notes": "No tax broken out on purchase order; total amount stated inclusive."
+  },
+  {
+    "doc_id": "REC-1014",
+    "type": "receipt",
+    "vendor": "Sunrise Packaging Solutions Pvt. Ltd.",
+    "amount": null,
+    "tax_amount": null,
+    "currency": null,
+    "date": "2026-08-11",
+    "references": [
+      "INV-1014",
+      "PO-1014"
+    ],
+    "case_id": "CASE_14",
+    "extraction_notes": "Goods receipt note confirms quantity received but does not state monetary amount or currency."
+  }
+]

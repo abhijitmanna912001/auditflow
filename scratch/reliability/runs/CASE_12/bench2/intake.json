@@ -1,0 +1,57 @@
+[
+  {
+    "doc_id": "BNK-1012",
+    "type": "bank_statement",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-20",
+    "references": [
+      "INV-1012",
+      "PO-1012"
+    ],
+    "case_id": "CASE_12",
+    "extraction_notes": "Bank statement does not break out tax separately; narration references both INV-1012 and PO-1012."
+  },
+  {
+    "doc_id": "INV-1012",
+    "type": "invoice",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000.0,
+    "tax_amount": 36000.0,
+    "currency": "INR",
+    "date": "2026-08-30",
+    "references": [
+      "PO-1012"
+    ],
+    "case_id": "CASE_12",
+    "extraction_notes": "Invoice explicitly states GST @18% as a separate line item. Payment terms require a signed service acceptance receipt, which was not provided among the documents reviewed."
+  },
+  {
+    "doc_id": "LED-1012",
+    "type": "ledger_entry",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-20",
+    "references": [
+      "INV-1012"
+    ],
+    "case_id": "CASE_12",
+    "extraction_notes": "Ledger entry records total debit amount without separately stating tax; combined account label 'Records Storage Expense and Input GST' does not break out the GST figure."
+  },
+  {
+    "doc_id": "PO-1012",
+    "type": "purchase_order",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000.0,
+    "tax_amount": 36000.0,
+    "currency": "INR",
+    "date": "2026-08-08",
+    "references": [],
+    "case_id": "CASE_12",
+    "extraction_notes": "Purchase order explicitly states GST @18% as a separate line item. No prior document references found on the PO itself."
+  }
+]

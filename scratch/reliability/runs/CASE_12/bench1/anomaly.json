@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_12",
+  "case_id": "CASE_12",
+  "findings": [
+    {
+      "type": "missing_receipt",
+      "documents": [
+        "INV-1012"
+      ],
+      "severity": "medium",
+      "confidence": 0.85,
+      "explanation": "No receipt document of any kind exists for this transaction even though the invoice's payment terms explicitly require a signed service acceptance receipt before payment, which was nonetheless made per the ledger and bank records."
+    }
+  ]
+}

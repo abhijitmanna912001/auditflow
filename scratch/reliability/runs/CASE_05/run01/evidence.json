@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "BNK-1005",
+    "INV-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "PO-1005 (purchase order) - explicitly referenced by both INV-1005 and REC-1005 but no PO document was provided in the case; no pattern in the available documents supports treating this vendor as PO-exempt (only a single transaction is available for this vendor, insufficient to infer an exemption pattern)"
+  ],
+  "evidence_confidence": 0.6,
+  "notes": "All four documents (bank statement, invoice, ledger entry, receipt) share consistent vendor name (GreenRoute Logistics Pvt. Ltd.), currency (INR), and total amount (59,000), and follow a plausible date sequence (receipt 2026-07-18, invoice 2026-07-21, payment/ledger 2026-08-18). However, this internal consistency does not establish that the referenced PO-1005 exists or was ever issued - the PO document itself is absent, and both the invoice and receipt cite it as a reference, so its absence is treated as missing supporting evidence rather than assumed exemption. The successful bank settlement (BNK-1005) and matching ledger debit (LED-1005) confirm payment occurred but do not independently corroborate that a purchase order or that payment terms tied to the PO were satisfied. Tax amount is broken out only on INV-1005 (9,000 of 59,000); other documents state combined totals without a separate tax line, which is a documentation limitation rather than an inconsistency. Given the confirmed but unverified PO reference, confidence is moderate rather than high."
+}

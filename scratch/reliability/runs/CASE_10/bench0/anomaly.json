@@ -1,0 +1,31 @@
+{
+  "transaction_id": "TXN_10",
+  "case_id": "CASE_10",
+  "findings": [
+    {
+      "type": "vendor_mismatch",
+      "documents": [
+        "PO-1010",
+        "INV-1010",
+        "REC-1010",
+        "LED-1010",
+        "BNK-1010"
+      ],
+      "severity": "high",
+      "confidence": 0.95,
+      "explanation": "PO-1010 names the vendor as 'Crestline Data Services Pvt. Ltd.' while the invoice, receipt, ledger entry, and bank statement referencing the same PO all name 'Beacon IT Consulting Pvt. Ltd.', an unresolved vendor identity conflict."
+    },
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "INV-1010",
+        "REC-1010",
+        "BNK-1010",
+        "LED-1010"
+      ],
+      "severity": "high",
+      "confidence": 0.9,
+      "explanation": "The invoice is dated 2026-09-20, after the receipt (2026-09-03) and after the bank payment and ledger posting (both 2026-09-10), meaning payment was recorded before the invoice was issued."
+    }
+  ]
+}

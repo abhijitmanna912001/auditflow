@@ -1,0 +1,57 @@
+[
+  {
+    "doc_id": "BNK-1012",
+    "type": "bank_statement",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-20",
+    "references": [
+      "INV-1012",
+      "PO-1012"
+    ],
+    "case_id": "CASE_12",
+    "extraction_notes": "Bank statement narration references INV-1012 and PO-1012; no separate tax line stated."
+  },
+  {
+    "doc_id": "INV-1012",
+    "type": "invoice",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000,
+    "tax_amount": 36000,
+    "currency": "INR",
+    "date": "2026-08-30",
+    "references": [
+      "PO-1012"
+    ],
+    "case_id": "CASE_12",
+    "extraction_notes": "GST @18% explicitly stated as INR 36,000.00 on subtotal of INR 200,000.00; total INR 236,000.00. Payment terms require signed service acceptance receipt, which was not provided among the documents reviewed."
+  },
+  {
+    "doc_id": "LED-1012",
+    "type": "ledger_entry",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-20",
+    "references": [
+      "INV-1012"
+    ],
+    "case_id": "CASE_12",
+    "extraction_notes": "Ledger entry records total debit amount matching invoice total; no separate tax line item stated in this document."
+  },
+  {
+    "doc_id": "PO-1012",
+    "type": "purchase_order",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000,
+    "tax_amount": 36000,
+    "currency": "INR",
+    "date": "2026-08-08",
+    "references": [],
+    "case_id": "CASE_12",
+    "extraction_notes": "GST @18% explicitly stated as INR 36,000.00 on subtotal of INR 200,000.00; total INR 236,000.00. No reference IDs to other documents found on the PO itself."
+  }
+]

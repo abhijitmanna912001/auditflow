@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "BNK-1014",
+    "LED-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Full document chain present: purchase order (2026-08-01), invoice (2026-08-09) referencing the PO and carrying the vendor's own document number SPS/2026/2208, a goods receipt note (2026-08-11) confirming delivery, and both a bank statement and ledger entry (2026-08-14) reflecting the matching payment of INR 246,000. All documents share consistent vendor identity, matching amounts, and a logical chronological sequence (PO -> invoice -> receipt -> payment/ledger). The invoice explicitly states GST of INR 36,000 (18%), serving as the tax documentation; no separate tax invoice is expected or missing. No document type in the expected set (PO, invoice, receipt, bank statement, ledger) is absent, so no missing_evidence items are flagged. Confidence is high but not absolute since no independent third-party confirmation (e.g., vendor-issued payment confirmation) beyond the internal documents was available."
+}

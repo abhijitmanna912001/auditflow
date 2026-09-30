@@ -1,0 +1,57 @@
+[
+  {
+    "doc_id": "INV-1012",
+    "type": "invoice",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000.0,
+    "tax_amount": 36000.0,
+    "currency": "INR",
+    "date": "2026-08-30",
+    "references": [
+      "PO-1012"
+    ],
+    "case_id": "CASE_12",
+    "extraction_notes": "Payment terms state payment requires a signed service acceptance receipt, but no such receipt document was provided in this case file."
+  },
+  {
+    "doc_id": "PO-1012",
+    "type": "purchase_order",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000.0,
+    "tax_amount": 36000.0,
+    "currency": "INR",
+    "date": "2026-08-08",
+    "references": [],
+    "case_id": "CASE_12",
+    "extraction_notes": null
+  },
+  {
+    "doc_id": "LED-1012",
+    "type": "ledger_entry",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-20",
+    "references": [
+      "INV-1012"
+    ],
+    "case_id": "CASE_12",
+    "extraction_notes": "Ledger entry does not break out tax separately; total debit amount includes GST but not stated as a distinct line item."
+  },
+  {
+    "doc_id": "BNK-1012",
+    "type": "bank_statement",
+    "vendor": "Nova Archive Storage Pvt. Ltd.",
+    "amount": 236000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-20",
+    "references": [
+      "INV-1012",
+      "PO-1012"
+    ],
+    "case_id": "CASE_12",
+    "extraction_notes": "Bank statements do not itemize tax amounts separately."
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "transaction_id": "TXN_04",
+  "case_id": "CASE_04",
+  "documents": [
+    "PO-1004",
+    "INV-1004",
+    "REC-1004",
+    "BNK-1004",
+    "LED-1004"
+  ],
+  "missing_evidence": [
+    "PO amendment or revised purchase order justifying the invoice amount (INR 82,500.00) exceeding the original PO total (INR 75,000.00)",
+    "A receipt or goods/service acceptance document confirming value matching the invoiced amount of INR 82,500.00 - the existing receipt only confirms the PO value of INR 75,000.00"
+  ],
+  "evidence_confidence": 0.55,
+  "notes": "All core document types for this transaction are present and cross-referenced (PO, invoice, receipt, bank statement, ledger entry), and the payment/ledger amount (INR 82,500.00) is internally consistent across INV-1004, BNK-1004, and LED-1004. However, the invoice amount exceeds the referenced PO amount (INR 75,000.00) by INR 7,500.00, and REC-1004 - the only document evidencing acceptance of goods/services - matches the lower PO value, not the higher invoiced/paid amount. No amended PO or supplementary receipt is present to substantiate the higher amount actually paid, so the successful bank debit and ledger posting cannot themselves confirm that the additional value was legitimately received or authorized. This unresolved discrepancy lowers confidence despite otherwise complete document coverage."
+}

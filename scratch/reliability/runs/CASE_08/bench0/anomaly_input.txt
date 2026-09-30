@@ -1,0 +1,95 @@
+Case ID: CASE_08
+Transaction ID: TXN_08
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_08",
+  "case_id": "CASE_08",
+  "documents": [
+    "PO-1008",
+    "INV-1008",
+    "REC-1008",
+    "BNK-1008",
+    "LED-1008"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.78,
+  "notes": "All five expected document types (purchase order, invoice, receipt, bank statement, ledger entry) are present and cross-referenced, with consistent vendor name and amount (106200.0 INR) across all documents. However, the purchase order (PO-1008, dated 2026-08-15) is dated after its referenced invoice (INV-1008, dated 2026-08-05), which is an illogical sequence for a PO-driven procurement flow and may indicate a retroactively created or backdated PO - this is flagged as a control concern rather than a missing-document issue. Tax amount breakdowns are only present on the PO and invoice (16200.0 INR); the receipt, bank statement, and ledger entry report only the inclusive total with no separate tax line, which is consistent with typical downstream document formats and not treated as missing evidence. The presence of a receipt does establish that a delivery/acceptance record exists, but does not by itself confirm any additional payment-terms conditions beyond what is documented. Overall the transaction is well-documented in terms of coverage, but confidence is moderated by the anomalous PO/invoice date ordering."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "PO-1008",
+    "type": "purchase_order",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": 16200.0,
+    "currency": "INR",
+    "date": "2026-08-15",
+    "references": [],
+    "case_id": "CASE_08",
+    "extraction_notes": "Purchase order issue date (2026-08-15) is after the referenced invoice date (2026-08-05); noted as-is without alteration."
+  },
+  {
+    "doc_id": "INV-1008",
+    "type": "invoice",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": 16200.0,
+    "currency": "INR",
+    "date": "2026-08-05",
+    "references": [
+      "PO-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Supplier invoice number BPT/2026/0805 also present but doc_id taken as document ID INV-1008 per header."
+  },
+  {
+    "doc_id": "REC-1008",
+    "type": "receipt",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-19",
+    "references": [
+      "PO-1008",
+      "INV-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Accepted value stated as 'including GST' but no separate tax line item provided, so tax_amount left null."
+  },
+  {
+    "doc_id": "BNK-1008",
+    "type": "bank_statement",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-03",
+    "references": [
+      "INV-1008",
+      "PO-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Bank statement shows total debit amount only; no separate tax breakdown provided."
+  },
+  {
+    "doc_id": "LED-1008",
+    "type": "ledger_entry",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-03",
+    "references": [
+      "PO-1008",
+      "INV-1008",
+      "REC-1008",
+      "BNK-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Ledger entry references combined 'Employee Training Expense and Input GST' account but does not break out a separate tax amount."
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "REC-1005",
+    "BNK-1005",
+    "LED-1005"
+  ],
+  "missing_evidence": [
+    "Purchase order document PO-1005: both INV-1005 and REC-1005 reference PO-1005, but no purchase_order document was provided in this case, so the referenced PO cannot be verified."
+  ],
+  "evidence_confidence": 0.62,
+  "notes": "All four documents share consistent vendor (GreenRoute Logistics Pvt. Ltd.), amount (59000.0 INR), and cross-references (INV-1005 <-> PO-1005/GRS-2026-071 <-> REC-1005/BNK-1005/LED-1005), forming a coherent single transaction. However, PO-1005 is referenced by two separate documents (invoice and receipt) but the actual purchase order document was never supplied, so its existence and terms cannot be confirmed from evidence alone. The receipt (REC-1005, dated 2026-07-18) precedes the invoice (dated 2026-07-21) by three days, which is an unusual sequence for a payment/acceptance receipt relative to invoicing; this is noted as an inconsistency but is not treated as proof that any document is missing or fabricated. Tax amounts are broken out only on the invoice (9000.0 INR); the receipt, bank statement, and ledger entry each note that tax is bundled into the total rather than stated separately, which is internally explained and not flagged as missing evidence. The successful bank debit (BNK-1005) confirms payment settlement but, per policy, does not by itself substantiate that all payment-terms conditions (e.g., proper PO authorization) were met - only the missing PO document itself could do that. Overall the transaction is well-documented for payment and ledger posting but lacks direct proof of the underlying purchase authorization."
+}

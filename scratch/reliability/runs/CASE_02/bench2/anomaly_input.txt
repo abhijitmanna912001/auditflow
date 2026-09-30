@@ -1,0 +1,95 @@
+Case ID: CASE_02
+Transaction ID: TXN_02
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_02",
+  "case_id": "CASE_02",
+  "documents": [
+    "PO-1002",
+    "INV-1002",
+    "REC-1002",
+    "BNK-1002",
+    "LED-1002"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.96,
+  "notes": "All five expected document types for a standard procurement cycle are present: purchase_order (PO-1002), invoice (INV-1002), receipt (REC-1002), bank_statement (BNK-1002), and ledger_entry (LED-1002). All documents share consistent vendor (CloudDesk Software India Pvt. Ltd.), consistent total amount (94400.0 INR), and cross-reference each other coherently (REC references PO and INV; BNK references INV and PO; LED references all four other documents). Dates follow a logical sequence: PO issued 2026-08-01, invoice 2026-08-02, receipt 2026-08-04, and settlement/ledger posting 2026-09-01. Tax is explicitly broken out as a separate 18% GST line item on the PO and invoice (14400.0), consistent with the total; the receipt, bank statement, and ledger entry note that GST is included in the total but not separately itemized, which is a normal presentation difference for those document types rather than a discrepancy or missing item. No document type expected for this kind of transaction (order, invoice, proof of receipt, payment, and internal booking) is absent, so no missing_evidence is flagged. The presence of the receipt itself is what supports fulfillment of any receipt-based payment term; the successful bank settlement alone is not treated as substituting for that receipt, but since the receipt document is independently present, the full evidentiary chain is intact, supporting a high confidence score."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "BNK-1002",
+    "type": "bank_statement",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-01",
+    "references": [
+      "INV-1002",
+      "PO-1002"
+    ],
+    "case_id": "CASE_02",
+    "extraction_notes": "No separate tax line item stated on bank statement; narration references settlement of INV-1002 and PO-1002."
+  },
+  {
+    "doc_id": "INV-1002",
+    "type": "invoice",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": 14400.0,
+    "currency": "INR",
+    "date": "2026-08-02",
+    "references": [
+      "PO-1002"
+    ],
+    "case_id": "CASE_02",
+    "extraction_notes": "Document ID field used as doc_id; supplier's internal invoice number (CDS/BLR/0826/441) noted separately but not used as doc_id. GST explicitly stated at 18% as a separate line item."
+  },
+  {
+    "doc_id": "LED-1002",
+    "type": "ledger_entry",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-01",
+    "references": [
+      "PO-1002",
+      "INV-1002",
+      "REC-1002",
+      "BNK-1002"
+    ],
+    "case_id": "CASE_02",
+    "extraction_notes": "Ledger entry does not break out tax as a separate amount, though account name references Input GST; total debit amount includes GST but not separately stated."
+  },
+  {
+    "doc_id": "PO-1002",
+    "type": "purchase_order",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": 14400.0,
+    "currency": "INR",
+    "date": "2026-08-01",
+    "references": [],
+    "case_id": "CASE_02",
+    "extraction_notes": "GST explicitly stated at 18% as a separate line item. No references to other documents found on this purchase order itself."
+  },
+  {
+    "doc_id": "REC-1002",
+    "type": "receipt",
+    "vendor": "CloudDesk Software India Pvt. Ltd.",
+    "amount": 94400.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-04",
+    "references": [
+      "PO-1002",
+      "INV-1002"
+    ],
+    "case_id": "CASE_02",
+    "extraction_notes": "Accepted value stated as including GST but tax is not broken out separately on this document."
+  }
+]

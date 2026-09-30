@@ -1,0 +1,75 @@
+[
+  {
+    "doc_id": "BNK-1010",
+    "type": "bank_statement",
+    "vendor": "Beacon IT Consulting Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-10",
+    "references": [
+      "INV-1010",
+      "PO-1010"
+    ],
+    "case_id": "CASE_10",
+    "extraction_notes": "Narration cites INV-1010 and PO-1010; no separate tax line item is stated on the bank record."
+  },
+  {
+    "doc_id": "INV-1010",
+    "type": "invoice",
+    "vendor": "Beacon IT Consulting Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": 10800.0,
+    "currency": "INR",
+    "date": "2026-09-20",
+    "references": [
+      "PO-1010"
+    ],
+    "case_id": "CASE_10",
+    "extraction_notes": "GST explicitly stated as 18% (INR 10,800.00) on subtotal of INR 60,000.00. Supplier's own invoice number (BIC/2026/920) noted but doc_id taken from Document ID field."
+  },
+  {
+    "doc_id": "LED-1010",
+    "type": "ledger_entry",
+    "vendor": "Beacon IT Consulting Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-10",
+    "references": [
+      "PO-1010",
+      "INV-1010",
+      "REC-1010",
+      "BNK-1010"
+    ],
+    "case_id": "CASE_10",
+    "extraction_notes": "Ledger lists a combined IT Consulting Expense and Input GST account but does not break out a separate tax amount figure."
+  },
+  {
+    "doc_id": "PO-1010",
+    "type": "purchase_order",
+    "vendor": "Crestline Data Services Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": 10800.0,
+    "currency": "INR",
+    "date": "2026-08-01",
+    "references": [],
+    "case_id": "CASE_10",
+    "extraction_notes": "GST explicitly stated as 18% (INR 10,800.00) on subtotal of INR 60,000.00. Vendor listed here as Crestline Data Services Pvt. Ltd., which conflicts with the vendor name (Beacon IT Consulting Pvt. Ltd.) shown on the related invoice, receipt, ledger entry, and bank statement citing this same PO - flagged as a discrepancy for audit review."
+  },
+  {
+    "doc_id": "REC-1010",
+    "type": "receipt",
+    "vendor": "Beacon IT Consulting Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-03",
+    "references": [
+      "PO-1010",
+      "INV-1010"
+    ],
+    "case_id": "CASE_10",
+    "extraction_notes": "Accepted value stated as INR 70,800.00 'including GST' but no separate GST/tax figure is broken out on this receipt."
+  }
+]

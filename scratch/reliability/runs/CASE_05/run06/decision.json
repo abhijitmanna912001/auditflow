@@ -1,0 +1,22 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "action": "human_review",
+  "confidence": 0.95,
+  "reason": "This transaction is flagged for human review because a missing purchase order finding was identified: PO-1005 is referenced on both the invoice (INV-1005) and receipt (REC-1005), but the actual PO document was never provided, making it impossible to independently verify procurement authorization. This medium-severity finding has a confidence of 0.95, and its presence alone triggers human review.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1005",
+        "REC-1005"
+      ],
+      "severity": "medium",
+      "explanation": "No purchase order document exists for this transaction at all \u2014 PO-1005 is cited as a reference on both the invoice and the receipt but was never provided, so procurement authorization cannot be independently verified."
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+Case ID: CASE_07
+Transaction ID: TXN_07
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_07",
+  "case_id": "CASE_07",
+  "documents": [
+    "PO-1007",
+    "INV-1007",
+    "REC-1007",
+    "BNK-1007",
+    "LED-1007"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.35,
+  "notes": "All five expected document types are present (purchase_order, invoice, receipt, bank_statement, ledger_entry), amounts (53,100.00 INR) and dates form a plausible sequence (PO 06-10 -> INV 06-28 -> REC 06-30 -> BNK/LED 07-20). However, there is a persistent and unresolved vendor name discrepancy across the chain: PO-1007 and REC-1007 name 'Atlas Facilities Care Pvt. Ltd.' as vendor, while INV-1007, BNK-1007, and LED-1007 name 'Orchid Workspace Solutions Pvt. Ltd.'. This is a material inconsistency - two different legal entities appear interchangeably as the counterparty across linked documents - which is a strong fraud/error indicator and cannot be resolved by the presence of matching amounts or reference chains alone. Additionally, REC-1007's tax_amount is not separately stated (bundled into a GST-inclusive total), and BNK-1007/LED-1007 lack explicit tax line items, so tax consistency cannot be independently verified beyond PO-1007 and INV-1007. The successful bank payment and ledger posting do not, by themselves, confirm the vendor identity discrepancy was resolved or that payment terms (e.g., correct receipt acknowledgment tied to the correct vendor) were properly satisfied. Confidence is lowered substantially due to the unresolved vendor mismatch spanning multiple independent document sources."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "PO-1007",
+    "type": "purchase_order",
+    "vendor": "Atlas Facilities Care Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": 8100.0,
+    "currency": "INR",
+    "date": "2026-06-10",
+    "references": [],
+    "case_id": "CASE_07",
+    "extraction_notes": "Supplier listed as Atlas Facilities Care Pvt. Ltd., which differs from the vendor named on INV-1007, REC-1007's 'Vendor' line elsewhere in the chain (Orchid Workspace Solutions Pvt. Ltd. on invoice/bank/ledger). Potential vendor discrepancy flagged for audit review."
+  },
+  {
+    "doc_id": "INV-1007",
+    "type": "invoice",
+    "vendor": "Orchid Workspace Solutions Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": 8100.0,
+    "currency": "INR",
+    "date": "2026-06-28",
+    "references": [
+      "PO-1007"
+    ],
+    "case_id": "CASE_07",
+    "extraction_notes": "Vendor named here (Orchid Workspace Solutions Pvt. Ltd.) differs from the supplier on the referenced PO-1007 (Atlas Facilities Care Pvt. Ltd.) and from the vendor on REC-1007 (Atlas Facilities Care Pvt. Ltd.). Potential vendor mismatch/fraud indicator flagged for audit review."
+  },
+  {
+    "doc_id": "REC-1007",
+    "type": "receipt",
+    "vendor": "Atlas Facilities Care Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-06-30",
+    "references": [
+      "PO-1007",
+      "INV-1007"
+    ],
+    "case_id": "CASE_07",
+    "extraction_notes": "Accepted value stated as INR 53,100.00 'including GST' without a separate GST line item, so tax_amount cannot be extracted explicitly. Also, vendor listed here (Atlas Facilities Care Pvt. Ltd.) differs from the vendor named on the referenced INV-1007 (Orchid Workspace Solutions Pvt. Ltd.) - potential mismatch flagged."
+  },
+  {
+    "doc_id": "BNK-1007",
+    "type": "bank_statement",
+    "vendor": "Orchid Workspace Solutions Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-20",
+    "references": [
+      "INV-1007",
+      "PO-1007"
+    ],
+    "case_id": "CASE_07",
+    "extraction_notes": "Bank narration references both INV-1007 and PO-1007. Beneficiary named (Orchid Workspace Solutions Pvt. Ltd.) differs from PO-1007 supplier (Atlas Facilities Care Pvt. Ltd.) - potential vendor mismatch flagged. No separate tax line item on a bank statement, so tax_amount is null."
+  },
+  {
+    "doc_id": "LED-1007",
+    "type": "ledger_entry",
+    "vendor": "Orchid Workspace Solutions Pvt. Ltd.",
+    "amount": 53100.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-20",
+    "references": [
+      "PO-1007",
+      "INV-1007",
+      "REC-1007",
+      "BNK-1007"
+    ],
+    "case_id": "CASE_07",
+    "extraction_notes": "Ledger references all supporting documents for this transaction chain. Account line mentions 'Input GST' but does not state a distinct tax amount within this ledger entry, so tax_amount is null. Vendor named (Orchid Workspace Solutions Pvt. Ltd.) is inconsistent with the PO-1007 supplier (Atlas Facilities Care Pvt. Ltd.) noted elsewhere in the chain - flagged as a discrepancy requiring investigation."
+  }
+]

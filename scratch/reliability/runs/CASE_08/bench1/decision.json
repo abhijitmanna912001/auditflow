@@ -1,0 +1,22 @@
+{
+  "transaction_id": "TXN_08",
+  "case_id": "CASE_08",
+  "action": "human_review",
+  "confidence": 0.92,
+  "reason": "This transaction was flagged for human review because invoice INV-1008 is dated 2026-08-05, ten days before the purchase order PO-1008 it references was issued on 2026-08-15, a date inconsistency finding with medium severity and 0.92 confidence that requires manual verification.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "date_inconsistency",
+      "documents": [
+        "INV-1008",
+        "PO-1008"
+      ],
+      "severity": "medium",
+      "explanation": "The invoice INV-1008 is dated 2026-08-05, ten days before the purchase order PO-1008 it references was issued (2026-08-15), indicating the invoice was raised before the PO authorized the purchase."
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "LED-1014",
+    "BNK-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Full document chain present: purchase order (PO-1014, 246000 INR, no tax breakdown), invoice (INV-1014, same amount with explicit 36000 INR GST line, referencing PO-1014 and supplier's own number SPS/2026/2208), goods receipt (REC-1014, confirming delivery, referencing both INV-1014 and PO-1014, though it carries no monetary amount itself), ledger entry (LED-1014, matching total debit of 246000 INR, referencing both INV-1014 and PO-1014), and bank statement (BNK-1014, matching payment of 246000 INR, referencing INV-1014 and the supplier invoice number). Dates progress logically (PO 08-01, invoice 08-09, receipt 08-11, ledger/payment 08-14). All amounts reconcile consistently across documents. The receipt document itself is present, satisfying the delivery/receipt condition rather than relying on payment success alone. No expected document type is absent, so evidence_confidence is high, though full certainty is withheld absent independent verification of tax remittance or external bank confirmation beyond the stated statement."
+}

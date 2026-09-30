@@ -1,0 +1,98 @@
+Case ID: CASE_10
+Transaction ID: TXN_10
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_10",
+  "case_id": "CASE_10",
+  "documents": [
+    "PO-1010",
+    "INV-1010",
+    "REC-1010",
+    "LED-1010",
+    "BNK-1010"
+  ],
+  "missing_evidence": [
+    "Vendor authorization or change-order documentation reconciling the vendor discrepancy between PO-1010 (Crestline Data Services Pvt. Ltd.) and all downstream documents (Beacon IT Consulting Pvt. Ltd.)",
+    "Explanatory documentation for the payment (BNK-1010/LED-1010, dated 2026-09-10) occurring before the invoice date (INV-1010, dated 2026-09-20), such as an advance-payment agreement or pre-payment authorization"
+  ],
+  "evidence_confidence": 0.45,
+  "notes": "All five expected document types for this transaction are present (purchase order, invoice, receipt, ledger entry, bank statement) and are linked by consistent cross-references (PO-1010, INV-1010, REC-1010, BNK-1010) and a consistent amount of 70800.0 INR with tax_amount of 10800.0 where itemized. However, two unresolved issues prevent high confidence: (1) PO-1010 names the vendor as 'Crestline Data Services Pvt. Ltd.' while every other document in the chain (invoice, receipt, ledger, bank statement) names 'Beacon IT Consulting Pvt. Ltd.' - this is a material vendor mismatch that internal consistency among the other four documents cannot resolve or excuse, since the PO itself is the outlier and no substitution/authorization document is present. (2) The date sequence is illogical: PO-1010 (2026-08-01) precedes REC-1010 (2026-09-03), which precedes the ledger/bank payment (2026-09-10), which precedes INV-1010 (2026-09-20) - meaning payment was recorded before the invoice was issued. A successful-looking payment flow does not itself establish that this sequence was proper or that any advance-payment terms were satisfied; only explicit supporting documentation could do so, and none is present. These two anomalies are flagged as missing evidence rather than assumed benign, in line with audit policy not to let document presence or internal consistency substitute for actual proof."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "BNK-1010",
+    "type": "bank_statement",
+    "vendor": "Beacon IT Consulting Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-10",
+    "references": [
+      "INV-1010",
+      "PO-1010"
+    ],
+    "case_id": "CASE_10",
+    "extraction_notes": "Tax amount not broken out separately in bank statement narration."
+  },
+  {
+    "doc_id": "INV-1010",
+    "type": "invoice",
+    "vendor": "Beacon IT Consulting Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": 10800.0,
+    "currency": "INR",
+    "date": "2026-09-20",
+    "references": [
+      "PO-1010"
+    ],
+    "case_id": "CASE_10",
+    "extraction_notes": "Supplier Invoice No BIC/2026/920 is an internal vendor reference, not a cross-document ID, so not included in references."
+  },
+  {
+    "doc_id": "LED-1010",
+    "type": "ledger_entry",
+    "vendor": "Beacon IT Consulting Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-10",
+    "references": [
+      "PO-1010",
+      "INV-1010",
+      "REC-1010",
+      "BNK-1010"
+    ],
+    "case_id": "CASE_10",
+    "extraction_notes": "Tax amount not broken out separately in ledger entry; total debit includes GST per supporting invoice."
+  },
+  {
+    "doc_id": "PO-1010",
+    "type": "purchase_order",
+    "vendor": "Crestline Data Services Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": 10800.0,
+    "currency": "INR",
+    "date": "2026-08-01",
+    "references": [],
+    "case_id": "CASE_10",
+    "extraction_notes": "Discrepancy noted: PO-1010 lists supplier as Crestline Data Services Pvt. Ltd., while all related documents (INV-1010, REC-1010, LED-1010, BNK-1010) reference Beacon IT Consulting Pvt. Ltd. as the vendor. This mismatch may indicate a vendor substitution or data entry error requiring audit follow-up."
+  },
+  {
+    "doc_id": "REC-1010",
+    "type": "receipt",
+    "vendor": "Beacon IT Consulting Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-03",
+    "references": [
+      "PO-1010",
+      "INV-1010"
+    ],
+    "case_id": "CASE_10",
+    "extraction_notes": "Accepted value stated as including GST but tax amount not separately itemized on this document."
+  }
+]

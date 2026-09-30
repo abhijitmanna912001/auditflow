@@ -1,0 +1,24 @@
+{
+  "transaction_id": "TXN_13",
+  "case_id": "CASE_13",
+  "action": "human_review",
+  "confidence": 0.95,
+  "reason": "Flagged for human review due to a high-severity currency mismatch: invoice INV-1013 is stated in USD 4,980.00 while the related PO-1013, LED-1013, and BNK-1013 documents all reflect INR 415,000.00, with no conversion rate or reconciliation note provided (confidence 0.95).",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "currency_mismatch",
+      "documents": [
+        "INV-1013",
+        "PO-1013",
+        "LED-1013",
+        "BNK-1013"
+      ],
+      "severity": "high",
+      "explanation": "INV-1013 is denominated in USD 4,980.00 while PO-1013, LED-1013, and BNK-1013 all state INR 415,000.00, with no conversion rate or reconciliation note in any document."
+    }
+  ]
+}

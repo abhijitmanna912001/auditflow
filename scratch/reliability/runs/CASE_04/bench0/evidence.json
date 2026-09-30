@@ -1,0 +1,17 @@
+{
+  "transaction_id": "TXN_04",
+  "case_id": "CASE_04",
+  "documents": [
+    "PO-1004",
+    "INV-1004",
+    "REC-1004",
+    "BNK-1004",
+    "LED-1004"
+  ],
+  "missing_evidence": [
+    "No amended purchase order or approved change order authorizing the invoice amount (82,500) exceeding the original PO-1004 value (75,000) by 7,500",
+    "No documentation reconciling why REC-1004 reflects the original PO value (75,000) rather than the higher invoiced/paid amount (82,500)"
+  ],
+  "evidence_confidence": 0.5,
+  "notes": "All core document types for this transaction are present (purchase order, invoice, receipt, bank statement, ledger entry) and they are linked via consistent cross-references. However, there is an unresolved amount discrepancy: PO-1004 authorizes 75,000, but INV-1004, BNK-1004, and LED-1004 all reflect 82,500, while REC-1004 reflects only 75,000. The presence of a receipt does not by itself confirm that goods/services matching the higher invoiced amount were actually accepted, and the successful bank payment does not establish that the 7,500 overage was properly authorized - only a supporting document such as a PO amendment or approved change order could do that, and none is present. This internal inconsistency across otherwise complete documentation lowers confidence in the transaction's evidentiary support."
+}

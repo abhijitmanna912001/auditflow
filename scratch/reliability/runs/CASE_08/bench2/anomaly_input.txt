@@ -1,0 +1,95 @@
+Case ID: CASE_08
+Transaction ID: TXN_08
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_08",
+  "case_id": "CASE_08",
+  "documents": [
+    "INV-1008",
+    "PO-1008",
+    "REC-1008",
+    "BNK-1008",
+    "LED-1008"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.7,
+  "notes": "All five expected document types are present (invoice, purchase order, receipt, bank statement, ledger entry) and all amounts are internally consistent at INR 106,200.00 (INR 90,000 + INR 16,200 GST) across every document that reports a total. However, a significant chronological anomaly exists: PO-1008 is dated 2026-08-15, ten days after INV-1008 (dated 2026-08-05), yet the invoice references the PO as if it pre-existed. This reversed sequencing undermines confidence in the procurement trail's authenticity/order of operations, even though no document type is outright missing. The receipt (REC-1008, dated 2026-08-19) establishes that goods/services were accepted, and the bank statement (BNK-1008, dated 2026-09-03) confirms payment matching the invoiced amount, with the ledger entry (LED-1008) tying all four other documents together on the same date as the bank transaction. Because internal amount consistency and a successful payment do not resolve or excuse the PO/invoice date inversion, and no explanation for the anomaly is present in any document, evidence confidence is reduced from what full document coverage would otherwise support."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "INV-1008",
+    "type": "invoice",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": 16200.0,
+    "currency": "INR",
+    "date": "2026-08-05",
+    "references": [
+      "PO-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Amount is invoice total (subtotal INR 90,000 + GST). Supplier invoice number BPT/2026/0805 also present but doc_id taken as stated Document ID field."
+  },
+  {
+    "doc_id": "PO-1008",
+    "type": "purchase_order",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": 16200.0,
+    "currency": "INR",
+    "date": "2026-08-15",
+    "references": [],
+    "case_id": "CASE_08",
+    "extraction_notes": "PO issue date (2026-08-15) is later than the referenced invoice's date (2026-08-05, INV-1008), which is an unusual sequencing worth flagging for audit review. Amount reflects PO total including GST."
+  },
+  {
+    "doc_id": "REC-1008",
+    "type": "receipt",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-19",
+    "references": [
+      "PO-1008",
+      "INV-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Accepted value stated as INR 106,200.00 including GST but no separate tax line item is broken out, so tax_amount left null per instructions."
+  },
+  {
+    "doc_id": "BNK-1008",
+    "type": "bank_statement",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-03",
+    "references": [
+      "INV-1008",
+      "PO-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "No tax breakdown provided in bank statement narration; tax_amount left null."
+  },
+  {
+    "doc_id": "LED-1008",
+    "type": "ledger_entry",
+    "vendor": "BluePeak Training Services Pvt. Ltd.",
+    "amount": 106200.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-09-03",
+    "references": [
+      "PO-1008",
+      "INV-1008",
+      "REC-1008",
+      "BNK-1008"
+    ],
+    "case_id": "CASE_08",
+    "extraction_notes": "Ledger account combines Employee Training Expense and Input GST without a separately stated tax figure, so tax_amount left null."
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "transaction_id": "TXN_11",
+  "case_id": "CASE_11",
+  "action": "human_review",
+  "confidence": 0.95,
+  "reason": "This transaction is flagged for human review due to two findings: a missing purchase order (PO-1011) referenced by the invoice and receipt but absent from the evidence, and a high-severity amount mismatch where the bank debit and ledger both show INR 129,800.00 versus INR 118,000.00 on the invoice and receipt, an unexplained INR 11,800.00 overpayment.",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "missing_po",
+      "documents": [
+        "INV-1011",
+        "REC-1011"
+      ],
+      "severity": "medium",
+      "explanation": "PO-1011 is referenced by both the invoice and the receipt but no purchase order document exists anywhere in the transaction evidence, so the underlying purchase authorization cannot be verified."
+    },
+    {
+      "type": "amount_mismatch",
+      "documents": [
+        "INV-1011",
+        "REC-1011",
+        "BNK-1011",
+        "LED-1011"
+      ],
+      "severity": "high",
+      "explanation": "The bank debit and ledger entry both record INR 129,800.00 while the invoice and receipt state INR 118,000.00, an unexplained INR 11,800.00 overpayment with no supporting document."
+    }
+  ]
+}

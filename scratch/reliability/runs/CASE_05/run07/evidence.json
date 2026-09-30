@@ -1,0 +1,15 @@
+{
+  "transaction_id": "TXN_05",
+  "case_id": "CASE_05",
+  "documents": [
+    "INV-1005",
+    "BNK-1005",
+    "LED-1005",
+    "REC-1005"
+  ],
+  "missing_evidence": [
+    "PO-1005 (purchase_order referenced by INV-1005 and REC-1005 but not provided)"
+  ],
+  "evidence_confidence": 0.62,
+  "notes": "Invoice, bank statement, ledger entry, and receipt all cross-reference INV-1005 and share consistent vendor, amount (59000 INR), and currency, providing a reasonably coherent chain from invoice to payment to ledger posting. However, both the invoice and receipt reference PO-1005, and no purchase order document was supplied for this case, so that expected supporting document is missing and cannot be assumed to exist or be exempt without further pattern evidence. Additionally, the receipt (REC-1005, dated 2026-07-18) predates the invoice it references (INV-1005, dated 2026-07-21), an unusual sequencing that is noted but not resolved by the other documents. The invoice separately states a tax_amount of 9000 INR, but neither the bank statement nor the ledger entry breaks out tax separately, so the tax component of the payment is not independently corroborated. The successful bank payment does not by itself confirm that any payment-term condition (such as receipt-before-invoice or PO-based approval) was properly satisfied - only the missing PO document could establish that."
+}

@@ -1,0 +1,89 @@
+[
+  {
+    "doc_id": "BNK-1003",
+    "type": "bank_statement",
+    "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-10",
+    "references": [
+      "SSS/2026/188",
+      "PO-1003"
+    ],
+    "case_id": "CASE_03",
+    "extraction_notes": "Tax amount not broken out on bank statement; narration references supplier invoice SSS/2026/188 and PO-1003."
+  },
+  {
+    "doc_id": "INV-1003-A",
+    "type": "invoice",
+    "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": 10800.0,
+    "currency": "INR",
+    "date": "2026-07-16",
+    "references": [
+      "PO-1003"
+    ],
+    "case_id": "CASE_03",
+    "extraction_notes": "Supplier invoice number SSS/2026/188 noted on document; appears to be a duplicate scan of the same invoice as INV-1003-B (identical amounts, date, and supplier invoice number) - flag for potential duplicate payment/entry review."
+  },
+  {
+    "doc_id": "INV-1003-B",
+    "type": "invoice",
+    "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": 10800.0,
+    "currency": "INR",
+    "date": "2026-07-16",
+    "references": [
+      "PO-1003"
+    ],
+    "case_id": "CASE_03",
+    "extraction_notes": "Supplier invoice number SSS/2026/188 noted on document; appears to be a duplicate scan of the same invoice as INV-1003-A (identical amounts, date, and supplier invoice number) - flag for potential duplicate payment/entry review."
+  },
+  {
+    "doc_id": "LED-1003",
+    "type": "ledger_entry",
+    "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-10",
+    "references": [
+      "PO-1003",
+      "REC-1003",
+      "BNK-1003",
+      "SSS/2026/188"
+    ],
+    "case_id": "CASE_03",
+    "extraction_notes": "Tax amount not broken out separately in ledger entry, only combined debit to Safety Equipment Expense and Input GST account. Narration indicates single payment posted despite two invoice scans (INV-1003-A and INV-1003-B) existing for the same supplier invoice SSS/2026/188."
+  },
+  {
+    "doc_id": "PO-1003",
+    "type": "purchase_order",
+    "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": 10800.0,
+    "currency": "INR",
+    "date": "2026-07-12",
+    "references": [],
+    "case_id": "CASE_03",
+    "extraction_notes": null
+  },
+  {
+    "doc_id": "REC-1003",
+    "type": "receipt",
+    "vendor": "Sterling Safety Supplies Pvt. Ltd.",
+    "amount": 70800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-19",
+    "references": [
+      "PO-1003",
+      "SSS/2026/188"
+    ],
+    "case_id": "CASE_03",
+    "extraction_notes": "Accepted value stated as inclusive of GST but tax portion not separately broken out on this document."
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "LED-1014",
+    "BNK-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Complete document chain present: purchase order (PO-1014), invoice (INV-1014) referencing the PO, goods receipt (REC-1014) confirming delivery, ledger entry (LED-1014) recording the transaction, and bank statement (BNK-1014) confirming payment of the matching amount (246,000.00 INR). Dates follow a logical sequence: PO (08-01) -> invoice (08-09) -> receipt (08-11) -> ledger/payment (08-14). Vendor name and amounts are consistent across all documents. Note the receipt document lacks monetary/currency fields, so it only establishes goods receipt occurred, not amount reconciliation - amount consistency is corroborated instead via PO, invoice, ledger, and bank records. No missing document types identified based on the pattern of documents present."
+}

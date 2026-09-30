@@ -1,0 +1,25 @@
+{
+  "transaction_id": "TXN_04",
+  "case_id": "CASE_04",
+  "action": "human_review",
+  "confidence": 0.97,
+  "reason": "This transaction requires human review due to a high-severity amount mismatch: PO-1004 and REC-1004 both show INR 75,000, but INV-1004, BNK-1004, and LED-1004 all reflect INR 82,500, meaning a 7,500 overage was invoiced, paid, and posted without any corresponding PO amendment or updated acceptance document (confidence 0.97).",
+  "thresholds_used": {
+    "auto_clear": 0.95,
+    "human_review": 0.8
+  },
+  "findings": [
+    {
+      "type": "amount_mismatch",
+      "documents": [
+        "PO-1004",
+        "INV-1004",
+        "REC-1004",
+        "BNK-1004",
+        "LED-1004"
+      ],
+      "severity": "high",
+      "explanation": "PO-1004 and REC-1004 both state INR 75,000 while INV-1004, BNK-1004, and LED-1004 all state INR 82,500, a 7,500 overage that was invoiced, paid, and posted with no PO amendment or updated acceptance document reconciling it."
+    }
+  ]
+}

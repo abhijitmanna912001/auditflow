@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_13",
+  "case_id": "CASE_13",
+  "documents": [
+    "PO-1013",
+    "INV-1013",
+    "REC-1013",
+    "LED-1013",
+    "BNK-1013"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.55,
+  "notes": "All five expected document types (purchase order, invoice, receipt, ledger entry, bank statement) are present and cross-reference each other via INV-1013/PO-1013/MCS-2026-4471. However, the invoice (INV-1013) states an amount of 4980.0 in USD, while the linked PO, ledger entry, and bank statement all reflect 415000.0 INR - a significant unresolved currency/amount discrepancy between the source invoice and its downstream records that cannot be explained by tax differences alone (no tax amounts are broken out on any document). This inconsistency is not proof of fraud but materially weakens confidence that the invoice as recorded actually corresponds to the payment executed. The receipt (REC-1013) confirms only service activation with no stated amount, currency, or tax - it establishes that a service acceptance event occurred but does not itself confirm that any payment-terms condition (e.g., receipt-before-payment) was satisfied, nor does the successful bank transaction independently prove the receipt requirement was met. No document types are missing from the expected set for this transaction, so confidence is reduced primarily due to the currency/amount mismatch on the invoice rather than absent evidence."
+}

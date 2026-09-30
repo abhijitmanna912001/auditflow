@@ -1,0 +1,98 @@
+Case ID: CASE_04
+Transaction ID: TXN_04
+
+Evidence Agent's transaction evidence map:
+{
+  "transaction_id": "TXN_04",
+  "case_id": "CASE_04",
+  "documents": [
+    "PO-1004",
+    "INV-1004",
+    "REC-1004",
+    "BNK-1004",
+    "LED-1004"
+  ],
+  "missing_evidence": [
+    "No amended purchase order or approved change order authorizing the invoice amount (82,500) exceeding the original PO-1004 value (75,000) by 7,500",
+    "No documentation reconciling why REC-1004 reflects the original PO value (75,000) rather than the higher invoiced/paid amount (82,500)"
+  ],
+  "evidence_confidence": 0.5,
+  "notes": "All core document types for this transaction are present (purchase order, invoice, receipt, bank statement, ledger entry) and they are linked via consistent cross-references. However, there is an unresolved amount discrepancy: PO-1004 authorizes 75,000, but INV-1004, BNK-1004, and LED-1004 all reflect 82,500, while REC-1004 reflects only 75,000. The presence of a receipt does not by itself confirm that goods/services matching the higher invoiced amount were actually accepted, and the successful bank payment does not establish that the 7,500 overage was properly authorized - only a supporting document such as a PO amendment or approved change order could do that, and none is present. This internal inconsistency across otherwise complete documentation lowers confidence in the transaction's evidentiary support."
+}
+
+Underlying Intake Agent document records for every document listed in that evidence map (the evidence map only tracks which documents are present or missing, not their field values - use these vendor/amount/currency/date fields to actually check for the issue types below):
+[
+  {
+    "doc_id": "PO-1004",
+    "type": "purchase_order",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 75000.0,
+    "tax_amount": 11440.68,
+    "currency": "INR",
+    "date": "2026-06-03",
+    "references": [],
+    "case_id": "CASE_04",
+    "extraction_notes": null
+  },
+  {
+    "doc_id": "INV-1004",
+    "type": "invoice",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 82500.0,
+    "tax_amount": 12584.75,
+    "currency": "INR",
+    "date": "2026-06-12",
+    "references": [
+      "PO-1004"
+    ],
+    "case_id": "CASE_04",
+    "extraction_notes": "Invoice total (82,500) exceeds the referenced PO-1004 total (75,000) by 7,500; document also cites a separate supplier invoice number VPS/2026/0619 not used as doc_id."
+  },
+  {
+    "doc_id": "REC-1004",
+    "type": "receipt",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 75000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-06-16",
+    "references": [
+      "PO-1004",
+      "INV-1004"
+    ],
+    "case_id": "CASE_04",
+    "extraction_notes": "Amount reflects 'Accepted Purchase Order Value' stated as including GST, but tax is not broken out separately on this document; note discrepancy with INV-1004 total of 82,500."
+  },
+  {
+    "doc_id": "BNK-1004",
+    "type": "bank_statement",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 82500.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-10",
+    "references": [
+      "INV-1004",
+      "PO-1004"
+    ],
+    "case_id": "CASE_04",
+    "extraction_notes": "Bank statement does not break out tax separately; debit matches INV-1004 total, not PO-1004 total."
+  },
+  {
+    "doc_id": "LED-1004",
+    "type": "ledger_entry",
+    "vendor": "Vertex Print Solutions Pvt. Ltd.",
+    "amount": 82500.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-10",
+    "references": [
+      "PO-1004",
+      "INV-1004",
+      "REC-1004",
+      "BNK-1004"
+    ],
+    "case_id": "CASE_04",
+    "extraction_notes": "Ledger entry does not break out tax separately; posted value matches invoice total (82,500), which exceeds original PO total (75,000) - potential discrepancy to flag for audit review."
+  }
+]

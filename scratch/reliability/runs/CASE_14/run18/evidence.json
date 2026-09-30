@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "LED-1014",
+    "BNK-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.95,
+  "notes": "Full document chain present: purchase order (PO-1014), invoice (INV-1014) referencing the PO, goods receipt (REC-1014) confirming physical delivery and referencing both invoice and PO, ledger entry (LED-1014) referencing invoice and PO, and bank statement (BNK-1014) referencing the invoice and its supplier alias number. Amounts are consistent across PO, invoice, ledger, and bank statement (246000 INR, with invoice explicitly breaking out 36000 tax at 18% GST). Date sequence (PO 08-01 -> Invoice 08-09 -> Receipt 08-11 -> Ledger/Bank 08-14) is logically consistent with a PO-based procurement, delivery, and payment cycle. The receipt lacks a monetary amount, which is expected since it is a delivery confirmation rather than a financial document. No document type expected for this transaction pattern (PO, invoice, receipt, ledger, bank) appears to be absent, so no missing evidence is flagged; confidence reflects strong internal consistency and completeness of the chain, though it does not independently prove the receipt satisfied any specific payment-terms condition beyond confirming delivery."
+}

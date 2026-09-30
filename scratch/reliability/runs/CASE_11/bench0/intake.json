@@ -1,0 +1,59 @@
+[
+  {
+    "doc_id": "INV-1011",
+    "type": "invoice",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 118000.0,
+    "tax_amount": 18000.0,
+    "currency": "INR",
+    "date": "2026-07-11",
+    "references": [
+      "PO-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "Supplier's internal invoice number (APS/2026/614) noted on document but not treated as a cross-document reference. GST explicitly stated as 18% (INR 18,000.00) on subtotal of INR 100,000.00."
+  },
+  {
+    "doc_id": "BNK-1011",
+    "type": "bank_statement",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 129800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-12",
+    "references": [
+      "INV-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "No tax amount stated on bank statement. Debit amount (INR 129,800.00) exceeds INV-1011 invoice total (INR 118,000.00) by INR 11,800.00 with no explanation given in this document - potential discrepancy for audit review."
+  },
+  {
+    "doc_id": "LED-1011",
+    "type": "ledger_entry",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 129800.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-08-12",
+    "references": [
+      "INV-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "No separate tax line stated; account label references 'Input GST' but no explicit tax figure is broken out. Amount matches bank debit (INR 129,800.00) rather than invoice total (INR 118,000.00), an unexplained variance of INR 11,800.00."
+  },
+  {
+    "doc_id": "REC-1011",
+    "type": "receipt",
+    "vendor": "Apex Process Systems Pvt. Ltd.",
+    "amount": 118000.0,
+    "tax_amount": null,
+    "currency": "INR",
+    "date": "2026-07-18",
+    "references": [
+      "INV-1011",
+      "PO-1011"
+    ],
+    "case_id": "CASE_11",
+    "extraction_notes": "Accepted value stated as INR 118,000.00 'including GST' but tax is not broken out separately on this document, so tax_amount left null."
+  }
+]

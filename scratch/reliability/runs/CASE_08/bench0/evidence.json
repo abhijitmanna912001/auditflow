@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_08",
+  "case_id": "CASE_08",
+  "documents": [
+    "PO-1008",
+    "INV-1008",
+    "REC-1008",
+    "BNK-1008",
+    "LED-1008"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.78,
+  "notes": "All five expected document types (purchase order, invoice, receipt, bank statement, ledger entry) are present and cross-referenced, with consistent vendor name and amount (106200.0 INR) across all documents. However, the purchase order (PO-1008, dated 2026-08-15) is dated after its referenced invoice (INV-1008, dated 2026-08-05), which is an illogical sequence for a PO-driven procurement flow and may indicate a retroactively created or backdated PO - this is flagged as a control concern rather than a missing-document issue. Tax amount breakdowns are only present on the PO and invoice (16200.0 INR); the receipt, bank statement, and ledger entry report only the inclusive total with no separate tax line, which is consistent with typical downstream document formats and not treated as missing evidence. The presence of a receipt does establish that a delivery/acceptance record exists, but does not by itself confirm any additional payment-terms conditions beyond what is documented. Overall the transaction is well-documented in terms of coverage, but confidence is moderated by the anomalous PO/invoice date ordering."
+}

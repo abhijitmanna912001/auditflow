@@ -1,0 +1,14 @@
+{
+  "transaction_id": "TXN_14",
+  "case_id": "CASE_14",
+  "documents": [
+    "PO-1014",
+    "INV-1014",
+    "REC-1014",
+    "BNK-1014",
+    "LED-1014"
+  ],
+  "missing_evidence": [],
+  "evidence_confidence": 0.93,
+  "notes": "Full document chain present: purchase order (PO-1014), invoice (INV-1014), goods receipt (REC-1014), bank payment (BNK-1014), and ledger entry (LED-1014), all cross-referencing each other via INV-1014/PO-1014/SPS/2026/2208. Amounts of 246,000.00 INR are consistent across PO, invoice, bank statement, and ledger; invoice date (08-09) precedes goods receipt (08-11) and payment (08-14) in a logical sequence. Note that REC-1014 is a goods receipt confirming delivered quantity, not a payment receipt, so it does not by itself establish satisfaction of any payment-terms condition tied to receipt of funds - that is inferred only from the successful bank statement entry, which likewise cannot independently confirm terms compliance. No document type appears absent relative to the expected set for this vendor, so no missing_evidence items are flagged."
+}
