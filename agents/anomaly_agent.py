@@ -54,8 +54,11 @@ SYSTEM_PROMPT = (
     "even if the numeric amounts would also disagree after conversion. "
     "tax_mismatch is an arithmetic check on a single document only (does "
     "its own stated subtotal, tax rate, and total actually reconcile) - "
-    "never score it just because a document doesn't mention tax. For each "
-    "issue found, output: type, the documents involved, a severity "
+    "never score it just because a document doesn't mention tax. When an "
+    "arithmetic check line is given for a document, use it as the "
+    "authoritative result for tax_mismatch on that document, and do not "
+    "raise tax_mismatch for a document whose arithmetic check reconciles. "
+    "For each issue found, output: type, the documents involved, a severity "
     "(low/medium/high), a confidence score (0-1), and a one-sentence "
     "explanation. A transaction can have zero, one, or multiple findings. "
     "If no issues are found, output an empty findings list - do not force "
@@ -110,9 +113,42 @@ OUTPUT_SCHEMA = {
 }
 
 
+# A stated total within this many currency units of subtotal + tax counts as
+# reconciling (covers round-off lines).
+ARITHMETIC_TOLERANCE = 1
+
+
+def _fmt_number(value: float) -> str:
+    return str(int(value)) if float(value).is_integer() else f"{value:.2f}"
+
+
+def _arithmetic_check_lines(documents: list[dict]) -> list[str]:
+    """One plain line per document that states amount, tax_amount and
+    subtotal, giving the computed subtotal + tax against the stated total.
+    Documents missing any of the three get no line."""
+    lines = []
+    for doc in documents:
+        amount, tax, subtotal = doc.get("amount"), doc.get("tax_amount"), doc.get("subtotal")
+        if amount is None or tax is None or subtotal is None:
+            continue
+        computed = subtotal + tax
+        difference = abs(computed - amount)
+        verdict = "reconciles" if difference <= ARITHMETIC_TOLERANCE else "does not reconcile"
+        lines.append(
+            f"Arithmetic check for {doc['doc_id']}: subtotal {_fmt_number(subtotal)} "
+            f"+ tax {_fmt_number(tax)} = {_fmt_number(computed)}; stated total "
+            f"{_fmt_number(amount)}; difference {_fmt_number(difference)} ({verdict})"
+        )
+    return lines
+
+
 def _build_user_message(evidence_transaction: dict, intake_documents: list[dict]) -> str:
     doc_ids = set(evidence_transaction["documents"])
     relevant_docs = [doc for doc in intake_documents if doc["doc_id"] in doc_ids]
+    check_lines = _arithmetic_check_lines(relevant_docs)
+    arithmetic_section = (
+        "\n\nArithmetic checks:\n" + "\n".join(check_lines) if check_lines else ""
+    )
 
     return (
         f"Case ID: {evidence_transaction['case_id']}\n"
@@ -125,6 +161,7 @@ def _build_user_message(evidence_transaction: dict, intake_documents: list[dict]
         "vendor/amount/currency/date fields to actually check for the issue "
         "types below):\n"
         f"{json.dumps(relevant_docs, indent=2)}"
+        f"{arithmetic_section}"
     )
 
 
