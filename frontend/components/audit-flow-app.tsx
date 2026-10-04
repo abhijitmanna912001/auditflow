@@ -15,8 +15,13 @@ import {
   workpaperPayloadFallback,
 } from "../lib/mock-workpaper";
 import { persistFeedback } from "../lib/feedback";
+import {
+  actionLabel,
+  caseDisplayName,
+  findingLabel,
+  resolverSummary,
+} from "../lib/display-labels";
 import type {
-  Action,
   Confidence,
   EvidenceResolution,
   Workpaper,
@@ -25,6 +30,7 @@ import type {
 import type { FeedbackDecision, FeedbackRecord } from "../types/feedback";
 import { Icon } from "./icons";
 import { FeedbackHistoryPanel } from "./feedback-history";
+import { PrintReport } from "./print-report";
 
 type RunState = "ready" | "running" | "complete";
 type StageState = "idle" | "active" | "complete";
@@ -41,89 +47,116 @@ interface Stage {
   icon: string;
 }
 
+interface CompletedRun {
+  readonly completedAt: Date;
+  readonly uploadedFileCount: number;
+}
+
 interface ExceptionDetail {
   reason: string;
   severity: "None" | "High";
 }
 
 const stages: Stage[] = [
-  { name: "Intake", description: "Classify source documents", icon: "↓" },
-  { name: "Evidence", description: "Link supporting records", icon: "⌘" },
-  { name: "Anomaly", description: "Check bounded exceptions", icon: "⌁" },
-  { name: "Decision", description: "Apply review thresholds", icon: "✓" },
-  { name: "Workpaper", description: "Compile review-ready output", icon: "▤" },
+  {
+    name: "Read",
+    description: "Identify each invoice, PO, receipt and payment record",
+    icon: "↓",
+  },
+  {
+    name: "Match",
+    description: "Link each invoice to its PO, receipt and payment",
+    icon: "⌘",
+  },
+  {
+    name: "Check",
+    description: "Compare amounts, suppliers, dates and tax; note missing documents",
+    icon: "⌁",
+  },
+  { name: "Route", description: "Send any finding for review", icon: "✓" },
+  {
+    name: "Report",
+    description: "List findings and the documents behind them",
+    icon: "▤",
+  },
 ];
+
+const stageStateLabel: Record<StageState, string> = {
+  idle: "not started",
+  active: "in progress",
+  complete: "done",
+};
 
 const cases = [
   {
     id: "CASE_01",
-    name: "TXN_01 · no expected findings",
-    detail: "Expected action: auto_clear",
+    name: "Transaction 01 · No expected findings",
+    detail: "Expected result: no findings",
   },
   {
     id: "CASE_02",
-    name: "TXN_02 · no expected findings",
-    detail: "Expected action: auto_clear",
+    name: "Transaction 02 · No expected findings",
+    detail: "Expected result: no findings",
   },
   {
     id: "CASE_03",
-    name: "TXN_03 · duplicate_invoice",
-    detail: "Expected action: human_review · high severity",
+    name: "Transaction 03 · Duplicate invoice",
+    detail: "Expected result: sent for review · high severity",
   },
   {
     id: "CASE_04",
-    name: "TXN_04 · amount_mismatch",
-    detail: "Expected action: human_review · high severity",
+    name: "Transaction 04 · Amount mismatch",
+    detail: "Expected result: sent for review · high severity",
   },
   {
     id: "CASE_05",
-    name: "TXN_05 · missing_po",
-    detail: "Expected action: human_review · medium severity",
+    name: "Transaction 05 · Missing PO",
+    detail: "Expected result: sent for review · medium severity",
   },
   {
     id: "CASE_06",
-    name: "TXN_06 · missing_receipt",
-    detail: "Expected action: human_review · high severity",
+    name: "Transaction 06 · Missing receipt",
+    detail: "Expected result: sent for review · high severity",
   },
   {
     id: "CASE_07",
-    name: "TXN_07 · vendor_mismatch",
-    detail: "Expected action: human_review · high severity",
+    name: "Transaction 07 · Vendor mismatch",
+    detail: "Expected result: sent for review · high severity",
   },
   {
     id: "CASE_08",
-    name: "TXN_08 · date_inconsistency",
-    detail: "Expected action: human_review · medium severity",
+    name: "Transaction 08 · Date inconsistency",
+    detail: "Expected result: sent for review · medium severity",
   },
   {
     id: "CASE_09",
-    name: "TXN_09 · duplicate_invoice, amount_mismatch, missing_receipt",
-    detail: "Expected action: human_review · high severity",
+    name: "Transaction 09 · Duplicate invoice, amount mismatch, missing receipt",
+    detail: "Expected result: sent for review · high severity",
   },
   {
     id: "CASE_10",
-    name: "TXN_10 · vendor_mismatch, date_inconsistency",
-    detail: "Expected action: human_review · high severity",
+    name: "Transaction 10 · Vendor mismatch, date inconsistency",
+    detail: "Expected result: sent for review · high severity",
   },
   {
     id: "CASE_11",
-    name: "TXN_11 · missing_po, amount_mismatch",
-    detail: "Expected action: human_review · medium/high severity",
+    name: "Transaction 11 · Missing PO, amount mismatch",
+    detail: "Expected result: sent for review · medium to high severity",
   },
   {
     id: "CASE_12",
-    name: "TXN_12 · missing_receipt",
-    detail: "Expected action: human_review · medium severity",
+    name: "Transaction 12 · Missing receipt",
+    detail: "Expected result: sent for review · medium severity",
   },
   {
     id: "CASE_13",
-    name: "TXN_13 · currency_mismatch",
-    detail: "Expected action: human_review · high severity",
+    name: "Transaction 13 · Currency mismatch",
+    detail: "Expected result: sent for review · high severity",
   },
   {
     id: "CASE_14",
-    name: "TXN_14 · tax_mismatch",
-    detail: "Expected action: human_review · medium severity",
+    name: "Transaction 14 · Tax mismatch",
+    detail: "Expected result: sent for review · medium severity",
   },
 ] as const satisfies readonly AuditCase[];
 
@@ -133,22 +166,21 @@ type CaseId = BenchmarkCaseId | "UPLOAD";
 const detailByDocument: Record<string, ExceptionDetail> = {
   "INV-1001": {
     reason:
-      "All expected supporting records agree on vendor, date, and amount.",
+      "The PO, receipt and bank record agree with the invoice on supplier, date and amount.",
     severity: "None",
   },
   "INV-1004": {
     reason:
-      "Invoice total is INR 82,500.00; the approved PO is INR 75,000.00. The receipt, bank record, and ledger align with the invoice.",
+      "Invoice total is INR 82,500.00; the purchase order total is INR 75,000.00. The receipt, bank record and ledger agree with the invoice.",
     severity: "High",
   },
   "INV-1006": {
-    reason:
-      "No signed goods or service receipt is present for this payment, which requires receipt evidence under the purchase order terms.",
+    reason: "No signed goods or service receipt was found for this payment.",
     severity: "High",
   },
   "INV-1007": {
     reason:
-      "Supplier naming differs between the purchase order and invoice; supporting records do not resolve the entity mismatch.",
+      "The supplier name differs between the purchase order and the invoice; the other documents don't show which supplier name is correct.",
     severity: "High",
   },
 };
@@ -160,8 +192,6 @@ const reviewerDecisionCopy: Record<FeedbackDecision, string> = {
 };
 
 const formatConfidence = (value: Confidence) => `${Math.round(value * 100)}%`;
-const actionLabel = (action: Action) =>
-  action === "auto_clear" ? "Auto-cleared" : "Human review";
 
 function resolveStageState(
   index: number,
@@ -193,14 +223,15 @@ export function AuditFlowApp() {
     cases.find((item) => item.id === selectedCase) ?? cases[0];
   const isUploadSelected = selectedCase === "UPLOAD";
   const caseDescriptionTitle = isUploadSelected
-    ? "Uploaded document bundle"
+    ? "Your uploaded documents"
     : selectedCaseInfo.name;
-  const uploadedFileCountLabel = `${uploadedFiles.length} file${uploadedFiles.length === 1 ? "" : "s"} staged for this run`;
+  const uploadedFileCountLabel = `${uploadedFiles.length} file${uploadedFiles.length === 1 ? "" : "s"} ready to check`;
   const caseDescriptionDetail = isUploadSelected
     ? uploadedFileCountLabel
     : selectedCaseInfo.detail;
   const [backendLoaded, setBackendLoaded] = useState(false);
   const [workpaper, setWorkpaper] = useState<Workpaper | null>(null);
+  const [completedRun, setCompletedRun] = useState<CompletedRun | null>(null);
 
   const activeWorkpaper = useMemo<Workpaper>(() => {
     if (workpaper)
@@ -260,8 +291,35 @@ export function AuditFlowApp() {
       setBackendLoaded(false);
     }
 
+    setCompletedRun({
+      completedAt: new Date(),
+      uploadedFileCount: selectedCase === "UPLOAD" ? uploadedFiles.length : 0,
+    });
     setActiveStage(stages.length);
     setRunState("complete");
+  };
+
+  // Builds the PDF from the result already on the page: the browser's print
+  // window renders the print-only report. No backend call, nothing stored.
+  const saveReport = () => {
+    if (!workpaper || !completedRun) return;
+    const previousTitle = document.title;
+    // Local calendar date, so the file name matches the date in the report
+    // (toISOString would give the UTC date).
+    const { completedAt } = completedRun;
+    const date = [
+      completedAt.getFullYear(),
+      String(completedAt.getMonth() + 1).padStart(2, "0"),
+      String(completedAt.getDate()).padStart(2, "0"),
+    ].join("-");
+    // The page title becomes the browser's suggested PDF file name.
+    document.title = `AuditFlow report – ${workpaper.case_id} – ${date}`;
+    const restoreTitle = () => {
+      document.title = previousTitle;
+      window.removeEventListener("afterprint", restoreTitle);
+    };
+    window.addEventListener("afterprint", restoreTitle);
+    window.print();
   };
 
   const handleUpload = (event: ChangeEvent<HTMLInputElement>) => {
@@ -304,54 +362,53 @@ export function AuditFlowApp() {
           <span>AuditFlow</span>
         </a>
         <div className="topbar-status">
-          <span className="live-dot" /> Live agent pipeline · reviewer workspace
+          <span className="live-dot" /> Document checks · findings for review
         </div>
       </header>
 
       <section className="hero" id="top">
         <div>
-          <p className="eyebrow">WORKPAPER REVIEW</p>
+          <p className="eyebrow">DOCUMENT REVIEW</p>
           <h1>
-            Give every exception
+            Spot the mismatches.
             <br />
-            <em>its evidence.</em>
+            <em>See the documents behind them.</em>
           </h1>
           <p className="hero-copy">
-            Turn document bundles into a review-ready workpaper, with the
-            rationale to decide what happens next.
+            Add invoices, purchase orders and receipts. AuditFlow compares
+            them, lists any mismatches or missing documents, and sends each
+            finding to a person to review.
           </p>
         </div>
         <div className="threshold-card">
-          <span className="threshold-label">Decision policy</span>
-          <strong>
-            ≥ 95% <span>auto-clear</span>
-          </strong>
-          <span>Below 95% routes to review</span>
+          <span className="threshold-label">Review rule</span>
+          <strong>Any finding is sent for review.</strong>
+          <span>Items with no findings can be cleared.</span>
+          <span>Confidence does not determine routing.</span>
         </div>
       </section>
 
       <section className="control-card" aria-labelledby="case-heading">
         <div className="control-heading">
           <div>
-            <p className="eyebrow">01 · SELECT A BUNDLE</p>
-            <h2 id="case-heading">Start an audit run</h2>
+            <p className="eyebrow">01 · CHOOSE DOCUMENTS</p>
+            <h2 id="case-heading">Check a set of documents</h2>
           </div>
-          <span className="simulated-badge">LIVE AGENT PIPELINE</span>
         </div>
         <div className="case-picker">
           <label className="select-wrap">
-            <span>Audit case</span>
+            <span>Sample case</span>
             <select
               value={selectedCase}
               onChange={(event) => selectCase(event.target.value as CaseId)}
             >
               {cases.map((item) => (
                 <option key={item.id} value={item.id}>
-                  {item.id} — {item.name}
+                  {caseDisplayName(item.id)} — {item.name}
                 </option>
               ))}
               {uploadedFiles.length > 0 && (
-                <option value="UPLOAD">Uploaded document bundle</option>
+                <option value="UPLOAD">Your uploaded documents</option>
               )}
             </select>
           </label>
@@ -377,12 +434,12 @@ export function AuditFlowApp() {
             {runState === "running" ? (
               <>
                 <span className="spinner" />
-                <span>Processing</span>
+                <span>Checking documents…</span>
               </>
             ) : (
               <>
                 <Icon name="play" size={15} />
-                <span>Run AuditFlow</span>
+                <span>Check documents</span>
               </>
             )}
           </button>
@@ -395,23 +452,23 @@ export function AuditFlowApp() {
               onChange={(e) => setUseResolver(e.target.checked)}
             />
             <span>
-              Use Evidence Resolver (second pass on ambiguous findings)
+              Double-check missing-document findings (runs a second check)
             </span>
           </label>
         )}
         {uploadedFiles.length > 0 && (
           <p className="upload-note">
             <Icon name="check" size={15} />{" "}
-            {uploadedFiles.map((file) => file.name).join(", ")} ready. Run
-            AuditFlow to send this bundle to the pipeline.
+            {uploadedFiles.map((file) => file.name).join(", ")} ready to check.
+            Select &ldquo;Check documents&rdquo; to start.
           </p>
         )}
       </section>
 
-      <section className="pipeline" aria-label="AuditFlow agent pipeline">
+      <section className="pipeline" aria-label="Check progress">
         <div className="pipeline-heading">
-          <p className="eyebrow">02 · AGENT PIPELINE</p>
-          <span>Intake → Evidence → Anomaly → Decision → Workpaper</span>
+          <p className="eyebrow">02 · PROGRESS</p>
+          <span>Read → Match → Check → Route → Report</span>
         </div>
         <div className="stage-grid">
           {stages.map((stage, index) => {
@@ -420,7 +477,7 @@ export function AuditFlowApp() {
               <div
                 className={`stage ${stageState}`}
                 key={stage.name}
-                aria-label={`${stage.name}: ${stageState}`}
+                aria-label={`${stage.name}: ${stageStateLabel[stageState]}`}
               >
                 <span className="stage-icon">
                   {stageState === "complete" ? (
@@ -443,42 +500,56 @@ export function AuditFlowApp() {
         <section className="results" aria-labelledby="workpaper-heading">
           <div className="workpaper-header">
             <div>
-              <p className="eyebrow">03 · WORKPAPER OUTPUT</p>
+              <p className="eyebrow">03 · RESULTS</p>
               <h2 id="workpaper-heading">
-                {activeWorkpaper.case_id} <span>· review register</span>
+                {caseDisplayName(activeWorkpaper.case_id)}{" "}
+                <span>· findings</span>
               </h2>
             </div>
             <div className="workpaper-meta">
               <ResolverBadge resolution={activeWorkpaper.evidence_resolution} />
               <p className="contract-note">
-                {backendLoaded ? "Live Backend Data" : "Fallback Demo Data"}
+                {backendLoaded
+                  ? "Results from your documents"
+                  : "AuditFlow couldn't complete the check. Showing sample results, not your documents."}
               </p>
+              {backendLoaded && (
+                <div className="report-action">
+                  <button className="secondary-button" onClick={saveReport}>
+                    <Icon name="note" size={15} />
+                    <span>Save PDF report</span>
+                  </button>
+                  <small>
+                    {"Opens your browser's print window. Choose Save as PDF."}
+                  </small>
+                </div>
+              )}
             </div>
           </div>
-          <div className="metrics" aria-label="Workpaper summary">
+          <div className="metrics" aria-label="Results summary">
             <Metric
               value={activeWorkpaper.summary.items_reviewed}
-              label="Reviewed"
+              label="Items checked"
               tone="dark"
             />
             <Metric
               value={activeWorkpaper.summary.auto_cleared}
-              label="Auto-cleared"
+              label="No findings"
               tone="mint"
             />
             <Metric
               value={activeWorkpaper.summary.human_review}
-              label="Human review"
+              label="Sent for review"
               tone="amber"
             />
             <Metric
               value={activeWorkpaper.summary.critical}
-              label="Critical"
+              label="High severity"
               tone="coral"
             />
             <Metric
               value={`${activeWorkpaper.summary.assumed_minutes_per_item} min`}
-              label="Time assumption / item"
+              label="Assumed minutes per cleared item"
               tone="plain"
             />
             <Metric
@@ -491,8 +562,11 @@ export function AuditFlowApp() {
             <div className="table-card">
               <div className="table-intro">
                 <div>
-                  <h3>Workpaper table</h3>
-                  <p>Select any row to inspect its decision rationale.</p>
+                  <h3>Findings by document</h3>
+                  <p>
+                    Select a row to see what was found and which documents
+                    were used.
+                  </p>
                 </div>
                 <span>{humanQueue.length} awaiting review</span>
               </div>
@@ -502,9 +576,9 @@ export function AuditFlowApp() {
                     <tr>
                       <th>Document</th>
                       <th>Finding</th>
-                      <th>Evidence</th>
-                      <th>Confidence</th>
-                      <th>Action</th>
+                      <th>Documents used</th>
+                      <th>Confidence (reference only)</th>
+                      <th>Result</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -529,26 +603,35 @@ export function AuditFlowApp() {
               }
               reviewNote={reviewNote}
               resolution={activeWorkpaper.evidence_resolution}
+              isSampleData={!backendLoaded}
               onClose={() => setSelectedRow(null)}
               onDecision={chooseDecision}
               onNoteChange={setReviewNote}
             />
           </div>
           <p className="assumption">
-            <Icon name="clock" size={16} /> Estimated minutes saved uses the
-            explicit assumption of{" "}
+            <Icon name="clock" size={16} /> Estimated time saved assumes{" "}
             <strong>
               {activeWorkpaper.summary.assumed_minutes_per_item} minutes per
-              auto-cleared item
+              item with no findings
             </strong>
             : {activeWorkpaper.summary.auto_cleared} ×{" "}
             {activeWorkpaper.summary.assumed_minutes_per_item} ={" "}
-            {activeWorkpaper.summary.estimated_minutes_saved} minutes.
+            {activeWorkpaper.summary.estimated_minutes_saved} minutes. This is
+            an estimate, not a measured figure.
           </p>
         </section>
       )}
 
       <FeedbackHistoryPanel sessionLog={feedbackLog} />
+
+      {isComplete && backendLoaded && workpaper && completedRun && (
+        <PrintReport
+          workpaper={workpaper}
+          completedAt={completedRun.completedAt}
+          uploadedFileCount={completedRun.uploadedFileCount}
+        />
+      )}
     </main>
   );
 }
@@ -581,14 +664,14 @@ function WorkpaperTableRow({
       <td>
         <strong>{row.document}</strong>
         <small>
-          {selectedCase === "UPLOAD" ? "Uploaded bundle" : "Demo document"}
+          {selectedCase === "UPLOAD" ? "Uploaded document" : "Sample document"}
         </small>
       </td>
       <td>
         <span
           className={`finding ${row.finding === "Clean" ? "clean" : "exception"}`}
         >
-          {row.finding}
+          {findingLabel(row.finding)}
         </span>
       </td>
       <td>
@@ -618,20 +701,12 @@ function WorkpaperTableRow({
   );
 }
 
-function resolverSummary(resolution: EvidenceResolution) {
-  if (!resolution.second_pass_run)
-    return `No second pass — ${resolution.reason}`;
-  const verdict = resolution.agreement
-    ? "Two passes agreed"
-    : "Two passes disagreed (both sets unioned)";
-  return `${verdict}. ${resolution.reason}`;
-}
-
 interface ExceptionPanelProps {
   readonly row: WorkpaperRow | null;
   readonly decision?: FeedbackDecision;
   readonly reviewNote: string;
   readonly resolution?: EvidenceResolution | null;
+  readonly isSampleData: boolean;
   readonly onClose: () => void;
   readonly onDecision: (decision: FeedbackDecision) => void;
   readonly onNoteChange: (value: string) => void;
@@ -642,6 +717,7 @@ function ExceptionPanel({
   decision,
   reviewNote,
   resolution,
+  isSampleData,
   onClose,
   onDecision,
   onNoteChange,
@@ -653,19 +729,25 @@ function ExceptionPanel({
           <span className="empty-icon">
             <Icon name="note" size={23} />
           </span>
-          <h3>Open an exception</h3>
+          <h3>Select a finding</h3>
           <p>
-            Select a workpaper row to see the finding, evidence, confidence,
-            action, and decision rationale.
+            Select a row to see what was found, the documents involved, and
+            why it needs review or can be cleared.
           </p>
         </div>
       </aside>
     );
-  const detail = detailByDocument[row.document] ?? {
-    reason:
-      "No additional exception narrative is available. Review the linked evidence and the agent action before recording a decision.",
-    severity: row.finding === "Clean" ? "None" : "High",
-  };
+  const isClear = row.action === "auto_clear";
+  // The hand-written narrative and severity describe the sample documents
+  // only; live results don't carry them, so they are never shown there.
+  const sampleDetail = isSampleData ? detailByDocument[row.document] : undefined;
+  const fallbackReason = isClear
+    ? "No mismatches or missing documents were found for this item."
+    : "No further detail is available for this item. Check the listed documents before recording your decision.";
+  const severity =
+    sampleDetail && sampleDetail.severity !== "None"
+      ? sampleDetail.severity
+      : null;
   return (
     <aside className="decision-panel" aria-live="polite">
       <button
@@ -675,14 +757,15 @@ function ExceptionPanel({
       >
         <Icon name="close" size={18} />
       </button>
-      <p className="eyebrow">EXCEPTION DETAIL</p>
-      <h3>{row.finding}</h3>
+      <p className="eyebrow">FINDING DETAIL</p>
+      <h3>{findingLabel(row.finding)}</h3>
       <p className="detail-doc">
-        {row.document} <span>· {detail.severity} priority</span>
+        {row.document}
+        {severity && <span> · {severity} severity</span>}
       </p>
-      <Detail label="Finding" value={row.finding} />
+      <Detail label="Finding" value={findingLabel(row.finding)} />
       <Detail
-        label="Evidence"
+        label="Documents used"
         value={
           <div className="detail-evidence">
             {row.evidence.map((item) => (
@@ -693,16 +776,19 @@ function ExceptionPanel({
       />
       <Detail
         label="Confidence"
-        value={`${formatConfidence(row.confidence)} (${row.confidence.toFixed(2)} internally)`}
+        value={`${formatConfidence(row.confidence)} — for reference; does not affect whether an item is sent for review`}
       />
-      <Detail label="Agent action" value={actionLabel(row.action)} />
-      <Detail label="Reason" value={detail.reason} />
-      <Detail label="Involved documents" value={row.evidence.join(" · ")} />
+      <Detail label="AuditFlow result" value={actionLabel(row.action)} />
+      <Detail
+        label={isClear ? "Why it can be cleared" : "Why it was flagged"}
+        value={sampleDetail?.reason ?? fallbackReason}
+      />
+      <Detail label="Documents involved" value={row.evidence.join(" · ")} />
       {resolution && (
-        <Detail label="Resolver" value={resolverSummary(resolution)} />
+        <Detail label="Double-check" value={resolverSummary(resolution)} />
       )}
       <div className="review-actions">
-        <p>Reviewer decision</p>
+        <p>Your decision</p>
         <div>
           <button
             className={decision === "confirmed" ? "active-decision" : ""}
@@ -734,7 +820,7 @@ function ExceptionPanel({
           <textarea
             value={reviewNote}
             onChange={(event) => onNoteChange(event.target.value)}
-            placeholder="Add context for the review trail…"
+            placeholder="Add a note explaining your decision…"
             rows={2}
           />
         </label>
@@ -767,16 +853,16 @@ function ResolverBadge({ resolution }: ResolverBadgeProps) {
   if (!resolution.second_pass_run)
     return (
       <span className="resolver-badge none">
-        Resolver: no second pass needed
+        Double-check: not needed
       </span>
     );
   return resolution.agreement ? (
     <span className="resolver-badge confirmed">
-      Resolver: second pass confirmed
+      Double-check: results agreed
     </span>
   ) : (
     <span className="resolver-badge disagreement">
-      Resolver: second pass — disagreement flagged
+      Double-check: results differed, review both
     </span>
   );
 }

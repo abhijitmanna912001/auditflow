@@ -2,8 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { fetchFeedbackHistory } from "../lib/feedback";
+import {
+  actionLabel,
+  caseDisplayName,
+  findingLabel,
+} from "../lib/display-labels";
 import type { FeedbackDecision, FeedbackRecord } from "../types/feedback";
 import { Icon } from "./icons";
+
+type HistoryStatus = "loading" | "loaded" | "unavailable";
 
 const decisionLabel: Record<FeedbackDecision, string> = {
   confirmed: "Confirmed",
@@ -11,8 +18,11 @@ const decisionLabel: Record<FeedbackDecision, string> = {
   evidence_requested: "Evidence requested",
 };
 
-const actionLabel = (action: FeedbackRecord["agent_action"]) =>
-  action === "auto_clear" ? "Auto-cleared" : "Human review";
+const statusBadge: Record<HistoryStatus, string> = {
+  loaded: "ALL SAVED DECISIONS",
+  loading: "LOADING…",
+  unavailable: "THIS SESSION ONLY · NOT SAVED",
+};
 
 function formatTime(iso: string) {
   const date = new Date(iso);
@@ -29,9 +39,13 @@ function countBy(records: FeedbackRecord[], decision: FeedbackDecision) {
   return records.filter((record) => record.decision === decision).length;
 }
 
-export function FeedbackHistoryPanel({ sessionLog }: { sessionLog: FeedbackRecord[] }) {
+interface FeedbackHistoryPanelProps {
+  readonly sessionLog: FeedbackRecord[];
+}
+
+export function FeedbackHistoryPanel({ sessionLog }: FeedbackHistoryPanelProps) {
   const [backendHistory, setBackendHistory] = useState<FeedbackRecord[] | null>(null);
-  const [status, setStatus] = useState<"loading" | "loaded" | "unavailable">("loading");
+  const [status, setStatus] = useState<HistoryStatus>("loading");
 
   useEffect(() => {
     let cancelled = false;
@@ -57,16 +71,14 @@ export function FeedbackHistoryPanel({ sessionLog }: { sessionLog: FeedbackRecor
     <section className="control-card feedback-history" aria-labelledby="feedback-heading">
       <div className="control-heading">
         <div>
-          <p className="eyebrow">04 · REVIEWER FEEDBACK</p>
+          <p className="eyebrow">04 · REVIEW LOG</p>
           <h2 id="feedback-heading">Decision history</h2>
         </div>
-        <span className="simulated-badge">
-          {status === "loaded" ? "ALL-TIME · BACKEND" : status === "loading" ? "LOADING…" : "THIS SESSION ONLY"}
-        </span>
+        <span className="simulated-badge">{statusBadge[status]}</span>
       </div>
 
-      <div className="metrics feedback-metrics" aria-label="Feedback summary">
-        <FeedbackMetric value={records.length} label="Decisions logged" tone="dark" />
+      <div className="metrics feedback-metrics" aria-label="Decision summary">
+        <FeedbackMetric value={records.length} label="Decisions recorded" tone="dark" />
         <FeedbackMetric value={countBy(records, "confirmed")} label="Confirmed" tone="mint" />
         <FeedbackMetric value={countBy(records, "overturned")} label="Overturned" tone="coral" />
         <FeedbackMetric value={countBy(records, "evidence_requested")} label="Evidence requested" tone="amber" />
@@ -74,8 +86,8 @@ export function FeedbackHistoryPanel({ sessionLog }: { sessionLog: FeedbackRecor
 
       {timeline.length === 0 ? (
         <p className="upload-note">
-          <Icon name="note" size={15} /> No reviewer decisions recorded yet. Confirm, overturn, or request evidence
-          on a finding to start the log.
+          <Icon name="note" size={15} /> No decisions recorded yet. Open a finding and confirm it, overturn it, or
+          request evidence.
         </p>
       ) : (
         <div className="table-card">
@@ -86,8 +98,8 @@ export function FeedbackHistoryPanel({ sessionLog }: { sessionLog: FeedbackRecor
                   <th>Time</th>
                   <th>Case</th>
                   <th>Document</th>
-                  <th>Agent action</th>
-                  <th>Reviewer decision</th>
+                  <th>AuditFlow result</th>
+                  <th>Decision</th>
                   <th>Note</th>
                 </tr>
               </thead>
@@ -98,11 +110,11 @@ export function FeedbackHistoryPanel({ sessionLog }: { sessionLog: FeedbackRecor
                       <small>{formatTime(record.timestamp)}</small>
                     </td>
                     <td>
-                      <strong>{record.case_id}</strong>
+                      <strong>{caseDisplayName(record.case_id)}</strong>
                     </td>
                     <td>
                       <strong>{record.document}</strong>
-                      <small>{record.finding}</small>
+                      <small>{findingLabel(record.finding)}</small>
                     </td>
                     <td>
                       <span className={`action ${record.agent_action}`}>{actionLabel(record.agent_action)}</span>
@@ -123,14 +135,21 @@ export function FeedbackHistoryPanel({ sessionLog }: { sessionLog: FeedbackRecor
 
       {status === "unavailable" && (
         <p className="upload-note">
-          <Icon name="check" size={15} /> Showing this session only — persistence API not reachable yet.
+          <Icon name="check" size={15} /> Saved history isn&apos;t available right now. Showing this session&apos;s
+          decisions only; they may not have been saved.
         </p>
       )}
     </section>
   );
 }
 
-function FeedbackMetric({ value, label, tone }: { value: number; label: string; tone: "dark" | "mint" | "amber" | "coral" }) {
+interface FeedbackMetricProps {
+  readonly value: number;
+  readonly label: string;
+  readonly tone: "dark" | "mint" | "amber" | "coral";
+}
+
+function FeedbackMetric({ value, label, tone }: FeedbackMetricProps) {
   return (
     <div className={`metric ${tone}`}>
       <strong>{value}</strong>
