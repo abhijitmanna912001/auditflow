@@ -69,7 +69,9 @@ export function PrintReport({
         <h3>1. Run summary</h3>
         <dl className="report-facts">
           <ReportFact label="Completed" value={formatDateTime(completedAt)} />
-          <ReportFact label="Reference" value={workpaper.case_id} />
+          {!isUpload && (
+            <ReportFact label="Reference" value={workpaper.case_id} />
+          )}
           <ReportFact label="Source" value={source} />
           {isUpload && (
             <ReportFact label="Files uploaded" value={uploadedFileCount} />
@@ -79,12 +81,12 @@ export function PrintReport({
             value={references.size}
           />
           <ReportFact
-            label="Items checked"
+            label="Transactions checked"
             value={workpaper.summary.items_reviewed}
           />
           <ReportFact label="Items with findings" value={findings.length} />
           <ReportFact
-            label="Items sent for review"
+            label="Items needing review"
             value={workpaper.summary.human_review}
           />
           {workpaper.evidence_resolution && (
@@ -95,7 +97,7 @@ export function PrintReport({
           )}
         </dl>
         <p className="report-note">
-          Review rule: any finding is sent for review. Items with no findings
+          Review rule: any finding needs review. Items with no findings
           can be cleared. Confidence does not determine routing.
         </p>
       </section>
@@ -180,7 +182,7 @@ export function PrintReport({
         </p>
         <p className="report-note">
           This report was created in your browser from the results on screen.
-          AuditFlow does not store it.
+          AuditFlow does not keep a copy of this report.
         </p>
       </section>
     </article>

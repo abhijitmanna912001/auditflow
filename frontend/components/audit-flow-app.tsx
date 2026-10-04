@@ -101,62 +101,62 @@ const cases = [
   {
     id: "CASE_03",
     name: "Transaction 03 · Duplicate invoice",
-    detail: "Expected result: sent for review · high severity",
+    detail: "Expected result: needs review · high severity",
   },
   {
     id: "CASE_04",
     name: "Transaction 04 · Amount mismatch",
-    detail: "Expected result: sent for review · high severity",
+    detail: "Expected result: needs review · high severity",
   },
   {
     id: "CASE_05",
     name: "Transaction 05 · Missing PO",
-    detail: "Expected result: sent for review · medium severity",
+    detail: "Expected result: needs review · medium severity",
   },
   {
     id: "CASE_06",
     name: "Transaction 06 · Missing receipt",
-    detail: "Expected result: sent for review · high severity",
+    detail: "Expected result: needs review · high severity",
   },
   {
     id: "CASE_07",
     name: "Transaction 07 · Vendor mismatch",
-    detail: "Expected result: sent for review · high severity",
+    detail: "Expected result: needs review · high severity",
   },
   {
     id: "CASE_08",
     name: "Transaction 08 · Date inconsistency",
-    detail: "Expected result: sent for review · medium severity",
+    detail: "Expected result: needs review · medium severity",
   },
   {
     id: "CASE_09",
     name: "Transaction 09 · Duplicate invoice, amount mismatch, missing receipt",
-    detail: "Expected result: sent for review · high severity",
+    detail: "Expected result: needs review · high severity",
   },
   {
     id: "CASE_10",
     name: "Transaction 10 · Vendor mismatch, date inconsistency",
-    detail: "Expected result: sent for review · high severity",
+    detail: "Expected result: needs review · high severity",
   },
   {
     id: "CASE_11",
     name: "Transaction 11 · Missing PO, amount mismatch",
-    detail: "Expected result: sent for review · medium to high severity",
+    detail: "Expected result: needs review · medium to high severity",
   },
   {
     id: "CASE_12",
     name: "Transaction 12 · Missing receipt",
-    detail: "Expected result: sent for review · medium severity",
+    detail: "Expected result: needs review · medium severity",
   },
   {
     id: "CASE_13",
     name: "Transaction 13 · Currency mismatch",
-    detail: "Expected result: sent for review · high severity",
+    detail: "Expected result: needs review · high severity",
   },
   {
     id: "CASE_14",
     name: "Transaction 14 · Tax mismatch",
-    detail: "Expected result: sent for review · medium severity",
+    detail: "Expected result: needs review · medium severity",
   },
 ] as const satisfies readonly AuditCase[];
 
@@ -249,6 +249,10 @@ export function AuditFlowApp() {
     } as Workpaper;
   }, [workpaper, selectedCase]);
   const isComplete = runState === "complete";
+  const ranOnUpload = (completedRun?.uploadedFileCount ?? 0) > 0;
+  const resultsSourceLabel = ranOnUpload
+    ? "Results from your documents"
+    : "Results from a sample case";
   const humanQueue = useMemo(
     () => activeWorkpaper.rows.filter((row) => row.action === "human_review"),
     [activeWorkpaper],
@@ -313,7 +317,11 @@ export function AuditFlowApp() {
       String(completedAt.getDate()).padStart(2, "0"),
     ].join("-");
     // The page title becomes the browser's suggested PDF file name.
-    document.title = `AuditFlow report – ${workpaper.case_id} – ${date}`;
+    const reportName =
+      completedRun.uploadedFileCount > 0
+        ? "uploaded documents"
+        : workpaper.case_id;
+    document.title = `AuditFlow report – ${reportName} – ${date}`;
     const restoreTitle = () => {
       document.title = previousTitle;
       window.removeEventListener("afterprint", restoreTitle);
@@ -376,13 +384,13 @@ export function AuditFlowApp() {
           </h1>
           <p className="hero-copy">
             Add invoices, purchase orders and receipts. AuditFlow compares
-            them, lists any mismatches or missing documents, and sends each
+            them, lists any mismatches or missing documents, and flags each
             finding to a person to review.
           </p>
         </div>
         <div className="threshold-card">
           <span className="threshold-label">Review rule</span>
-          <strong>Any finding is sent for review.</strong>
+          <strong>Any finding needs review.</strong>
           <span>Items with no findings can be cleared.</span>
           <span>Confidence does not determine routing.</span>
         </div>
@@ -510,7 +518,7 @@ export function AuditFlowApp() {
               <ResolverBadge resolution={activeWorkpaper.evidence_resolution} />
               <p className="contract-note">
                 {backendLoaded
-                  ? "Results from your documents"
+                  ? resultsSourceLabel
                   : "AuditFlow couldn't complete the check. Showing sample results, not your documents."}
               </p>
               {backendLoaded && (
@@ -529,7 +537,7 @@ export function AuditFlowApp() {
           <div className="metrics" aria-label="Results summary">
             <Metric
               value={activeWorkpaper.summary.items_reviewed}
-              label="Items checked"
+              label="Transactions checked"
               tone="dark"
             />
             <Metric
@@ -539,7 +547,7 @@ export function AuditFlowApp() {
             />
             <Metric
               value={activeWorkpaper.summary.human_review}
-              label="Sent for review"
+              label="Needs review"
               tone="amber"
             />
             <Metric
@@ -610,15 +618,18 @@ export function AuditFlowApp() {
             />
           </div>
           <p className="assumption">
-            <Icon name="clock" size={16} /> Estimated time saved assumes{" "}
-            <strong>
-              {activeWorkpaper.summary.assumed_minutes_per_item} minutes per
-              item with no findings
-            </strong>
-            : {activeWorkpaper.summary.auto_cleared} ×{" "}
-            {activeWorkpaper.summary.assumed_minutes_per_item} ={" "}
-            {activeWorkpaper.summary.estimated_minutes_saved} minutes. This is
-            an estimate, not a measured figure.
+            <Icon name="clock" size={16} />
+            <span>
+              Estimated time saved assumes{" "}
+              <strong>
+                {activeWorkpaper.summary.assumed_minutes_per_item} minutes per
+                item with no findings
+              </strong>
+              : {activeWorkpaper.summary.auto_cleared} ×{" "}
+              {activeWorkpaper.summary.assumed_minutes_per_item} ={" "}
+              {activeWorkpaper.summary.estimated_minutes_saved} minutes. This
+              is an estimate, not a measured figure.
+            </span>
           </p>
         </section>
       )}
@@ -776,14 +787,13 @@ function ExceptionPanel({
       />
       <Detail
         label="Confidence"
-        value={`${formatConfidence(row.confidence)} — for reference; does not affect whether an item is sent for review`}
+        value={`${formatConfidence(row.confidence)} — for reference; does not affect whether an item needs review`}
       />
       <Detail label="AuditFlow result" value={actionLabel(row.action)} />
       <Detail
         label={isClear ? "Why it can be cleared" : "Why it was flagged"}
         value={sampleDetail?.reason ?? fallbackReason}
       />
-      <Detail label="Documents involved" value={row.evidence.join(" · ")} />
       {resolution && (
         <Detail label="Double-check" value={resolverSummary(resolution)} />
       )}
