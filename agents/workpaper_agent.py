@@ -43,6 +43,7 @@ import anthropic
 from anomaly_agent import run_anomaly_agent
 from decision_agent import run_decision_agent
 from evidence_agent import run_evidence_agent, run_evidence_agent_with_resolver
+from finding_id import make_finding_id
 from intake_agent import run_intake_agent, run_intake_agent_from_documents
 
 MODEL = "claude-sonnet-5"
@@ -130,6 +131,49 @@ _FINDING_LABEL_REQUEST_SCHEMA = {
     "required": ["rows"],
     "additionalProperties": False,
 }
+
+
+FINDING_LABELS = {
+    "duplicate_invoice": "Duplicate invoice",
+    "amount_mismatch": "Amount mismatch",
+    "missing_po": "Missing purchase order",
+    "missing_receipt": "Missing receipt",
+    "vendor_mismatch": "Vendor mismatch",
+    "date_inconsistency": "Date inconsistency",
+    "currency_mismatch": "Currency mismatch",
+    "tax_mismatch": "Tax calculation mismatch",
+}
+
+
+def build_findings(anomaly_transaction: dict, workpaper: dict) -> list[dict]:
+    """One item per underlying finding of the (single) transaction, taken
+    from the Anomaly stage's final findings list - the Decision stage drops
+    per-finding confidence, so the Anomaly output is the source. Findings are
+    linked to the workpaper's row for that transaction. A transaction with no
+    findings contributes none."""
+    row = workpaper["rows"][0]
+    primary_document = row["document"]
+    findings = []
+    seen_ids: dict[str, int] = {}
+    for finding in anomaly_transaction["findings"]:
+        base_id = make_finding_id(finding["type"], primary_document)
+        seen_ids[base_id] = seen_ids.get(base_id, 0) + 1
+        finding_id = base_id if seen_ids[base_id] == 1 else f"{base_id}-{seen_ids[base_id]}"
+        findings.append(
+            {
+                "finding_id": finding_id,
+                "type": finding["type"],
+                "label": FINDING_LABELS.get(finding["type"], finding["type"]),
+                "row_document": row["document"],
+                "primary_document": primary_document,
+                "documents": list(finding["documents"]),
+                "transaction_documents": list(row["evidence"]),
+                "severity": finding["severity"],
+                "confidence": finding["confidence"],
+                "explanation": finding["explanation"],
+            }
+        )
+    return findings
 
 
 def _union_finding_documents(findings: list[dict]) -> list[str]:
@@ -322,12 +366,14 @@ def run_full_pipeline(
         evidence_transaction, intake_documents, client=anomaly_client
     )
     decision_transaction = run_decision_agent(anomaly_transaction, client=decision_client)
-    return run_workpaper_agent(
+    workpaper = run_workpaper_agent(
         [decision_transaction],
         [evidence_transaction],
         assumed_minutes_per_item=assumed_minutes_per_item,
         client=workpaper_client,
     )
+    workpaper["findings"] = build_findings(anomaly_transaction, workpaper)
+    return workpaper
 
 
 def run_full_pipeline_from_documents(
@@ -364,12 +410,14 @@ def run_full_pipeline_from_documents(
         evidence_transaction, intake_documents, client=anomaly_client
     )
     decision_transaction = run_decision_agent(anomaly_transaction, client=decision_client)
-    return run_workpaper_agent(
+    workpaper = run_workpaper_agent(
         [decision_transaction],
         [evidence_transaction],
         assumed_minutes_per_item=assumed_minutes_per_item,
         client=workpaper_client,
     )
+    workpaper["findings"] = build_findings(anomaly_transaction, workpaper)
+    return workpaper
 
 
 def _synthetic_case_id() -> str:
@@ -430,6 +478,7 @@ def run_full_pipeline_from_documents_with_resolver(
         assumed_minutes_per_item=assumed_minutes_per_item,
         client=workpaper_client,
     )
+    workpaper["findings"] = build_findings(anomaly_transaction, workpaper)
     # Surface the resolver's own record (ran? agreed? threshold used?) on
     # the workpaper output too, not just buried inside the evidence
     # transaction - this is the visible "Model: Claude, Reasoning passes: 2"
