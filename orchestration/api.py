@@ -92,7 +92,17 @@ _MAX_FILES_PER_REQUEST = 10
 _FEEDBACK_FILE = REPO_ROOT / "orchestration" / "feedback_log.json"
 _FEEDBACK_LOCK = threading.Lock()
 
-FEEDBACK_DECISIONS = ["confirmed", "overturned", "evidence_requested"]
+# The first three are the current ticket-style outcomes; the last three are
+# earlier values, still accepted so previously saved records stay valid.
+FEEDBACK_DECISIONS = [
+    "discarded",
+    "assigned",
+    "closed",
+    "confirmed",
+    "overturned",
+    "evidence_requested",
+]
+_NOTE_REQUIRED_DECISIONS = ("discarded", "assigned", "closed")
 
 
 class FeedbackRequest(BaseModel):
@@ -102,6 +112,7 @@ class FeedbackRequest(BaseModel):
     agent_action: str
     decision: str
     note: str | None = None
+    assignee: str | None = None
     # Caller-supplied timestamp is accepted (e.g. the moment the reviewer
     # clicked, if the frontend wants to own that) but never trusted for
     # ordering - the server also stamps its own received_at, which
@@ -208,6 +219,16 @@ def submit_feedback(request: FeedbackRequest) -> dict:
         raise HTTPException(
             status_code=400,
             detail=f"decision must be one of {FEEDBACK_DECISIONS}, got {request.decision!r}",
+        )
+    if request.decision in _NOTE_REQUIRED_DECISIONS and not (request.note or "").strip():
+        raise HTTPException(
+            status_code=400,
+            detail=f"a note is required for decision {request.decision!r}",
+        )
+    if request.decision == "assigned" and not (request.assignee or "").strip():
+        raise HTTPException(
+            status_code=400,
+            detail="an assignee is required for decision 'assigned'",
         )
 
     record = request.model_dump()

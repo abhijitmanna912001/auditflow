@@ -7,16 +7,27 @@ import {
   caseDisplayName,
   findingLabel,
 } from "../lib/display-labels";
-import type { FeedbackDecision, FeedbackRecord } from "../types/feedback";
+import type { FeedbackRecord, StoredFeedbackDecision } from "../types/feedback";
 import { Icon } from "./icons";
 
 type HistoryStatus = "loading" | "loaded" | "unavailable";
 
-const decisionLabel: Record<FeedbackDecision, string> = {
-  confirmed: "Confirmed",
-  overturned: "Overturned",
-  evidence_requested: "Evidence requested",
+const decisionLabel: Record<StoredFeedbackDecision, string> = {
+  discarded: "Discarded",
+  assigned: "Assigned",
+  closed: "Closed",
+  confirmed: "Earlier decision",
+  overturned: "Earlier decision",
+  evidence_requested: "Earlier decision",
 };
+
+function decisionText(record: FeedbackRecord) {
+  const label = decisionLabel[record.decision] ?? "Earlier decision";
+  if (record.decision === "assigned" && record.assignee) {
+    return `${label} to ${record.assignee}`;
+  }
+  return label;
+}
 
 const statusBadge: Record<HistoryStatus, string> = {
   loaded: "ALL SAVED DECISIONS",
@@ -35,7 +46,7 @@ function formatTime(iso: string) {
   });
 }
 
-function countBy(records: FeedbackRecord[], decision: FeedbackDecision) {
+function countBy(records: FeedbackRecord[], decision: StoredFeedbackDecision) {
   return records.filter((record) => record.decision === decision).length;
 }
 
@@ -79,15 +90,15 @@ export function FeedbackHistoryPanel({ sessionLog }: FeedbackHistoryPanelProps) 
 
       <div className="metrics feedback-metrics" aria-label="Decision summary">
         <FeedbackMetric value={records.length} label="Decisions recorded" tone="dark" />
-        <FeedbackMetric value={countBy(records, "confirmed")} label="Confirmed" tone="mint" />
-        <FeedbackMetric value={countBy(records, "overturned")} label="Overturned" tone="coral" />
-        <FeedbackMetric value={countBy(records, "evidence_requested")} label="Evidence requested" tone="amber" />
+        <FeedbackMetric value={countBy(records, "discarded")} label="Discarded" tone="coral" />
+        <FeedbackMetric value={countBy(records, "assigned")} label="Assigned" tone="amber" />
+        <FeedbackMetric value={countBy(records, "closed")} label="Closed" tone="mint" />
       </div>
 
       {timeline.length === 0 ? (
         <p className="upload-note">
-          <Icon name="note" size={15} /> No decisions recorded yet. Open a finding and confirm it, overturn it, or
-          request evidence.
+          <Icon name="note" size={15} /> No decisions recorded yet. Open a finding, write a note, then discard,
+          assign or close it.
         </p>
       ) : (
         <div className="table-card">
@@ -120,7 +131,7 @@ export function FeedbackHistoryPanel({ sessionLog }: FeedbackHistoryPanelProps) 
                       <span className={`action ${record.agent_action}`}>{actionLabel(record.agent_action)}</span>
                     </td>
                     <td>
-                      <span className={`feedback-decision ${record.decision}`}>{decisionLabel[record.decision]}</span>
+                      <span className={`feedback-decision ${record.decision}`}>{decisionText(record)}</span>
                     </td>
                     <td>
                       <small>{record.note || "—"}</small>

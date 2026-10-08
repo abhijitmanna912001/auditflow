@@ -27,7 +27,11 @@ import type {
   Workpaper,
   WorkpaperRow,
 } from "../types/workpaper";
-import type { FeedbackDecision, FeedbackRecord } from "../types/feedback";
+import type {
+  FeedbackDecision,
+  FeedbackRecord,
+  StoredFeedbackDecision,
+} from "../types/feedback";
 import { Icon } from "./icons";
 import { FeedbackHistoryPanel } from "./feedback-history";
 import { PrintReport } from "./print-report";
@@ -185,11 +189,28 @@ const detailByDocument: Record<string, ExceptionDetail> = {
   },
 };
 
-const reviewerDecisionCopy: Record<FeedbackDecision, string> = {
-  confirmed: "Confirmed",
-  overturned: "Overturned",
-  evidence_requested: "Evidence requested",
+interface RecordedDecision {
+  readonly decision: FeedbackDecision;
+  readonly note: string;
+  readonly assignee?: string;
+}
+
+const decisionOutcomeLabel: Record<StoredFeedbackDecision, string> = {
+  discarded: "Discarded",
+  assigned: "Assigned",
+  closed: "Closed",
+  confirmed: "Earlier decision",
+  overturned: "Earlier decision",
+  evidence_requested: "Earlier decision",
 };
+
+function outcomeText(recorded: RecordedDecision) {
+  const label = decisionOutcomeLabel[recorded.decision];
+  if (recorded.decision === "assigned" && recorded.assignee) {
+    return `${label} to ${recorded.assignee}`;
+  }
+  return label;
+}
 
 const formatConfidence = (value: Confidence) => `${Math.round(value * 100)}%`;
 
@@ -213,7 +234,7 @@ export function AuditFlowApp() {
   const [activeStage, setActiveStage] = useState(-1);
   const [selectedRow, setSelectedRow] = useState<WorkpaperRow | null>(null);
   const [reviewDecisions, setReviewDecisions] = useState<
-    Partial<Record<string, FeedbackDecision>>
+    Partial<Record<string, RecordedDecision>>
   >({});
   const [reviewNote, setReviewNote] = useState("");
   const [feedbackLog, setFeedbackLog] = useState<FeedbackRecord[]>([]);
@@ -341,20 +362,37 @@ export function AuditFlowApp() {
     setUploadedFiles([]);
   };
 
-  const chooseDecision = (decision: FeedbackDecision) => {
+  const selectRow = (row: WorkpaperRow | null) => {
+    setSelectedRow(row);
+    setReviewNote("");
+  };
+
+  const chooseDecision = (decision: FeedbackDecision, assignee?: string) => {
     if (!selectedRow) return;
+    const note = reviewNote.trim();
+    const assignedTo = assignee?.trim();
+    // A note is required for every decision, and "assigned" also needs a
+    // name. Already-decided findings can't be decided a second time.
+    if (!note) return;
+    if (decision === "assigned" && !assignedTo) return;
+    if (reviewDecisions[selectedRow.document]) return;
     const record: FeedbackRecord = {
       case_id: activeWorkpaper.case_id,
       document: selectedRow.document,
       finding: selectedRow.finding,
       agent_action: selectedRow.action,
       decision,
-      note: reviewNote.trim() || undefined,
+      note,
+      assignee: decision === "assigned" ? assignedTo : undefined,
       timestamp: new Date().toISOString(),
     };
     setReviewDecisions((current) => ({
       ...current,
-      [selectedRow.document]: decision,
+      [selectedRow.document]: {
+        decision,
+        note,
+        assignee: record.assignee,
+      },
     }));
     setFeedbackLog((current) => [...current, record]);
     void persistFeedback(record);
@@ -555,16 +593,6 @@ export function AuditFlowApp() {
               label="High severity"
               tone="coral"
             />
-            <Metric
-              value={`${activeWorkpaper.summary.assumed_minutes_per_item} min`}
-              label="Assumed minutes per cleared item"
-              tone="plain"
-            />
-            <Metric
-              value={`${activeWorkpaper.summary.estimated_minutes_saved} min`}
-              label="Estimated minutes saved"
-              tone="dark"
-            />
           </div>
           <div className="workpaper-layout">
             <div className="table-card">
@@ -595,9 +623,9 @@ export function AuditFlowApp() {
                         key={row.document}
                         row={row}
                         isSelected={selectedRow?.document === row.document}
-                        reviewerDecision={reviewDecisions[row.document]}
+                        recorded={reviewDecisions[row.document]}
                         selectedCase={selectedCase}
-                        onSelect={setSelectedRow}
+                        onSelect={selectRow}
                       />
                     ))}
                   </tbody>
@@ -605,32 +633,19 @@ export function AuditFlowApp() {
               </div>
             </div>
             <ExceptionPanel
+              key={selectedRow ? selectedRow.document : "none"}
               row={selectedRow}
-              decision={
+              recorded={
                 selectedRow ? reviewDecisions[selectedRow.document] : undefined
               }
               reviewNote={reviewNote}
               resolution={activeWorkpaper.evidence_resolution}
               isSampleData={!backendLoaded}
-              onClose={() => setSelectedRow(null)}
+              onClose={() => selectRow(null)}
               onDecision={chooseDecision}
               onNoteChange={setReviewNote}
             />
           </div>
-          <p className="assumption">
-            <Icon name="clock" size={16} />
-            <span>
-              Estimated time saved assumes{" "}
-              <strong>
-                {activeWorkpaper.summary.assumed_minutes_per_item} minutes per
-                item with no findings
-              </strong>
-              : {activeWorkpaper.summary.auto_cleared} ×{" "}
-              {activeWorkpaper.summary.assumed_minutes_per_item} ={" "}
-              {activeWorkpaper.summary.estimated_minutes_saved} minutes. This
-              is an estimate, not a measured figure.
-            </span>
-          </p>
         </section>
       )}
 
@@ -650,7 +665,7 @@ export function AuditFlowApp() {
 interface WorkpaperTableRowProps {
   readonly row: WorkpaperRow;
   readonly isSelected: boolean;
-  readonly reviewerDecision?: FeedbackDecision;
+  readonly recorded?: RecordedDecision;
   readonly selectedCase: CaseId;
   readonly onSelect: (row: WorkpaperRow) => void;
 }
@@ -658,13 +673,16 @@ interface WorkpaperTableRowProps {
 function WorkpaperTableRow({
   row,
   isSelected,
-  reviewerDecision,
+  recorded,
   selectedCase,
   onSelect,
 }: WorkpaperTableRowProps) {
   const handleKeyDown = (event: KeyboardEvent<HTMLTableRowElement>) => {
     if (event.key === "Enter") onSelect(row);
   };
+  const resultLabel = recorded
+    ? outcomeText(recorded)
+    : actionLabel(row.action);
   return (
     <tr
       className={isSelected ? "selected" : ""}
@@ -703,9 +721,7 @@ function WorkpaperTableRow({
       </td>
       <td>
         <span className={`action ${row.action}`}>
-          {reviewerDecision
-            ? reviewerDecisionCopy[reviewerDecision]
-            : actionLabel(row.action)}
+          {resultLabel}
         </span>
       </td>
     </tr>
@@ -714,18 +730,18 @@ function WorkpaperTableRow({
 
 interface ExceptionPanelProps {
   readonly row: WorkpaperRow | null;
-  readonly decision?: FeedbackDecision;
+  readonly recorded?: RecordedDecision;
   readonly reviewNote: string;
   readonly resolution?: EvidenceResolution | null;
   readonly isSampleData: boolean;
   readonly onClose: () => void;
-  readonly onDecision: (decision: FeedbackDecision) => void;
+  readonly onDecision: (decision: FeedbackDecision, assignee?: string) => void;
   readonly onNoteChange: (value: string) => void;
 }
 
 function ExceptionPanel({
   row,
-  decision,
+  recorded,
   reviewNote,
   resolution,
   isSampleData,
@@ -733,6 +749,8 @@ function ExceptionPanel({
   onDecision,
   onNoteChange,
 }: ExceptionPanelProps) {
+  const [isAssigning, setIsAssigning] = useState(false);
+  const [assignee, setAssignee] = useState("");
   if (!row)
     return (
       <aside className="decision-panel" aria-live="polite">
@@ -755,6 +773,8 @@ function ExceptionPanel({
   const fallbackReason = isClear
     ? "No mismatches or missing documents were found for this item."
     : "No further detail is available for this item. Check the listed documents before recording your decision.";
+  const hasNote = reviewNote.trim().length > 0;
+  const hasAssignee = assignee.trim().length > 0;
   const severity =
     sampleDetail && sampleDetail.severity !== "None"
       ? sampleDetail.severity
@@ -798,42 +818,72 @@ function ExceptionPanel({
         <Detail label="Double-check" value={resolverSummary(resolution)} />
       )}
       <div className="review-actions">
-        <p>Your decision</p>
-        <div>
-          <button
-            className={decision === "confirmed" ? "active-decision" : ""}
-            onClick={() => onDecision("confirmed")}
-          >
-            Confirm finding
-          </button>
-          <button
-            className={
-              decision === "evidence_requested" ? "active-decision" : ""
-            }
-            onClick={() => onDecision("evidence_requested")}
-          >
-            Request evidence
-          </button>
-          <button
-            className={
-              decision === "overturned" ? "active-decision danger" : "danger"
-            }
-            onClick={() => onDecision("overturned")}
-          >
-            Overturn decision
-          </button>
-        </div>
-        <label className="note-field">
-          <span>
-            Reviewer note <em>optional</em>
-          </span>
-          <textarea
-            value={reviewNote}
-            onChange={(event) => onNoteChange(event.target.value)}
-            placeholder="Add a note explaining your decision…"
-            rows={2}
-          />
-        </label>
+        {recorded ? (
+          <div className="recorded-outcome">
+            <strong>{outcomeText(recorded)}</strong>
+            <p>
+              Note:{" "}
+              {recorded.note}
+            </p>
+            <p>This finding has been decided and cannot be changed.</p>
+          </div>
+        ) : (
+          <>
+            <label className="note-field">
+              <span>
+                Reviewer note <em>required</em>
+              </span>
+              <textarea
+                value={reviewNote}
+                onChange={(event) => onNoteChange(event.target.value)}
+                placeholder="Write a note before choosing what to do…"
+                rows={3}
+              />
+            </label>
+            <p>Your decision</p>
+            <div className="decision-buttons">
+              <button
+                disabled={!hasNote}
+                onClick={() => onDecision("discarded")}
+              >
+                Discard
+              </button>
+              <button
+                disabled={!hasNote}
+                onClick={() => setIsAssigning(true)}
+              >
+                Assign
+              </button>
+              <button
+                disabled={!hasNote}
+                onClick={() => onDecision("closed")}
+              >
+                Close
+              </button>
+            </div>
+            {isAssigning && (
+              <>
+                <label className="assign-field">
+                  <span>Assign to (name or email)</span>
+                  <input
+                    type="text"
+                    value={assignee}
+                    onChange={(event) => setAssignee(event.target.value)}
+                  />
+                </label>
+                <div className="assign-actions">
+                  <button
+                    disabled={!hasNote || !hasAssignee}
+                    onClick={() => onDecision("assigned", assignee)}
+                  >
+                    Save assignment
+                  </button>
+                  <button onClick={() => setIsAssigning(false)}>Cancel</button>
+                </div>
+              </>
+            )}
+          </>
+        )}
       </div>
     </aside>
   );
