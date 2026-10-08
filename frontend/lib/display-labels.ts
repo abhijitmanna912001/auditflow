@@ -1,4 +1,9 @@
-import type { Action, EvidenceResolution } from "../types/workpaper";
+import type {
+  Action,
+  EvidenceResolution,
+  FindingDetail,
+  FindingSeverity,
+} from "../types/workpaper";
 
 /**
  * Display-only labels. The raw values (case IDs, action codes, the "Clean"
@@ -16,6 +21,19 @@ export const actionLabel = (action: Action) =>
 
 export const findingLabel = (finding: string) =>
   finding === "Clean" ? "No findings" : finding;
+
+const severityLabels: Record<FindingSeverity, string> = {
+  low: "Low severity",
+  medium: "Medium severity",
+  high: "High severity",
+};
+
+export const severityLabel = (severity: FindingSeverity) =>
+  severityLabels[severity];
+
+/** Documents a finding cites other than its own primary document. */
+export const matchedDocuments = (finding: FindingDetail) =>
+  finding.documents.filter((document) => document !== finding.primary_document);
 
 export function resolverSummary(resolution: EvidenceResolution) {
   if (!resolution.second_pass_run)

@@ -1,9 +1,14 @@
 import type { ReactNode } from "react";
-import type { Workpaper, WorkpaperRow } from "../types/workpaper";
+import type {
+  FindingDetail,
+  Workpaper,
+  WorkpaperRow,
+} from "../types/workpaper";
 import {
   actionLabel,
   caseDisplayName,
   resolverSummary,
+  severityLabel,
 } from "../lib/display-labels";
 
 interface PrintReportProps {
@@ -15,6 +20,11 @@ interface PrintReportProps {
 interface NumberedFinding {
   readonly label: string;
   readonly row: WorkpaperRow;
+}
+
+interface ReportEntry {
+  readonly finding: FindingDetail;
+  readonly result: string;
 }
 
 const formatDateTime = (date: Date) =>
@@ -42,12 +52,44 @@ export function PrintReport({
     findings.map((finding) => [finding.row.document, finding.label]),
   );
 
+  // When the response carries per-finding detail, list one entry per finding.
+  // Otherwise fall back to the row-based output.
+  const entries: ReportEntry[] = (workpaper.findings ?? []).map((finding) => {
+    const row = workpaper.rows.find(
+      (candidate) => candidate.document === finding.row_document,
+    );
+    return {
+      finding,
+      result: actionLabel(row ? row.action : "human_review"),
+    };
+  });
+  const [firstEntry, ...otherEntries] = entries;
+  const useEntries = entries.length > 0;
+  const entryIdsByDocument = new Map<string, string[]>();
+  for (const { finding } of entries) {
+    const ids = entryIdsByDocument.get(finding.row_document) ?? [];
+    entryIdsByDocument.set(finding.row_document, [...ids, finding.finding_id]);
+  }
+
   const references = new Map<string, string[]>();
+  const addReference = (document: string, usedFor: string) => {
+    const current = references.get(document) ?? [];
+    if (!current.includes(usedFor)) {
+      references.set(document, [...current, usedFor]);
+    }
+  };
   for (const row of workpaper.rows) {
-    const usedFor =
-      findingByDocument.get(row.document) ?? `${row.document} (no findings)`;
+    const noFindings = `${row.document} (no findings)`;
+    const rowLabels = [findingByDocument.get(row.document) ?? noFindings];
+    const entryLabels = entryIdsByDocument.get(row.document) ?? [noFindings];
+    const usedFor = useEntries ? entryLabels : rowLabels;
     for (const document of row.evidence) {
-      references.set(document, [...(references.get(document) ?? []), usedFor]);
+      for (const label of usedFor) addReference(document, label);
+    }
+  }
+  for (const { finding } of entries) {
+    for (const document of finding.documents) {
+      addReference(document, finding.finding_id);
     }
   }
   const isUpload = uploadedFileCount > 0;
@@ -104,9 +146,34 @@ export function PrintReport({
 
       <section>
         <h3>2. Findings summary</h3>
-        {findings.length === 0 ? (
+        {useEntries && (
+          <table>
+            <thead>
+              <tr>
+                <th>Reference</th>
+                <th>Issue</th>
+                <th>Document</th>
+                <th>Severity</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              {entries.map(({ finding, result }) => (
+                <tr key={finding.finding_id}>
+                  <td>{finding.finding_id}</td>
+                  <td>{finding.label}</td>
+                  <td>{finding.primary_document}</td>
+                  <td>{severityLabel(finding.severity)}</td>
+                  <td>{result}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {!useEntries && findings.length === 0 && (
           <p>No findings were identified. All items can be cleared.</p>
-        ) : (
+        )}
+        {!useEntries && findings.length > 0 && (
           <table>
             <thead>
               <tr>
@@ -135,7 +202,7 @@ export function PrintReport({
             so the heading is never left alone at the bottom of a page. */}
         <div className="report-keep">
           <h3>3. Detailed findings</h3>
-          {firstFinding ? (
+          {(useEntries || firstFinding) ? (
             <p className="report-note">
               Each finding shows what this result contains: the issue
               identified, the main document and the documents involved. Check
@@ -144,11 +211,19 @@ export function PrintReport({
           ) : (
             <p>There are no findings to detail.</p>
           )}
-          {firstFinding && <FindingBlock finding={firstFinding} />}
+          {useEntries && firstEntry && <EntryBlock entry={firstEntry} />}
+          {!useEntries && firstFinding && (
+            <FindingBlock finding={firstFinding} />
+          )}
         </div>
-        {otherFindings.map((finding) => (
-          <FindingBlock key={finding.label} finding={finding} />
-        ))}
+        {useEntries &&
+          otherEntries.map((entry) => (
+            <EntryBlock key={entry.finding.finding_id} entry={entry} />
+          ))}
+        {!useEntries &&
+          otherFindings.map((finding) => (
+            <FindingBlock key={finding.label} finding={finding} />
+          ))}
       </section>
 
       <section>
@@ -208,6 +283,32 @@ function FindingBlock({ finding }: FindingBlockProps) {
           label="Documents involved"
           value={row.evidence.join(", ")}
         />
+      </dl>
+    </div>
+  );
+}
+
+interface EntryBlockProps {
+  readonly entry: ReportEntry;
+}
+
+function EntryBlock({ entry }: EntryBlockProps) {
+  const { finding, result } = entry;
+  return (
+    <div className="report-finding">
+      <h4>
+        {finding.finding_id} · {finding.label}
+      </h4>
+      <dl className="report-facts">
+        <ReportFact label="What was identified" value={finding.label} />
+        <ReportFact label="Why it was flagged" value={finding.explanation} />
+        <ReportFact label="Document" value={finding.primary_document} />
+        <ReportFact
+          label="Documents it cites"
+          value={finding.documents.length > 0 ? finding.documents.join(", ") : "None listed"}
+        />
+        <ReportFact label="Severity" value={severityLabel(finding.severity)} />
+        <ReportFact label="Result" value={result} />
       </dl>
     </div>
   );

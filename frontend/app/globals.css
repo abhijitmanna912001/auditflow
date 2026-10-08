@@ -69,3 +69,19 @@ h2 { color: #1b3739; font-size: 22px; letter-spacing: -.8px; margin-bottom: 0; }
   .report-finding .report-facts div { grid-template-columns: 30% 1fr; }
   .report-scope { border: 1pt solid #155d57; padding: 6pt 9pt; break-inside: avoid; }
 }
+.finding-count { margin: 0 0 6px; color: #788988; font: 500 9px 'DM Mono', monospace; letter-spacing: .3px; }
+.finding-blocks { display: grid; gap: 8px; min-width: 0; }
+.finding-block { border: 1px solid #e4e9e3; border-radius: 8px; background: white; padding: 9px 10px; display: grid; gap: 6px; min-width: 0; }
+.finding-block p { margin: 0; color: #405c5d; font-size: 10px; line-height: 1.5; overflow-wrap: anywhere; }
+.finding-block .finding-matches { font-family: 'DM Mono', monospace; color: #527171; }
+.finding-block-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 8px; }
+.finding-block-head strong { color: #29484a; font-size: 11px; min-width: 0; overflow-wrap: anywhere; }
+.severity-badge { border-radius: 20px; padding: 2px 7px; font-size: 9px; font-weight: 700; white-space: nowrap; }
+.severity-badge.low { background: #e6f4ec; color: #317859; }
+.severity-badge.medium { background: #fff1d6; color: #a7651d; }
+.severity-badge.high { background: #fbe5e0; color: #a04e47; }
+@media (max-width: 620px) { .detail-row:has(.finding-blocks) { grid-template-columns: 1fr; gap: 6px; } }
+@media screen and (min-width: 1001px) {
+  .workpaper-layout .table-card { align-self: start; }
+  .finding-blocks { max-height: 45vh; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; scrollbar-color: #c3d0c8 transparent; }
+}

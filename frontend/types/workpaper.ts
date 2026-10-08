@@ -54,10 +54,33 @@ export interface EvidenceResolution {
   pass_2_missing_evidence?: string[];
 }
 
+export type FindingSeverity = "low" | "medium" | "high";
+
+/**
+ * One underlying finding from the API's top-level `findings` list. A row can
+ * have several. (Named FindingDetail because `Finding` above is the row's
+ * plain-language label.)
+ */
+export interface FindingDetail {
+  finding_id: string;
+  type: string;
+  label: string;
+  row_document: string;
+  primary_document: string;
+  /** Documents the finding cites; may be empty. */
+  documents: string[];
+  /** Every document in the transaction. */
+  transaction_documents: string[];
+  severity: FindingSeverity;
+  confidence: number;
+  explanation: string;
+}
+
 /** Exact top-level Workpaper Agent payload rendered by the frontend. */
 export interface Workpaper {
   case_id: string;
   rows: WorkpaperRow[];
   summary: Summary;
+  findings?: readonly FindingDetail[];
   evidence_resolution?: EvidenceResolution | null;
 }

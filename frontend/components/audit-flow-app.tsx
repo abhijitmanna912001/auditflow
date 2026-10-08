@@ -19,11 +19,14 @@ import {
   actionLabel,
   caseDisplayName,
   findingLabel,
+  matchedDocuments,
   resolverSummary,
+  severityLabel,
 } from "../lib/display-labels";
 import type {
   Confidence,
   EvidenceResolution,
+  FindingDetail,
   Workpaper,
   WorkpaperRow,
 } from "../types/workpaper";
@@ -640,6 +643,7 @@ export function AuditFlowApp() {
               }
               reviewNote={reviewNote}
               resolution={activeWorkpaper.evidence_resolution}
+              findings={activeWorkpaper.findings}
               isSampleData={!backendLoaded}
               onClose={() => selectRow(null)}
               onDecision={chooseDecision}
@@ -733,6 +737,7 @@ interface ExceptionPanelProps {
   readonly recorded?: RecordedDecision;
   readonly reviewNote: string;
   readonly resolution?: EvidenceResolution | null;
+  readonly findings?: readonly FindingDetail[];
   readonly isSampleData: boolean;
   readonly onClose: () => void;
   readonly onDecision: (decision: FeedbackDecision, assignee?: string) => void;
@@ -744,6 +749,7 @@ function ExceptionPanel({
   recorded,
   reviewNote,
   resolution,
+  findings,
   isSampleData,
   onClose,
   onDecision,
@@ -773,6 +779,9 @@ function ExceptionPanel({
   const fallbackReason = isClear
     ? "No mismatches or missing documents were found for this item."
     : "No further detail is available for this item. Check the listed documents before recording your decision.";
+  const rowFindings = (findings ?? []).filter(
+    (finding) => finding.row_document === row.document,
+  );
   const hasNote = reviewNote.trim().length > 0;
   const hasAssignee = assignee.trim().length > 0;
   const severity =
@@ -812,7 +821,22 @@ function ExceptionPanel({
       <Detail label="AuditFlow result" value={actionLabel(row.action)} />
       <Detail
         label={isClear ? "Why it can be cleared" : "Why it was flagged"}
-        value={sampleDetail?.reason ?? fallbackReason}
+        value={
+          rowFindings.length > 0 ? (
+            <>
+              {rowFindings.length >= 2 && (
+                <p className="finding-count">{rowFindings.length} findings</p>
+              )}
+              <div className="finding-blocks">
+                {rowFindings.map((finding) => (
+                  <FindingBlock key={finding.finding_id} finding={finding} />
+                ))}
+              </div>
+            </>
+          ) : (
+            (sampleDetail?.reason ?? fallbackReason)
+          )
+        }
       />
       {resolution && (
         <Detail label="Double-check" value={resolverSummary(resolution)} />
@@ -886,6 +910,38 @@ function ExceptionPanel({
         )}
       </div>
     </aside>
+  );
+}
+
+interface FindingBlockProps {
+  readonly finding: FindingDetail;
+}
+
+function FindingBlock({ finding }: FindingBlockProps) {
+  const matches = matchedDocuments(finding);
+  return (
+    <div className="finding-block">
+      <div className="finding-block-head">
+        <strong>{finding.label}</strong>
+        <span className={`severity-badge ${finding.severity}`}>
+          {severityLabel(finding.severity)}
+        </span>
+      </div>
+      <p>{finding.explanation}</p>
+      {finding.documents.length > 0 && (
+        <div className="detail-evidence">
+          {finding.documents.map((item) => (
+            <span key={item}>{item}</span>
+          ))}
+        </div>
+      )}
+      {finding.type === "duplicate_invoice" && matches.length > 0 && (
+        <p className="finding-matches">
+          Matches:{" "}
+          {matches.join(", ")}
+        </p>
+      )}
+    </div>
   );
 }
 
