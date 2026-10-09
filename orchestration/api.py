@@ -76,7 +76,7 @@ allowed_origins = (
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_methods=["POST", "OPTIONS"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     # Content-Type: multipart/form-data uploads set this too.
     # X-Access-Code: the per-client access code (see "Access control" below).
     allow_headers=["Content-Type", "X-Access-Code"],
