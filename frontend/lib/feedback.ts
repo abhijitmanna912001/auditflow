@@ -1,6 +1,11 @@
 import type { FeedbackRecord } from "../types/feedback";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+import { apiFetch } from "./api-client";
+
+export type FeedbackHistoryResult =
+  | { readonly kind: "ok"; readonly records: FeedbackRecord[] }
+  | { readonly kind: "needs_code" }
+  | { readonly kind: "unavailable" };
 
 /**
  * Persists a single reviewer decision. Expects a backend route at
@@ -11,7 +16,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000"
  */
 export async function persistFeedback(record: FeedbackRecord): Promise<boolean> {
   try {
-    const resp = await fetch(`${API_BASE}/feedback`, {
+    const resp = await apiFetch("/feedback", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(record),
@@ -25,16 +30,20 @@ export async function persistFeedback(record: FeedbackRecord): Promise<boolean> 
 /**
  * Fetches every persisted feedback record for the history dashboard.
  * Expects GET /feedback/history returning FeedbackRecord[].
- * Returns null (not []) on failure so the caller can tell "no history yet"
- * apart from "backend unreachable" and render accordingly.
+ * "unavailable" (not an empty list) on failure so the caller can tell
+ * "no history yet" apart from "backend unreachable"; "needs_code" when the
+ * backend asks for an access code.
  */
-export async function fetchFeedbackHistory(): Promise<FeedbackRecord[] | null> {
+export async function fetchFeedbackHistory(): Promise<FeedbackHistoryResult> {
   try {
-    const resp = await fetch(`${API_BASE}/feedback/history`);
-    if (!resp.ok) return null;
+    const resp = await apiFetch("/feedback/history");
+    if (resp.status === 401) return { kind: "needs_code" };
+    if (!resp.ok) return { kind: "unavailable" };
     const data = await resp.json();
-    return Array.isArray(data) ? (data as FeedbackRecord[]) : null;
+    return Array.isArray(data)
+      ? { kind: "ok", records: data as FeedbackRecord[] }
+      : { kind: "unavailable" };
   } catch {
-    return null;
+    return { kind: "unavailable" };
   }
 }

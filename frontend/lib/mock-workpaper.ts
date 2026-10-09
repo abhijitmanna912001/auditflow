@@ -1,38 +1,48 @@
 import { confidence, type Workpaper } from "../types/workpaper";
+import { apiFetch, friendlyApiError } from "./api-client";
 
 // This module now fetches real workpaper data from the backend when available.
 // It exports a single function to obtain the payload matching the Workpaper contract.
 export type MaybeWorkpaper = Workpaper | null;
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+// A failed run carries a plain-language message when the backend gave a
+// reason the user can act on; otherwise message is null.
+export interface WorkpaperOutcome {
+  readonly workpaper: MaybeWorkpaper;
+  readonly message: string | null;
+}
 
-export async function fetchWorkpaper(caseId: string): Promise<MaybeWorkpaper> {
+const failed = (message: string | null = null): WorkpaperOutcome => ({
+  workpaper: null,
+  message,
+});
+
+export async function fetchWorkpaper(caseId: string): Promise<WorkpaperOutcome> {
   try {
-    const resp = await fetch(`${API_BASE}/run-case`, {
+    const resp = await apiFetch("/run-case", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ case_id: caseId }),
     });
     if (!resp.ok) {
       // Let caller handle non-2xx with graceful fallback to null
-      return null;
+      return failed(await friendlyApiError(resp));
     }
     const data = await resp.json();
     // Basic shape validation; mapping layer if needed (no changes to backend)
     // Expecting { case_id, rows, summary }
     if (data?.case_id && Array.isArray(data?.rows) && data?.summary) {
       // Ensure types align by constructing a Workpaper-like object
-      return data as Workpaper;
+      return { workpaper: data as Workpaper, message: null };
     }
-    return null;
+    return failed();
   } catch {
-    return null;
+    return failed();
   }
 }
 
-export async function fetchWorkpaperFromUpload(files: File[], useResolver: boolean): Promise<MaybeWorkpaper> {
-  if (files.length === 0) return null;
+export async function fetchWorkpaperFromUpload(files: File[], useResolver: boolean): Promise<WorkpaperOutcome> {
+  if (files.length === 0) return failed();
   try {
     const caseId = `UPLOADED_${Date.now()}`;
     const form = new FormData();
@@ -41,20 +51,20 @@ export async function fetchWorkpaperFromUpload(files: File[], useResolver: boole
     const params = new URLSearchParams({ case_id: caseId });
     if (useResolver) params.set("use_resolver", "true");
 
-    const resp = await fetch(`${API_BASE}/run-case-upload?${params.toString()}`, {
+    const resp = await apiFetch(`/run-case-upload?${params.toString()}`, {
       method: "POST",
       body: form,
     });
     if (!resp.ok) {
-      return null;
+      return failed(await friendlyApiError(resp));
     }
     const data = await resp.json();
     if (data?.case_id && Array.isArray(data?.rows) && data?.summary) {
-      return data as Workpaper;
+      return { workpaper: data as Workpaper, message: null };
     }
-    return null;
+    return failed();
   } catch {
-    return null;
+    return failed();
   }
 }
 

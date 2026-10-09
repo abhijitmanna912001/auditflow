@@ -10,7 +10,7 @@ import {
 import type { FeedbackRecord, StoredFeedbackDecision } from "../types/feedback";
 import { Icon } from "./icons";
 
-type HistoryStatus = "loading" | "loaded" | "unavailable";
+type HistoryStatus = "loading" | "loaded" | "unavailable" | "needs_code";
 
 const decisionLabel: Record<StoredFeedbackDecision, string> = {
   discarded: "Discarded",
@@ -33,6 +33,7 @@ const statusBadge: Record<HistoryStatus, string> = {
   loaded: "ALL SAVED DECISIONS",
   loading: "LOADING…",
   unavailable: "THIS SESSION ONLY · NOT SAVED",
+  needs_code: "THIS SESSION ONLY · NOT SAVED",
 };
 
 function formatTime(iso: string) {
@@ -52,28 +53,32 @@ function countBy(records: FeedbackRecord[], decision: StoredFeedbackDecision) {
 
 interface FeedbackHistoryPanelProps {
   readonly sessionLog: FeedbackRecord[];
+  readonly accessCodeVersion: number;
 }
 
-export function FeedbackHistoryPanel({ sessionLog }: FeedbackHistoryPanelProps) {
+export function FeedbackHistoryPanel({
+  sessionLog,
+  accessCodeVersion,
+}: FeedbackHistoryPanelProps) {
   const [backendHistory, setBackendHistory] = useState<FeedbackRecord[] | null>(null);
   const [status, setStatus] = useState<HistoryStatus>("loading");
 
   useEffect(() => {
     let cancelled = false;
-    fetchFeedbackHistory().then((data) => {
+    fetchFeedbackHistory().then((result) => {
       if (cancelled) return;
-      if (data) {
-        setBackendHistory(data);
+      if (result.kind === "ok") {
+        setBackendHistory(result.records);
         setStatus("loaded");
       } else {
-        setStatus("unavailable");
+        setStatus(result.kind);
       }
     });
     return () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionLog.length]);
+  }, [sessionLog.length, accessCodeVersion]);
 
   const records = status === "loaded" && backendHistory ? backendHistory : sessionLog;
   const timeline = [...records].sort((a, b) => b.timestamp.localeCompare(a.timestamp));
@@ -142,6 +147,12 @@ export function FeedbackHistoryPanel({ sessionLog }: FeedbackHistoryPanelProps) 
             </table>
           </div>
         </div>
+      )}
+
+      {status === "needs_code" && (
+        <p className="upload-note">
+          <Icon name="check" size={15} /> Saved decisions need an access code
+        </p>
       )}
 
       {status === "unavailable" && (

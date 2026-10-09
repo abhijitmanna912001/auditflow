@@ -85,3 +85,23 @@ h2 { color: #1b3739; font-size: 22px; letter-spacing: -.8px; margin-bottom: 0; }
   .workpaper-layout .table-card { align-self: start; }
   .finding-blocks { max-height: 45vh; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; scrollbar-color: #c3d0c8 transparent; }
 }
+
+/* Access code control (page header) */
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.access-code { position: relative; }
+.access-code-toggle { height: 32px; padding: 0 12px; border: 1px solid #cad5cf; border-radius: 8px; background: transparent; color: #3b5b5d; font-size: 12px; font-weight: 700; cursor: pointer; }
+.access-code-panel { position: absolute; right: 0; top: 40px; z-index: 20; width: 280px; max-width: calc(100vw - 36px); padding: 14px; background: white; border: 1px solid #cad5cf; border-radius: 10px; box-shadow: 0 10px 28px #14323422; display: grid; gap: 8px; }
+.access-code-panel label { font-size: 12px; font-weight: 700; color: #143d40; }
+.access-code-panel input { height: 40px; padding: 0 10px; border: 1px solid #cad5cf; border-radius: 8px; font-size: 16px; }
+.access-code-panel p { margin: 0; font-size: 12px; color: #627475; }
+.access-code-panel .access-code-saved { color: #398064; }
+.access-code-panel .access-code-notice { color: #a33b2f; }
+@media (max-width: 620px) { .topbar-right { gap: 0; } }
+.access-code-actions { display: flex; flex-wrap: nowrap; gap: 8px; align-items: stretch; }
+.access-code-btn { flex: 1 1 0; min-width: 0; height: 44px; margin: 0; padding: 0 8px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; text-align: center; font-family: inherit; font-size: 14px; font-weight: 700; line-height: 1; border-radius: 8px; border: 1px solid #cad5cf; cursor: pointer; }
+.access-code-btn-solid { background: #155d57; border-color: #155d57; color: white; }
+.access-code-btn-solid:hover:not(:disabled) { background: #0e4e49; }
+.access-code-btn-solid:disabled { opacity: .5; cursor: default; }
+.access-code-btn-outline { background: transparent; color: #3b5b5d; }
+.access-code-btn-outline:hover { background: #f1f5f2; }
+@media (max-width: 620px) { .access-code-panel { right: -4px; } .access-code-btn { font-size: 16px; } }

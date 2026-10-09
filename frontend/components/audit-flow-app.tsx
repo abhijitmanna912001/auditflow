@@ -15,6 +15,7 @@ import {
   workpaperPayloadFallback,
 } from "../lib/mock-workpaper";
 import { persistFeedback } from "../lib/feedback";
+import { AccessCodeControl } from "./access-code-control";
 import {
   actionLabel,
   caseDisplayName,
@@ -256,6 +257,8 @@ export function AuditFlowApp() {
   const [backendLoaded, setBackendLoaded] = useState(false);
   const [workpaper, setWorkpaper] = useState<Workpaper | null>(null);
   const [completedRun, setCompletedRun] = useState<CompletedRun | null>(null);
+  const [runMessage, setRunMessage] = useState<string | null>(null);
+  const [accessCodeVersion, setAccessCodeVersion] = useState(0);
 
   const activeWorkpaper = useMemo<Workpaper>(() => {
     if (workpaper)
@@ -277,6 +280,9 @@ export function AuditFlowApp() {
   const resultsSourceLabel = ranOnUpload
     ? "Results from your documents"
     : "Results from a sample case";
+  const failedRunNote = runMessage
+    ? `${runMessage} Showing sample results, not your documents.`
+    : "AuditFlow couldn't complete the check. Showing sample results, not your documents.";
   const humanQueue = useMemo(
     () => activeWorkpaper.rows.filter((row) => row.action === "human_review"),
     [activeWorkpaper],
@@ -303,10 +309,12 @@ export function AuditFlowApp() {
       );
     }
 
-    const payload =
+    const outcome =
       selectedCase === "UPLOAD"
         ? await fetchWorkpaperFromUpload(uploadedFiles, useResolver)
         : await fetchWorkpaper(selectedCase);
+    const payload = outcome.workpaper;
+    setRunMessage(outcome.message);
 
     timers.current.forEach((timer) => window.clearTimeout(timer));
     timers.current = [];
@@ -410,8 +418,13 @@ export function AuditFlowApp() {
           </span>
           <span>AuditFlow</span>
         </a>
-        <div className="topbar-status">
-          <span className="live-dot" /> Document checks · findings for review
+        <div className="topbar-right">
+          <div className="topbar-status">
+            <span className="live-dot" /> Document checks · findings for review
+          </div>
+          <AccessCodeControl
+            onChange={() => setAccessCodeVersion((current) => current + 1)}
+          />
         </div>
       </header>
 
@@ -560,7 +573,7 @@ export function AuditFlowApp() {
               <p className="contract-note">
                 {backendLoaded
                   ? resultsSourceLabel
-                  : "AuditFlow couldn't complete the check. Showing sample results, not your documents."}
+                  : failedRunNote}
               </p>
               {backendLoaded && (
                 <div className="report-action">
@@ -653,7 +666,10 @@ export function AuditFlowApp() {
         </section>
       )}
 
-      <FeedbackHistoryPanel sessionLog={feedbackLog} />
+      <FeedbackHistoryPanel
+        sessionLog={feedbackLog}
+        accessCodeVersion={accessCodeVersion}
+      />
 
       {isComplete && backendLoaded && workpaper && completedRun && (
         <PrintReport
