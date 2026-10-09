@@ -104,7 +104,9 @@ def test_on_requires_code_for_upload_feedback_history(enable):
 
 def test_valid_code_passes(enable):
     client = enable()
-    assert _upload(client, ALICE_CODE).json() == RESULT
+    body = _upload(client, ALICE_CODE).json()
+    # The upload endpoint adds the final filenames next to the pipeline result.
+    assert body == {**RESULT, "uploaded_files": ["f0.pdf"]}
     assert _feedback(client, ALICE_CODE).status_code == 201
     assert len(client.get("/feedback/history", headers={"X-Access-Code": BOB_CODE}).json()) == 1
 
@@ -203,3 +205,24 @@ def test_codes_and_hashes_never_logged(enable, caplog):
     assert "Access control: ON" in text and "meter client=alice" in text
     for secret in (ALICE_CODE, BOB_CODE, "AF-wrong-code", PEPPER, _hash(ALICE_CODE), "f0.pdf"):
         assert secret not in text
+
+
+def test_upload_makes_duplicate_filenames_unique_and_returns_them():
+    api._init_access_control()
+    seen = {}
+
+    def fake(case_id, files):
+        seen["names"] = [name for name, _ in files]
+        return {"ok": True}
+
+    import pytest as _pytest  # local: keep the module imports unchanged
+    mp = _pytest.MonkeyPatch()
+    mp.setattr(api, "run_full_pipeline_from_documents", fake)
+    try:
+        client = TestClient(api.app)
+        files = [("files", (n, b"x", "application/pdf")) for n in ("a.pdf", "a.pdf", "b.pdf")]
+        body = client.post("/run-case-upload", params={"case_id": "C"}, files=files).json()
+    finally:
+        mp.undo()
+    assert seen["names"] == ["a.pdf", "a (2).pdf", "b.pdf"]
+    assert body["uploaded_files"] == ["a.pdf", "a (2).pdf", "b.pdf"]

@@ -43,6 +43,7 @@ import anthropic
 from anomaly_agent import run_anomaly_agent
 from decision_agent import run_decision_agent
 from evidence_agent import run_evidence_agent, run_evidence_agent_with_resolver
+from file_map import build_file_map
 from finding_id import make_finding_id
 from intake_agent import run_intake_agent, run_intake_agent_from_documents
 
@@ -403,8 +404,11 @@ def run_full_pipeline_from_documents(
     intake_documents = run_intake_agent_from_documents(
         case_id, files, client=intake_client
     )
+    file_map = build_file_map(intake_documents, [name for name, _ in files])
     for doc in intake_documents:
         doc["case_id"] = internal_case_id
+        # Later stages must see exactly what they saw before source_file existed.
+        doc.pop("source_file", None)
     evidence_transaction = run_evidence_agent(intake_documents, client=evidence_client)
     anomaly_transaction = run_anomaly_agent(
         evidence_transaction, intake_documents, client=anomaly_client
@@ -417,6 +421,7 @@ def run_full_pipeline_from_documents(
         client=workpaper_client,
     )
     workpaper["findings"] = build_findings(anomaly_transaction, workpaper)
+    workpaper.update(file_map)
     return workpaper
 
 
@@ -460,8 +465,11 @@ def run_full_pipeline_from_documents_with_resolver(
     intake_documents = run_intake_agent_from_documents(
         case_id, files, client=intake_client
     )
+    file_map = build_file_map(intake_documents, [name for name, _ in files])
     for doc in intake_documents:
         doc["case_id"] = internal_case_id
+        # Later stages must see exactly what they saw before source_file existed.
+        doc.pop("source_file", None)
     evidence_transaction = run_evidence_agent_with_resolver(
         intake_documents,
         threshold=threshold,
@@ -484,6 +492,7 @@ def run_full_pipeline_from_documents_with_resolver(
     # transaction - this is the visible "Model: Claude, Reasoning passes: 2"
     # detail Garvit wanted shown in the product, not just logged internally.
     workpaper["evidence_resolution"] = evidence_transaction.get("resolution")
+    workpaper.update(file_map)
     return workpaper
 
 

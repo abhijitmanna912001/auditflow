@@ -10,6 +10,7 @@ Usage:
 
 from __future__ import annotations
 
+import copy
 import json
 import sys
 from pathlib import Path
@@ -85,6 +86,18 @@ OUTPUT_SCHEMA = {
 }
 
 
+def _build_upload_schema(filenames: list[str]) -> dict:
+    """The output schema for the upload path: the benchmark schema plus a
+    required `source_file` limited to the filenames actually uploaded, so the
+    model can only name a file that exists. The benchmark OUTPUT_SCHEMA is not
+    changed."""
+    schema = copy.deepcopy(OUTPUT_SCHEMA)
+    item = schema["properties"]["documents"]["items"]
+    item["properties"]["source_file"] = {"type": "string", "enum": list(filenames)}
+    item["required"] = item["required"] + ["source_file"]
+    return schema
+
+
 def _read_case_documents(case_path: Path) -> list[tuple[str, str]]:
     """Read every .txt fixture in a case folder, sorted for determinism."""
     if not case_path.is_dir():
@@ -152,7 +165,9 @@ def _build_upload_content_blocks(
         f"The following {len(files)} uploaded document(s) belong to this audit "
         "case. Classify and extract fields for every document. Where a file "
         "contains more than one logical document (e.g. a scanned bundle), "
-        "extract each as a separate entry in the output."
+        "extract each as a separate entry in the output. For every document, "
+        "set source_file to the filename in the \"(Source file: ...)\" marker "
+        "that follows the file the document came from."
     )
     blocks: list[dict] = [{"type": "text", "text": intro}]
 
@@ -193,24 +208,29 @@ def run_intake_agent_from_documents(
     """
     if not files:
         raise ValueError("No files provided for intake")
+    filenames = [name for name, _ in files]
+    if len(set(filenames)) != len(filenames):
+        raise ValueError("Uploaded filenames must be unique (see file_map.make_unique_filenames)")
 
     content_blocks = _build_upload_content_blocks(case_id, files)
-    return _call_intake(content_blocks, client=client)
+    return _call_intake(content_blocks, client=client, schema=_build_upload_schema(filenames))
 
 
 def _call_intake(
     user_content: str | list[dict],
     client: anthropic.Anthropic | None = None,
+    schema: dict | None = None,
 ) -> list[dict]:
     """Shared Claude call for both the folder-based and upload-based paths -
-    same system prompt, same schema, only the message content differs."""
+    same system prompt; the schema is OUTPUT_SCHEMA unless the upload path
+    passes its own (with source_file)."""
     client = client or anthropic.Anthropic()
     response = client.messages.create(
         model=MODEL,
         max_tokens=16000,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_content}],
-        output_config={"format": {"type": "json_schema", "schema": OUTPUT_SCHEMA}},
+        output_config={"format": {"type": "json_schema", "schema": schema or OUTPUT_SCHEMA}},
     )
 
     text = next(block.text for block in response.content if block.type == "text")

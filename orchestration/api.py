@@ -42,6 +42,7 @@ DATASET_DIR = REPO_ROOT / "dataset"
 sys.path.insert(0, str(REPO_ROOT / "agents"))
 
 from observability import configure_neatlogs, shutdown_neatlogs  # noqa: E402
+from file_map import make_unique_filenames  # noqa: E402
 
 configure_neatlogs()
 
@@ -445,6 +446,12 @@ async def run_case_upload(
             )
         read_files.append((upload.filename or "unnamed", content))
 
+    # Repeated filenames are made unique ("a.pdf", "a (2).pdf") so each file
+    # can be named unambiguously in the file-to-document mapping. The final
+    # names are returned as `uploaded_files`, in upload order.
+    final_names = make_unique_filenames([name for name, _ in read_files])
+    read_files = [(name, content) for name, (_, content) in zip(final_names, read_files)]
+
     if _access_enabled and not _consume_run(client_id, _access_clients[client_id]["daily_runs"]):
         raise _denied(
             client_id, endpoint, n_files, "rate_limited", 429,
@@ -464,7 +471,7 @@ async def run_case_upload(
         _meter(client_id, endpoint, n_files, "error")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
     _meter(client_id, endpoint, n_files, "ok")
-    return result
+    return {**result, "uploaded_files": final_names}
 
 
 @app.post("/feedback", status_code=201)
