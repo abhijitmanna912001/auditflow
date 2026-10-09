@@ -33,6 +33,7 @@ def main(argv: list[str]) -> int:
         client_id: {
             "hash": digest,
             "daily_runs": 10,
+            "daily_tickets": 50,
             "max_files": 10,
             "max_file_mb": 20,
             "resolver": False,

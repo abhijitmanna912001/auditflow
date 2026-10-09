@@ -23,26 +23,43 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import html
 import json
 import logging
 import os
+import re
 import sys
 import threading
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 
-from fastapi import FastAPI, File, Header, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DATASET_DIR = REPO_ROOT / "dataset"
 
+sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "agents"))
 
 from observability import configure_neatlogs, shutdown_neatlogs  # noqa: E402
 from file_map import make_unique_filenames  # noqa: E402
+from connectors.ticket_content import (  # noqa: E402
+    build_description,
+    build_subject,
+    find_existing_ticket,
+    normalise_company,
+    plan_attachments,
+)
+from connectors.zoho_desk import (  # noqa: E402
+    RefreshTokenProvider,
+    ZohoClient,
+    ZohoError,
+    ZohoRateLimitError,
+)
 
 configure_neatlogs()
 
@@ -86,7 +103,7 @@ app.add_middleware(
 # Access control
 #
 # AUDITFLOW_ACCESS_CODES (JSON) maps client_id -> {"hash", "daily_runs",
-# "max_files", "max_file_mb", "resolver"}. "hash" is the hex HMAC-SHA256 of
+# "max_files", "max_file_mb", "resolver", "daily_tickets"}. "hash" is the hex HMAC-SHA256 of
 # the client's code keyed with AUDITFLOW_CODE_PEPPER (see
 # scripts/make_access_code.py). When AUDITFLOW_ACCESS_CODES is unset or empty
 # access control is OFF and every endpoint behaves as it always did (local
@@ -97,7 +114,10 @@ app.add_middleware(
 #     AUDITFLOW_SAMPLE_DAILY_CAP runs per UTC day (default 40, 429 beyond it);
 #     with AUDITFLOW_SAMPLE_REQUIRE_CODE=true it needs a code like the rest
 #     and counts against that client's daily_runs instead of the sample cap;
-#   - a client's own limits apply on top of the global ceilings above.
+#   - a client's own limits apply on top of the global ceilings above;
+#   - /send-to-zoho-desk needs a valid code (and is refused outright when
+#     access control is off); it counts against daily_tickets, never
+#     daily_runs.
 #
 # Run counters are in memory (guarded by a lock, reset on a new UTC day).
 # They ALSO reset whenever the process restarts or redeploys, so they are a
@@ -116,6 +136,7 @@ if not logger.handlers:
 
 _DEFAULT_CLIENT_LIMITS = {
     "daily_runs": 10,
+    "daily_tickets": 50,
     "max_files": 10,
     "max_file_mb": 20,
     "resolver": False,
@@ -131,6 +152,7 @@ _sample_require_code = False
 _COUNTER_LOCK = threading.Lock()
 _counter_day = ""
 _client_runs: dict[str, int] = {}
+_client_tickets: dict[str, int] = {}  # its own namespace, separate from runs
 _sample_runs = 0
 
 
@@ -160,7 +182,7 @@ def _parse_access_codes(raw: str) -> dict[str, dict]:
                 f"AUDITFLOW_ACCESS_CODES: client {client_id!r} has a 'hash' that is not hex."
             ) from None
         settings = {**_DEFAULT_CLIENT_LIMITS, **{k: v for k, v in entry.items() if k != "hash"}}
-        for key in ("daily_runs", "max_files", "max_file_mb"):
+        for key in ("daily_runs", "daily_tickets", "max_files", "max_file_mb"):
             value = settings[key]
             if isinstance(value, bool) or not isinstance(value, int) or value < 0:
                 raise RuntimeError(
@@ -227,6 +249,7 @@ def _reset_counters() -> None:
     with _COUNTER_LOCK:
         _counter_day, _sample_runs = _utc_day(), 0
         _client_runs.clear()
+        _client_tickets.clear()
 
 
 def _consume_run(client_id: str | None, limit: int) -> bool:
@@ -238,6 +261,7 @@ def _consume_run(client_id: str | None, limit: int) -> bool:
         if today != _counter_day:
             _counter_day, _sample_runs = today, 0
             _client_runs.clear()
+            _client_tickets.clear()
         used = _sample_runs if client_id is None else _client_runs.get(client_id, 0)
         if used >= limit:
             return False
@@ -246,6 +270,30 @@ def _consume_run(client_id: str | None, limit: int) -> bool:
         else:
             _client_runs[client_id] = used + 1
         return True
+
+
+def _reserve_ticket(client_id: str, limit: int) -> str | None:
+    """Atomically reserve one ticket for `client_id` and return the UTC day
+    it was counted on, or None (nothing counted) if `limit` is reached."""
+    global _counter_day, _sample_runs
+    with _COUNTER_LOCK:
+        today = _utc_day()
+        if today != _counter_day:
+            _counter_day, _sample_runs = today, 0
+            _client_runs.clear()
+            _client_tickets.clear()
+        used = _client_tickets.get(client_id, 0)
+        if used >= limit:
+            return None
+        _client_tickets[client_id] = used + 1
+        return today
+
+
+def _release_ticket(client_id: str, day: str) -> None:
+    """Give back a reservation whose ticket was not created."""
+    with _COUNTER_LOCK:
+        if day == _counter_day and _client_tickets.get(client_id, 0) > 0:
+            _client_tickets[client_id] -= 1
 
 
 def _meter(client_id: str, endpoint: str, n_files: int, outcome: str) -> None:
@@ -519,3 +567,332 @@ def feedback_history(x_access_code: str | None = Header(default=None)) -> list[d
     _meter(client_id, "feedback-history", 0, "ok")
     records = _read_feedback_records()
     return sorted(records, key=lambda r: r.get("received_at", ""))
+
+# ---------------------------------------------------------------------------
+# Zoho Desk: one ticket for one finding
+# ---------------------------------------------------------------------------
+
+_FINDING_ID_RE = re.compile(r"AF-[0-9a-f]{10}(-\d+)?", re.ASCII)
+_MAX_COMPANY_CHARS = 120
+_MAX_LABEL_CHARS = 300
+_MAX_EXPLANATION_CHARS = 4000
+_MAX_LIST_ENTRIES = 30
+_MAX_ITEM_CHARS = 120
+_MAX_MAP_ENTRIES = 300
+_MAX_FILENAME_CHARS = 255
+_MAX_JSON_FIELD_CHARS = 200_000
+_NOTE_PREFIX = "AuditFlow note: "
+
+
+class ZohoNotConfigured(Exception):
+    pass
+
+
+_zoho_lock = threading.Lock()
+_zoho_client: ZohoClient | None = None
+
+
+def get_zoho_client() -> ZohoClient:
+    """The process-wide Zoho client (and its token provider), built on first
+    use from the environment. Raises ZohoNotConfigured if a required setting
+    is missing. Tests replace this function with one returning a fake."""
+    global _zoho_client
+    with _zoho_lock:
+        if _zoho_client is not None:
+            return _zoho_client
+        env = {
+            name: os.environ.get(name, "").strip()
+            for name in (
+                "ZOHO_CLIENT_ID", "ZOHO_CLIENT_SECRET", "ZOHO_REFRESH_TOKEN",
+                "ZOHO_ORG_ID", "ZOHO_DEPARTMENT_ID",
+            )
+        }
+        if not all(env.values()):
+            raise ZohoNotConfigured()
+        accounts_url = os.environ.get("ZOHO_ACCOUNTS_URL", "").strip() or "https://accounts.zoho.in"
+        desk_url = os.environ.get("ZOHO_DESK_URL", "").strip() or "https://desk.zoho.in"
+        domain = os.environ.get("AUDITFLOW_CONTACT_EMAIL_DOMAIN", "").strip() or "example.com"
+        tokens = RefreshTokenProvider(
+            env["ZOHO_CLIENT_ID"], env["ZOHO_CLIENT_SECRET"], env["ZOHO_REFRESH_TOKEN"], accounts_url
+        )
+        _zoho_client = ZohoClient(
+            tokens, env["ZOHO_ORG_ID"], desk_url, env["ZOHO_DEPARTMENT_ID"],
+            contact_email_domain=domain,
+        )
+        return _zoho_client
+
+
+_ticket_locks_guard = threading.Lock()
+_ticket_locks: dict[tuple[str, str], threading.Lock] = {}
+
+
+def _ticket_lock(account_id: str, finding_id: str) -> threading.Lock:
+    with _ticket_locks_guard:
+        return _ticket_locks.setdefault((str(account_id), finding_id), threading.Lock())
+
+
+def _log_ticket(client_id: str, outcome: str, finding_id: str | None, ticket_number) -> None:
+    # Only these four values: never the company, filenames, text or tokens.
+    number = re.sub(r"[^A-Za-z0-9-]", "", str(ticket_number))[:32] if ticket_number else "-"
+    logger.info(
+        "zoho client=%s outcome=%s finding=%s ticket=%s",
+        client_id, outcome, finding_id or "-", number or "-",
+    )
+
+
+class _Rejected(Exception):
+    def __init__(self, status: int, detail: str):
+        self.status, self.detail = status, detail
+
+
+def _parse_json_field(name: str, raw: str):
+    if len(raw) > _MAX_JSON_FIELD_CHARS:
+        raise _Rejected(400, f"{name} is too large")
+    try:
+        return json.loads(raw)
+    except (json.JSONDecodeError, RecursionError):
+        raise _Rejected(400, f"{name} is not valid JSON") from None
+
+
+def _text(name: str, value, max_chars: int, required: bool = False) -> str:
+    if value is None and not required:
+        return ""
+    if not isinstance(value, str):
+        raise _Rejected(400, f"{name} must be text")
+    if len(value) > max_chars:
+        raise _Rejected(400, f"{name} is too long (max {max_chars} characters)")
+    if required and not value.strip():
+        raise _Rejected(400, f"{name} is required")
+    return value
+
+
+def _text_list(name: str, value) -> list[str]:
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise _Rejected(400, f"{name} must be a list")
+    if len(value) > _MAX_LIST_ENTRIES:
+        raise _Rejected(400, f"{name} has too many entries (max {_MAX_LIST_ENTRIES})")
+    return [_text(f"{name} entry", item, _MAX_ITEM_CHARS, required=True) for item in value]
+
+
+def _validate_ticket_request(
+    company: str, finding_raw: str, map_raw: str, ambiguous_raw: str
+) -> tuple[str, dict, list[dict], list[str]]:
+    company = company.strip()
+    if not company or len(company) > _MAX_COMPANY_CHARS:
+        raise _Rejected(400, f"company is required (max {_MAX_COMPANY_CHARS} characters)")
+
+    raw = _parse_json_field("finding", finding_raw)
+    if not isinstance(raw, dict):
+        raise _Rejected(400, "finding must be a JSON object")
+    finding_id = raw.get("finding_id")
+    if not isinstance(finding_id, str) or not _FINDING_ID_RE.fullmatch(finding_id):
+        raise _Rejected(400, "finding_id is not valid")
+    finding = {
+        "finding_id": finding_id,
+        "type": _text("type", raw.get("type"), _MAX_ITEM_CHARS),
+        "label": _text("label", raw.get("label"), _MAX_LABEL_CHARS, required=True),
+        "explanation": _text("explanation", raw.get("explanation"), _MAX_EXPLANATION_CHARS),
+        "primary_document": _text("primary_document", raw.get("primary_document"), _MAX_ITEM_CHARS),
+        "documents": _text_list("documents", raw.get("documents")),
+        "transaction_documents": _text_list(
+            "transaction_documents", raw.get("transaction_documents")
+        ),
+    }
+
+    mapping = _parse_json_field("documents_map", map_raw)
+    if not isinstance(mapping, list) or len(mapping) > _MAX_MAP_ENTRIES:
+        raise _Rejected(400, "documents_map must be a list")
+    documents_map = []
+    for entry in mapping:
+        if not isinstance(entry, dict):
+            raise _Rejected(400, "documents_map entries must be objects")
+        source = entry.get("source_file")
+        documents_map.append({
+            "doc_id": _text("doc_id", entry.get("doc_id"), _MAX_ITEM_CHARS, required=True),
+            "source_file": None if source is None
+            else _text("source_file", source, _MAX_FILENAME_CHARS),
+        })
+
+    ambiguous = _text_list("ambiguous_doc_ids", _parse_json_field("ambiguous_doc_ids", ambiguous_raw))
+    return company, finding, documents_map, ambiguous
+
+
+def _private_note(failed: list[str], plan: dict) -> str | None:
+    parts = []
+    if failed:
+        parts.append("Could not attach: " + ", ".join(failed) + ".")
+    for item in plan["not_attached_size"]:
+        parts.append(f"Not attached because of size: {item['filename']} ({item['reason']}).")
+    for item in plan["no_file"]:
+        parts.append(f"No uploaded file for document {item['doc_id']}.")
+    for item in plan["ambiguous"]:
+        parts.append(
+            f"Document {item['doc_id']} was found in more than one file "
+            f"({', '.join(item['files'])}); all were attached."
+        )
+    if not parts:
+        return None
+    return _NOTE_PREFIX + html.escape(" ".join(parts), quote=False)
+
+
+def _send_one_ticket(
+    client_id: str, zoho: ZohoClient, company: str, finding: dict,
+    documents_map: list[dict], ambiguous: list[str], files: dict[str, bytes], daily_tickets: int,
+) -> dict:
+    """Blocking; runs in a worker thread. Raises ZohoError / _Rejected."""
+    finding_id = finding["finding_id"]
+    display, _ = normalise_company(company)
+    account = zoho.find_or_create_account(display)
+    contact = zoho.find_or_create_contact(account["id"], display)
+    result = {
+        "finding_id": finding_id,
+        "ticket_number": None,
+        "ticket_id": None,
+        "web_url": None,
+        "account": {"id": account["id"], "name": account["name"], "created": account["created"]},
+        "attachments": {
+            "attached": [], "not_attached_size": [], "no_file": [], "ambiguous": [], "failed": [],
+        },
+    }
+
+    # One ticket per (account, finding) at a time: the check and the create
+    # are under the same lock, so a second request sees the first's ticket.
+    with _ticket_lock(account["id"], finding_id):
+        scan = zoho.list_account_tickets(account["id"])
+        existing = None
+        for page in scan:
+            existing = find_existing_ticket(page, finding_id)
+            if existing:
+                break
+        if existing:
+            return {
+                **result, "outcome": "duplicate",
+                "ticket_number": existing.get("ticketNumber"),
+                "ticket_id": existing.get("id"),
+                "web_url": existing.get("webUrl"),
+            }
+        if scan.scan_limit_reached:
+            # Older tickets were not checked: fail closed.
+            return {**result, "outcome": "unconfirmed"}
+
+        plan = plan_attachments(
+            finding, documents_map, ambiguous, {name: len(data) for name, data in files.items()}
+        )
+        subject = build_subject(finding_id, finding["label"], finding["primary_document"])
+        description = build_description(finding, display, plan)
+
+        day = _reserve_ticket(client_id, daily_tickets)
+        if day is None:
+            raise _Rejected(429, "Daily ticket limit reached for this access code")
+        try:
+            ticket = zoho.create_ticket(subject, description, contact["id"])
+        except BaseException:
+            _release_ticket(client_id, day)
+            raise
+
+        attached, failed = [], []
+        for item in plan["attach"]:
+            try:
+                zoho.attach_file(ticket["id"], item["filename"], files[item["filename"]])
+                attached.append(item["filename"])
+            except Exception:  # the ticket exists; report the file, never the error body
+                failed.append(item["filename"])
+        note = _private_note(failed, plan)
+        if note:
+            try:
+                zoho.add_private_comment(ticket["id"], note)
+            except Exception:
+                pass
+
+        return {
+            **result, "outcome": "created",
+            "ticket_number": ticket.get("ticket_number"),
+            "ticket_id": ticket.get("id"),
+            "web_url": ticket.get("web_url"),
+            "attachments": {
+                "attached": attached,
+                "not_attached_size": plan["not_attached_size"],
+                "no_file": plan["no_file"],
+                "ambiguous": plan["ambiguous"],
+                "failed": failed,
+            },
+        }
+
+
+@app.post("/send-to-zoho-desk")
+async def send_to_zoho_desk(
+    company: str = Form(...),
+    finding: str = Form(...),
+    documents_map: str = Form("[]"),
+    ambiguous_doc_ids: str = Form("[]"),
+    files: list[UploadFile] | None = File(default=None),
+    x_access_code: str | None = Header(default=None),
+) -> dict:
+    """Create ONE Zoho Desk ticket for ONE finding (or report that one
+    already exists). Never open: needs access control on and a valid code."""
+    client_id = "none"
+    finding_id: str | None = None
+
+    def refuse(status: int, detail: str, outcome: str):
+        _log_ticket(client_id, outcome, finding_id, None)
+        return HTTPException(status_code=status, detail=detail)
+
+    if not _access_enabled:
+        raise refuse(503, "Sending to Zoho Desk needs access control to be on", "access_off")
+    matched = _authenticate(x_access_code)
+    if matched is None:
+        client_id = "unknown"
+        raise refuse(401, "A valid access code is required", "unauthorized")
+    client_id = matched
+    limits = _access_clients[client_id]
+
+    uploads = files or []
+    max_files = min(_MAX_FILES_PER_REQUEST, limits["max_files"])
+    max_bytes = min(_MAX_UPLOAD_BYTES, limits["max_file_mb"] * 1024 * 1024)
+    if len(uploads) > max_files:
+        raise refuse(400, f"Too many files: {len(uploads)} (max {max_files})", "rejected")
+    contents: dict[str, bytes] = {}
+    for upload in uploads:
+        data = await upload.read()
+        if len(data) > max_bytes:
+            raise refuse(
+                413 if max_bytes < _MAX_UPLOAD_BYTES else 400,
+                f"A file exceeds the {max_bytes // (1024 * 1024)} MB per-file limit",
+                "rejected",
+            )
+        name = upload.filename or "unnamed"
+        if name in contents:
+            raise refuse(400, "File names must be unique", "rejected")
+        contents[name] = data
+
+    try:
+        zoho = get_zoho_client()
+    except ZohoNotConfigured:
+        raise refuse(503, "Zoho Desk is not set up on this server", "not_configured") from None
+
+    try:
+        company_name, clean_finding, documents, ambiguous = _validate_ticket_request(
+            company, finding, documents_map, ambiguous_doc_ids
+        )
+    except _Rejected as exc:
+        raise refuse(exc.status, exc.detail, "rejected") from None
+    finding_id = clean_finding["finding_id"]
+
+    try:
+        result = await run_in_threadpool(
+            _send_one_ticket, client_id, zoho, company_name, clean_finding,
+            documents, ambiguous, contents, limits["daily_tickets"],
+        )
+    except _Rejected as exc:
+        raise refuse(exc.status, exc.detail, "rate_limited") from None
+    except ZohoRateLimitError:
+        raise refuse(503, "Zoho Desk is busy, please try again", "zoho_busy") from None
+    except ZohoError:
+        raise refuse(502, "Zoho Desk could not complete the request", "zoho_error") from None
+    except Exception:
+        raise refuse(500, "Unexpected error while sending to Zoho Desk", "error") from None
+
+    _log_ticket(client_id, result["outcome"], finding_id, result["ticket_number"])
+    return result

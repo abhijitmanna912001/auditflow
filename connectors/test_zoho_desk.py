@@ -32,10 +32,15 @@ class FakeTransport:
         self.calls = []
         self._lock = threading.Lock()
 
-    def request(self, method, url, headers=None, params=None, json=None, files=None, data=None):
+    def request(
+        self, method, url, headers=None, params=None, json=None, files=None, data=None, timeout=None
+    ):
         with self._lock:
             self.calls.append(
-                dict(method=method, url=url, headers=headers, params=params, json=json, files=files, data=data)
+                dict(
+                    method=method, url=url, headers=headers, params=params, json=json,
+                    files=files, data=data, timeout=timeout,
+                )
             )
             if callable(self.script):
                 return self.script(self.calls[-1])
@@ -290,6 +295,38 @@ def test_attach_file_one_private_file():
     assert call["url"].endswith("/tickets/77/attachments")
     assert call["files"]["file"] == ("inv.pdf", b"bytes")
     assert call["files"]["isPublic"] == (None, "false")
+
+
+def test_only_attach_file_uses_the_long_timeout():
+    c, t, _ = client(lambda call: resp(200, {"data": [], "id": "x"}))
+    c.attach_file("77", "inv.pdf", b"bytes")
+    c.add_private_comment("77", "note")
+    c.create_ticket("s", "<p>d</p>", "c1")
+    c.find_or_create_contact("a1", "Acme")
+    list(c.list_account_tickets("a1"))
+    by_path = {(x["method"], x["url"].rsplit("/api/v1", 1)[1]): x["timeout"] for x in t.calls}
+    assert by_path[("POST", "/tickets/77/attachments")] == 120
+    others = [x["timeout"] for x in t.calls if not x["url"].endswith("/attachments")]
+    assert others and all(v == 30 for v in others)
+
+
+def test_requests_transport_per_call_timeout(monkeypatch):
+    import requests
+
+    from connectors.zoho_desk import RequestsTransport
+
+    seen = []
+
+    class R:
+        status_code = 200
+        headers = {}
+        content = b"{}"
+
+    monkeypatch.setattr(requests, "request", lambda *a, **kw: seen.append(kw["timeout"]) or R())
+    tr = RequestsTransport()
+    tr.request("GET", "https://x")
+    tr.request("POST", "https://x", timeout=120)
+    assert seen == [30, 120]
 
 
 def test_private_comment():

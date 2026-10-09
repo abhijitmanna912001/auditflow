@@ -15,6 +15,8 @@ try:  # allow both `connectors.x` and flat imports
 except ImportError:  # pragma: no cover
     from ticket_content import normalise_company
 
+DEFAULT_TIMEOUT = 30
+UPLOAD_TIMEOUT = 120
 PAGE_SIZE = 100
 MAX_PAGES = 20
 CONTACT_LAST_NAME = "AuditFlow findings"
@@ -93,16 +95,20 @@ class HttpTransport(Protocol):
         json: Any = None,
         files: dict | None = None,
         data: dict | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse: ...
 
 
 class RequestsTransport:
-    """Default transport using `requests`."""
+    """Default transport using `requests`. `timeout` is the default for calls
+    that do not pass their own."""
 
-    def __init__(self, timeout: float = 120):
+    def __init__(self, timeout: float = DEFAULT_TIMEOUT):
         self.timeout = timeout
 
-    def request(self, method, url, headers=None, params=None, json=None, files=None, data=None):
+    def request(
+        self, method, url, headers=None, params=None, json=None, files=None, data=None, timeout=None
+    ):
         import requests
 
         try:
@@ -114,7 +120,7 @@ class RequestsTransport:
                 json=json,
                 files=files,
                 data=data,
-                timeout=self.timeout,
+                timeout=self.timeout if timeout is None else timeout,
             )
         except requests.RequestException as exc:
             # The exception text can contain the URL; report only its type.
@@ -276,7 +282,9 @@ class ZohoClient:
 
     # -- low level --
 
-    def _call(self, method, path, params=None, json=None, files=None) -> Any:
+    def _call(
+        self, method, path, params=None, json=None, files=None, timeout=DEFAULT_TIMEOUT
+    ) -> Any:
         url = self._base + path
         retried_auth = False
         rate_retries = 0
@@ -284,7 +292,7 @@ class ZohoClient:
             token = self._tokens.get_token()
             headers = {"Authorization": f"Zoho-oauthtoken {token}", "orgId": self._org_id}
             resp = self._transport.request(
-                method, url, headers=headers, params=params, json=json, files=files
+                method, url, headers=headers, params=params, json=json, files=files, timeout=timeout
             )
             self._note_rate_limit(resp)
             if resp.status == 401 and not retried_auth:
@@ -408,6 +416,7 @@ class ZohoClient:
             "POST",
             f"/tickets/{ticket_id}/attachments",
             files={"file": (filename, content_bytes), "isPublic": (None, "false")},
+            timeout=UPLOAD_TIMEOUT,
         )
 
     def add_private_comment(self, ticket_id: str, text: str) -> None:
