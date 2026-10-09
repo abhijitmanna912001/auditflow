@@ -18,8 +18,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-dev.txt
 
-      - name: Compile check (agents + evaluation)
-        run: python -m py_compile agents/*.py evaluation/*.py
+      - name: Compile check (agents + connectors + evaluation)
+        run: python -m py_compile agents/*.py connectors/*.py evaluation/*.py
 
       - name: Validate benchmark dataset ground truth
         working-directory: evaluation
@@ -31,4 +31,4 @@ jobs:
           "
 
       - name: Run agent unit tests
-        run: pytest agents/ -v
+        run: pytest agents/ connectors/ -v
