@@ -8,7 +8,6 @@ import {
   actionLabel,
   caseDisplayName,
   resolverSummary,
-  severityLabel,
 } from "../lib/display-labels";
 
 interface PrintReportProps {
@@ -153,7 +152,6 @@ export function PrintReport({
                 <th>Reference</th>
                 <th>Issue</th>
                 <th>Document</th>
-                <th>Severity</th>
                 <th>Result</th>
               </tr>
             </thead>
@@ -163,7 +161,6 @@ export function PrintReport({
                   <td>{finding.finding_id}</td>
                   <td>{finding.label}</td>
                   <td>{finding.primary_document}</td>
-                  <td>{severityLabel(finding.severity)}</td>
                   <td>{result}</td>
                 </tr>
               ))}
@@ -304,10 +301,9 @@ function EntryBlock({ entry }: EntryBlockProps) {
         <ReportFact label="Why it was flagged" value={finding.explanation} />
         <ReportFact label="Document" value={finding.primary_document} />
         <ReportFact
-          label="Documents it cites"
+          label="Related documents"
           value={finding.documents.length > 0 ? finding.documents.join(", ") : "None listed"}
         />
-        <ReportFact label="Severity" value={severityLabel(finding.severity)} />
         <ReportFact label="Result" value={result} />
       </dl>
     </div>

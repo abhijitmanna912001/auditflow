@@ -22,7 +22,6 @@ import {
   findingLabel,
   matchedDocuments,
   resolverSummary,
-  severityLabel,
 } from "../lib/display-labels";
 import type {
   Confidence,
@@ -109,62 +108,62 @@ const cases = [
   {
     id: "CASE_03",
     name: "Transaction 03 · Duplicate invoice",
-    detail: "Expected result: needs review · high severity",
+    detail: "Expected result: needs review",
   },
   {
     id: "CASE_04",
     name: "Transaction 04 · Amount mismatch",
-    detail: "Expected result: needs review · high severity",
+    detail: "Expected result: needs review",
   },
   {
     id: "CASE_05",
     name: "Transaction 05 · Missing PO",
-    detail: "Expected result: needs review · medium severity",
+    detail: "Expected result: needs review",
   },
   {
     id: "CASE_06",
     name: "Transaction 06 · Missing receipt",
-    detail: "Expected result: needs review · high severity",
+    detail: "Expected result: needs review",
   },
   {
     id: "CASE_07",
     name: "Transaction 07 · Vendor mismatch",
-    detail: "Expected result: needs review · high severity",
+    detail: "Expected result: needs review",
   },
   {
     id: "CASE_08",
     name: "Transaction 08 · Date inconsistency",
-    detail: "Expected result: needs review · medium severity",
+    detail: "Expected result: needs review",
   },
   {
     id: "CASE_09",
     name: "Transaction 09 · Duplicate invoice, amount mismatch, missing receipt",
-    detail: "Expected result: needs review · high severity",
+    detail: "Expected result: needs review",
   },
   {
     id: "CASE_10",
     name: "Transaction 10 · Vendor mismatch, date inconsistency",
-    detail: "Expected result: needs review · high severity",
+    detail: "Expected result: needs review",
   },
   {
     id: "CASE_11",
     name: "Transaction 11 · Missing PO, amount mismatch",
-    detail: "Expected result: needs review · medium to high severity",
+    detail: "Expected result: needs review",
   },
   {
     id: "CASE_12",
     name: "Transaction 12 · Missing receipt",
-    detail: "Expected result: needs review · medium severity",
+    detail: "Expected result: needs review",
   },
   {
     id: "CASE_13",
     name: "Transaction 13 · Currency mismatch",
-    detail: "Expected result: needs review · high severity",
+    detail: "Expected result: needs review",
   },
   {
     id: "CASE_14",
     name: "Transaction 14 · Tax mismatch",
-    detail: "Expected result: needs review · medium severity",
+    detail: "Expected result: needs review",
   },
 ] as const satisfies readonly AuditCase[];
 
@@ -588,6 +587,7 @@ export function AuditFlowApp() {
               )}
             </div>
           </div>
+          {/* Severity is hidden from clients because it varies between runs; the data stays in the types and response. */}
           <div className="metrics" aria-label="Results summary">
             <Metric
               value={activeWorkpaper.summary.items_reviewed}
@@ -603,11 +603,6 @@ export function AuditFlowApp() {
               value={activeWorkpaper.summary.human_review}
               label="Needs review"
               tone="amber"
-            />
-            <Metric
-              value={activeWorkpaper.summary.critical}
-              label="High severity"
-              tone="coral"
             />
           </div>
           <div className="workpaper-layout">
@@ -628,7 +623,7 @@ export function AuditFlowApp() {
                     <tr>
                       <th>Document</th>
                       <th>Finding</th>
-                      <th>Documents used</th>
+                      <th>Related documents</th>
                       <th>Confidence (reference only)</th>
                       <th>Result</th>
                     </tr>
@@ -800,10 +795,6 @@ function ExceptionPanel({
   );
   const hasNote = reviewNote.trim().length > 0;
   const hasAssignee = assignee.trim().length > 0;
-  const severity =
-    sampleDetail && sampleDetail.severity !== "None"
-      ? sampleDetail.severity
-      : null;
   return (
     <aside className="decision-panel" aria-live="polite">
       <button
@@ -817,11 +808,10 @@ function ExceptionPanel({
       <h3>{findingLabel(row.finding)}</h3>
       <p className="detail-doc">
         {row.document}
-        {severity && <span> · {severity} severity</span>}
       </p>
       <Detail label="Finding" value={findingLabel(row.finding)} />
       <Detail
-        label="Documents used"
+        label="Related documents"
         value={
           <div className="detail-evidence">
             {row.evidence.map((item) => (
@@ -939,9 +929,6 @@ function FindingBlock({ finding }: FindingBlockProps) {
     <div className="finding-block">
       <div className="finding-block-head">
         <strong>{finding.label}</strong>
-        <span className={`severity-badge ${finding.severity}`}>
-          {severityLabel(finding.severity)}
-        </span>
       </div>
       <p>{finding.explanation}</p>
       {finding.documents.length > 0 && (
@@ -953,7 +940,7 @@ function FindingBlock({ finding }: FindingBlockProps) {
       )}
       {finding.type === "duplicate_invoice" && matches.length > 0 && (
         <p className="finding-matches">
-          Matches:{" "}
+          Possible duplicate of:{" "}
           {matches.join(", ")}
         </p>
       )}

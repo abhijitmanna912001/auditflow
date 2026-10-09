@@ -103,6 +103,7 @@ export function AccessCodeControl({ onChange }: AccessCodeControlProps) {
             onChange={(event) => setDraft(event.target.value)}
           />
           <p>Enter the access code you were given. It stays in this browser tab only.</p>
+          <p>Need an access code? Ask the person who sent you this link.</p>
           {saved && <p className="access-code-saved">Access code saved</p>}
           {notice && <p className="access-code-notice">{notice}</p>}
           <div className="access-code-actions">
