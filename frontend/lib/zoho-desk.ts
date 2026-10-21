@@ -249,13 +249,19 @@ export function summarizeRun(
     return `${created} ${plural(created, "ticket", "tickets")} created in Zoho Desk for ${company}.`;
   }
 
+  const numbers = duplicates.map(ticketLabel).filter((item) => item !== "");
+  const where =
+    numbers.length > 0
+      ? ` (${plural(numbers.length, "ticket", "tickets")} ${numbers.join(", ")})`
+      : "";
+  const allDuplicates =
+    duplicates.length === total && total > 0 && notAttempted === 0;
+  if (allDuplicates) {
+    return `Already in Zoho Desk${where}. Nothing new was sent.`;
+  }
+
   const parts = [`${created} of ${total} sent.`];
   if (duplicates.length > 0) {
-    const numbers = duplicates.map(ticketLabel).filter((item) => item !== "");
-    const where =
-      numbers.length > 0
-        ? ` (${plural(numbers.length, "ticket", "tickets")} ${numbers.join(", ")})`
-        : "";
     parts.push(
       `${duplicates.length} ${plural(duplicates.length, "was", "were")} already in Zoho Desk${where}.`,
     );

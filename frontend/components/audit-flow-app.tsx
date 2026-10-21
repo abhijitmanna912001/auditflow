@@ -448,7 +448,10 @@ export function AuditFlowApp() {
       );
       const clean =
         results.length === list.length &&
-        results.every((status) => status.state === "created");
+        results.every(
+          (status) =>
+            status.state === "created" || status.state === "duplicate",
+        );
       setSendHadProblem(!clean);
       setSendMessages([
         summarizeRun(companyName, results, list.length),
