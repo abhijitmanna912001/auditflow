@@ -14,7 +14,15 @@ import {
   fetchWorkpaperFromUpload,
   workpaperPayloadFallback,
 } from "../lib/mock-workpaper";
-import { persistFeedback } from "../lib/feedback";
+import {
+  ambiguousNotice,
+  safeTicketUrl,
+  sendFinding,
+  summarizeRun,
+  ticketLabel,
+  unmappedNotice,
+  type SendStatus,
+} from "../lib/zoho-desk";
 import { AccessCodeControl } from "./access-code-control";
 import {
   actionLabel,
@@ -30,13 +38,7 @@ import type {
   Workpaper,
   WorkpaperRow,
 } from "../types/workpaper";
-import type {
-  FeedbackDecision,
-  FeedbackRecord,
-  StoredFeedbackDecision,
-} from "../types/feedback";
 import { Icon } from "./icons";
-import { FeedbackHistoryPanel } from "./feedback-history";
 import { PrintReport } from "./print-report";
 
 type RunState = "ready" | "running" | "complete";
@@ -192,27 +194,31 @@ const detailByDocument: Record<string, ExceptionDetail> = {
   },
 };
 
-interface RecordedDecision {
-  readonly decision: FeedbackDecision;
-  readonly note: string;
-  readonly assignee?: string;
+const COMPANY_STORAGE_KEY = "auditflow-company-name";
+const COMPANY_MAX_LENGTH = 120;
+const SAMPLE_SEND_TOOLTIP = "Upload your own documents to send to Zoho Desk.";
+
+function readStoredCompany(): string {
+  try {
+    return window.sessionStorage.getItem(COMPANY_STORAGE_KEY) ?? "";
+  } catch {
+    return "";
+  }
 }
 
-const decisionOutcomeLabel: Record<StoredFeedbackDecision, string> = {
-  discarded: "Discarded",
-  assigned: "Assigned",
-  closed: "Closed",
-  confirmed: "Earlier decision",
-  overturned: "Earlier decision",
-  evidence_requested: "Earlier decision",
-};
-
-function outcomeText(recorded: RecordedDecision) {
-  const label = decisionOutcomeLabel[recorded.decision];
-  if (recorded.decision === "assigned" && recorded.assignee) {
-    return `${label} to ${recorded.assignee}`;
+function storeCompany(value: string): void {
+  try {
+    window.sessionStorage.setItem(COMPANY_STORAGE_KEY, value);
+  } catch {
+    // Storage unavailable: the name just isn't remembered.
   }
-  return label;
+}
+
+// Nothing on the page depends on the access code any more.
+function ignoreAccessCodeChange(): void {}
+
+function isTicketed(status: SendStatus | undefined): boolean {
+  return status?.state === "created" || status?.state === "duplicate";
 }
 
 const formatConfidence = (value: Confidence) => `${Math.round(value * 100)}%`;
@@ -236,11 +242,20 @@ export function AuditFlowApp() {
   const [runState, setRunState] = useState<RunState>("ready");
   const [activeStage, setActiveStage] = useState(-1);
   const [selectedRow, setSelectedRow] = useState<WorkpaperRow | null>(null);
-  const [reviewDecisions, setReviewDecisions] = useState<
-    Partial<Record<string, RecordedDecision>>
+  const [uploadSnapshot, setUploadSnapshot] = useState<readonly File[] | null>(
+    null,
+  );
+  const [company, setCompany] = useState("");
+  const [companyMissing, setCompanyMissing] = useState(false);
+  const [sendStatuses, setSendStatuses] = useState<
+    Partial<Record<string, SendStatus>>
   >({});
-  const [reviewNote, setReviewNote] = useState("");
-  const [feedbackLog, setFeedbackLog] = useState<FeedbackRecord[]>([]);
+  const [isSending, setIsSending] = useState(false);
+  const [sendMessages, setSendMessages] = useState<readonly string[]>([]);
+  const [sendHadProblem, setSendHadProblem] = useState(false);
+  const companyInput = useRef<HTMLInputElement>(null);
+  const isSendingRef = useRef(false);
+  const runToken = useRef(0);
   const timers = useRef<number[]>([]);
 
   const selectedCaseInfo =
@@ -257,7 +272,6 @@ export function AuditFlowApp() {
   const [workpaper, setWorkpaper] = useState<Workpaper | null>(null);
   const [completedRun, setCompletedRun] = useState<CompletedRun | null>(null);
   const [runMessage, setRunMessage] = useState<string | null>(null);
-  const [accessCodeVersion, setAccessCodeVersion] = useState(0);
 
   const activeWorkpaper = useMemo<Workpaper>(() => {
     if (workpaper)
@@ -287,6 +301,10 @@ export function AuditFlowApp() {
     [activeWorkpaper],
   );
 
+  useEffect(() => {
+    setCompany(readStoredCompany());
+  }, []);
+
   useEffect(
     () => () => timers.current.forEach((timer) => window.clearTimeout(timer)),
     [],
@@ -296,8 +314,10 @@ export function AuditFlowApp() {
     timers.current.forEach((timer) => window.clearTimeout(timer));
     timers.current = [];
     setSelectedRow(null);
-    setReviewDecisions({});
-    setReviewNote("");
+    runToken.current += 1;
+    setSendStatuses({});
+    setSendMessages([]);
+    setSendHadProblem(false);
     setRunState("running");
     setActiveStage(0);
 
@@ -314,6 +334,9 @@ export function AuditFlowApp() {
         : await fetchWorkpaper(selectedCase);
     const payload = outcome.workpaper;
     setRunMessage(outcome.message);
+    // Copied at run time, so later UI changes (selectCase clears
+    // uploadedFiles) cannot affect which files a ticket is built from.
+    setUploadSnapshot(payload && outcome.uploadedFiles ? outcome.uploadedFiles : null);
 
     timers.current.forEach((timer) => window.clearTimeout(timer));
     timers.current = [];
@@ -372,41 +395,80 @@ export function AuditFlowApp() {
     setUploadedFiles([]);
   };
 
-  const selectRow = (row: WorkpaperRow | null) => {
-    setSelectedRow(row);
-    setReviewNote("");
+  const canSend = ranOnUpload && backendLoaded && uploadSnapshot !== null;
+  const allFindings = useMemo(
+    () => workpaper?.findings ?? [],
+    [workpaper],
+  );
+  const pendingFindings = allFindings.filter(
+    (finding) => !isTicketed(sendStatuses[finding.finding_id]),
+  );
+
+  const sendTooltip = canSend ? undefined : SAMPLE_SEND_TOOLTIP;
+
+  // One request per finding, one after another. A run stops at the first
+  // 401, 403, 429 or 503 because the next request would fail the same way.
+  const sendFindings = async (list: readonly FindingDetail[]) => {
+    if (isSendingRef.current || list.length === 0) return;
+    if (!canSend || !workpaper || !uploadSnapshot) return;
+    const companyName = company.trim();
+    if (!companyName) {
+      setCompanyMissing(true);
+      companyInput.current?.focus();
+      return;
+    }
+    const token = runToken.current;
+    isSendingRef.current = true;
+    setIsSending(true);
+    setSendMessages([]);
+    setSendHadProblem(false);
+    const results: SendStatus[] = [];
+    try {
+      for (const finding of list) {
+        setSendStatuses((current) => ({
+          ...current,
+          [finding.finding_id]: { state: "sending" },
+        }));
+        const outcome = await sendFinding({
+          company: companyName,
+          finding,
+          workpaper,
+          uploadedFiles: uploadSnapshot,
+        });
+        if (token !== runToken.current) return;
+        results.push(outcome.status);
+        setSendStatuses((current) => ({
+          ...current,
+          [finding.finding_id]: outcome.status,
+        }));
+        if (outcome.stop) break;
+      }
+      const notes = results.flatMap((status) =>
+        status.state === "created" ? status.notes : [],
+      );
+      const clean =
+        results.length === list.length &&
+        results.every((status) => status.state === "created");
+      setSendHadProblem(!clean);
+      setSendMessages([
+        summarizeRun(companyName, results, list.length),
+        ...notes,
+      ]);
+    } finally {
+      isSendingRef.current = false;
+      setIsSending(false);
+    }
   };
 
-  const chooseDecision = (decision: FeedbackDecision, assignee?: string) => {
-    if (!selectedRow) return;
-    const note = reviewNote.trim();
-    const assignedTo = assignee?.trim();
-    // A note is required for every decision, and "assigned" also needs a
-    // name. Already-decided findings can't be decided a second time.
-    if (!note) return;
-    if (decision === "assigned" && !assignedTo) return;
-    if (reviewDecisions[selectedRow.document]) return;
-    const record: FeedbackRecord = {
-      case_id: activeWorkpaper.case_id,
-      document: selectedRow.document,
-      finding: selectedRow.finding,
-      agent_action: selectedRow.action,
-      decision,
-      note,
-      assignee: decision === "assigned" ? assignedTo : undefined,
-      timestamp: new Date().toISOString(),
-    };
-    setReviewDecisions((current) => ({
-      ...current,
-      [selectedRow.document]: {
-        decision,
-        note,
-        assignee: record.assignee,
-      },
-    }));
-    setFeedbackLog((current) => [...current, record]);
-    void persistFeedback(record);
+  const changeCompany = (value: string) => {
+    setCompany(value);
+    storeCompany(value);
+    if (value.trim()) setCompanyMissing(false);
   };
+
+  const unmappedText = ranOnUpload && workpaper ? unmappedNotice(workpaper) : null;
+  const ambiguousText =
+    ranOnUpload && workpaper ? ambiguousNotice(workpaper) : null;
 
   return (
     <main className="app-shell">
@@ -421,9 +483,7 @@ export function AuditFlowApp() {
           <div className="topbar-status">
             <span className="live-dot" /> Document checks · findings for review
           </div>
-          <AccessCodeControl
-            onChange={() => setAccessCodeVersion((current) => current + 1)}
-          />
+          <AccessCodeControl onChange={ignoreAccessCodeChange} />
         </div>
       </header>
 
@@ -585,7 +645,57 @@ export function AuditFlowApp() {
                   </small>
                 </div>
               )}
+              {backendLoaded && (
+                <SendAllButton
+                  count={pendingFindings.length}
+                  canSend={canSend}
+                  isSending={isSending}
+                  tooltip={sendTooltip}
+                  onSend={() => void sendFindings(pendingFindings)}
+                />
+              )}
             </div>
+          </div>
+          {ranOnUpload && (
+            <div className="send-panel">
+              <label className="company-field">
+                <span>
+                  Company name <em>required</em>
+                </span>
+                <input
+                  ref={companyInput}
+                  type="text"
+                  required
+                  maxLength={COMPANY_MAX_LENGTH}
+                  value={company}
+                  onChange={(event) => changeCompany(event.target.value)}
+                  aria-invalid={companyMissing}
+                  aria-describedby="company-hint"
+                  autoComplete="organization"
+                />
+              </label>
+              <p id="company-hint" className="send-hint">
+                Tickets are grouped under this company in Zoho Desk.
+              </p>
+              {companyMissing && (
+                <p className="send-message problem" role="alert">
+                  Enter the company name before sending.
+                </p>
+              )}
+              {sendMessages.map((message) => (
+                <p
+                  key={message}
+                  className={`send-message ${sendHadProblem ? "problem" : "ok"}`}
+                >
+                  {message}
+                </p>
+              ))}
+              {unmappedText && <p className="send-notice">{unmappedText}</p>}
+              {ambiguousText && <p className="send-notice">{ambiguousText}</p>}
+            </div>
+          )}
+          <div className="sr-only" aria-live="polite" role="status">
+            {sendMessages.join(" ")}
           </div>
           {/* Severity is hidden from clients because it varies between runs; the data stays in the types and response. */}
           <div className="metrics" aria-label="Results summary">
@@ -615,7 +725,10 @@ export function AuditFlowApp() {
                     were used.
                   </p>
                 </div>
-                <span>{humanQueue.length} awaiting review</span>
+                <span>
+                  {humanQueue.length}{" "}
+                  {humanQueue.length === 1 ? "needs" : "need"} review
+                </span>
               </div>
               <div className="table-scroll">
                 <table>
@@ -634,9 +747,8 @@ export function AuditFlowApp() {
                         key={row.document}
                         row={row}
                         isSelected={selectedRow?.document === row.document}
-                        recorded={reviewDecisions[row.document]}
                         selectedCase={selectedCase}
-                        onSelect={selectRow}
+                        onSelect={setSelectedRow}
                       />
                     ))}
                   </tbody>
@@ -646,25 +758,19 @@ export function AuditFlowApp() {
             <ExceptionPanel
               key={selectedRow ? selectedRow.document : "none"}
               row={selectedRow}
-              recorded={
-                selectedRow ? reviewDecisions[selectedRow.document] : undefined
-              }
-              reviewNote={reviewNote}
               resolution={activeWorkpaper.evidence_resolution}
               findings={activeWorkpaper.findings}
               isSampleData={!backendLoaded}
-              onClose={() => selectRow(null)}
-              onDecision={chooseDecision}
-              onNoteChange={setReviewNote}
+              onClose={() => setSelectedRow(null)}
+              sendStatuses={sendStatuses}
+              canSend={canSend}
+              isSending={isSending}
+              tooltip={sendTooltip}
+              onSend={(finding) => void sendFindings([finding])}
             />
           </div>
         </section>
       )}
-
-      <FeedbackHistoryPanel
-        sessionLog={feedbackLog}
-        accessCodeVersion={accessCodeVersion}
-      />
 
       {isComplete && backendLoaded && workpaper && completedRun && (
         <PrintReport
@@ -680,7 +786,6 @@ export function AuditFlowApp() {
 interface WorkpaperTableRowProps {
   readonly row: WorkpaperRow;
   readonly isSelected: boolean;
-  readonly recorded?: RecordedDecision;
   readonly selectedCase: CaseId;
   readonly onSelect: (row: WorkpaperRow) => void;
 }
@@ -688,16 +793,12 @@ interface WorkpaperTableRowProps {
 function WorkpaperTableRow({
   row,
   isSelected,
-  recorded,
   selectedCase,
   onSelect,
 }: WorkpaperTableRowProps) {
   const handleKeyDown = (event: KeyboardEvent<HTMLTableRowElement>) => {
     if (event.key === "Enter") onSelect(row);
   };
-  const resultLabel = recorded
-    ? outcomeText(recorded)
-    : actionLabel(row.action);
   return (
     <tr
       className={isSelected ? "selected" : ""}
@@ -736,7 +837,7 @@ function WorkpaperTableRow({
       </td>
       <td>
         <span className={`action ${row.action}`}>
-          {resultLabel}
+          {actionLabel(row.action)}
         </span>
       </td>
     </tr>
@@ -745,29 +846,29 @@ function WorkpaperTableRow({
 
 interface ExceptionPanelProps {
   readonly row: WorkpaperRow | null;
-  readonly recorded?: RecordedDecision;
-  readonly reviewNote: string;
   readonly resolution?: EvidenceResolution | null;
   readonly findings?: readonly FindingDetail[];
   readonly isSampleData: boolean;
   readonly onClose: () => void;
-  readonly onDecision: (decision: FeedbackDecision, assignee?: string) => void;
-  readonly onNoteChange: (value: string) => void;
+  readonly sendStatuses: Partial<Record<string, SendStatus>>;
+  readonly canSend: boolean;
+  readonly isSending: boolean;
+  readonly tooltip?: string;
+  readonly onSend: (finding: FindingDetail) => void;
 }
 
 function ExceptionPanel({
   row,
-  recorded,
-  reviewNote,
   resolution,
   findings,
   isSampleData,
   onClose,
-  onDecision,
-  onNoteChange,
+  sendStatuses,
+  canSend,
+  isSending,
+  tooltip,
+  onSend,
 }: ExceptionPanelProps) {
-  const [isAssigning, setIsAssigning] = useState(false);
-  const [assignee, setAssignee] = useState("");
   if (!row)
     return (
       <aside className="decision-panel" aria-live="polite">
@@ -789,12 +890,10 @@ function ExceptionPanel({
   const sampleDetail = isSampleData ? detailByDocument[row.document] : undefined;
   const fallbackReason = isClear
     ? "No mismatches or missing documents were found for this item."
-    : "No further detail is available for this item. Check the listed documents before recording your decision.";
+    : "No further detail is available for this item. Check the listed documents.";
   const rowFindings = (findings ?? []).filter(
     (finding) => finding.row_document === row.document,
   );
-  const hasNote = reviewNote.trim().length > 0;
-  const hasAssignee = assignee.trim().length > 0;
   return (
     <aside className="decision-panel" aria-live="polite">
       <button
@@ -835,7 +934,15 @@ function ExceptionPanel({
               )}
               <div className="finding-blocks">
                 {rowFindings.map((finding) => (
-                  <FindingBlock key={finding.finding_id} finding={finding} />
+                  <FindingBlock
+                    key={finding.finding_id}
+                    finding={finding}
+                    status={sendStatuses[finding.finding_id]}
+                    canSend={canSend}
+                    isSending={isSending}
+                    tooltip={tooltip}
+                    onSend={onSend}
+                  />
                 ))}
               </div>
             </>
@@ -847,83 +954,27 @@ function ExceptionPanel({
       {resolution && (
         <Detail label="Double-check" value={resolverSummary(resolution)} />
       )}
-      <div className="review-actions">
-        {recorded ? (
-          <div className="recorded-outcome">
-            <strong>{outcomeText(recorded)}</strong>
-            <p>
-              Note:{" "}
-              {recorded.note}
-            </p>
-            <p>This finding has been decided and cannot be changed.</p>
-          </div>
-        ) : (
-          <>
-            <label className="note-field">
-              <span>
-                Reviewer note <em>required</em>
-              </span>
-              <textarea
-                value={reviewNote}
-                onChange={(event) => onNoteChange(event.target.value)}
-                placeholder="Write a note before choosing what to do…"
-                rows={3}
-              />
-            </label>
-            <p>Your decision</p>
-            <div className="decision-buttons">
-              <button
-                disabled={!hasNote}
-                onClick={() => onDecision("discarded")}
-              >
-                Discard
-              </button>
-              <button
-                disabled={!hasNote}
-                onClick={() => setIsAssigning(true)}
-              >
-                Assign
-              </button>
-              <button
-                disabled={!hasNote}
-                onClick={() => onDecision("closed")}
-              >
-                Close
-              </button>
-            </div>
-            {isAssigning && (
-              <>
-                <label className="assign-field">
-                  <span>Assign to (name or email)</span>
-                  <input
-                    type="text"
-                    value={assignee}
-                    onChange={(event) => setAssignee(event.target.value)}
-                  />
-                </label>
-                <div className="assign-actions">
-                  <button
-                    disabled={!hasNote || !hasAssignee}
-                    onClick={() => onDecision("assigned", assignee)}
-                  >
-                    Save assignment
-                  </button>
-                  <button onClick={() => setIsAssigning(false)}>Cancel</button>
-                </div>
-              </>
-            )}
-          </>
-        )}
-      </div>
     </aside>
   );
 }
 
 interface FindingBlockProps {
   readonly finding: FindingDetail;
+  readonly status?: SendStatus;
+  readonly canSend: boolean;
+  readonly isSending: boolean;
+  readonly tooltip?: string;
+  readonly onSend: (finding: FindingDetail) => void;
 }
 
-function FindingBlock({ finding }: FindingBlockProps) {
+function FindingBlock({
+  finding,
+  status,
+  canSend,
+  isSending,
+  tooltip,
+  onSend,
+}: FindingBlockProps) {
   const matches = matchedDocuments(finding);
   return (
     <div className="finding-block">
@@ -944,7 +995,136 @@ function FindingBlock({ finding }: FindingBlockProps) {
           {matches.join(", ")}
         </p>
       )}
+      <FindingSend
+        finding={finding}
+        status={status}
+        canSend={canSend}
+        isSending={isSending}
+        tooltip={tooltip}
+        onSend={onSend}
+      />
     </div>
+  );
+}
+
+function sendButtonLabel(status: SendStatus | undefined): string {
+  if (status?.state === "sending") return "Sending…";
+  if (status?.state === "unconfirmed" || status?.state === "failed") {
+    return "Retry";
+  }
+  return "Send to Zoho Desk";
+}
+
+function FindingSend({
+  finding,
+  status,
+  canSend,
+  isSending,
+  tooltip,
+  onSend,
+}: FindingBlockProps) {
+  const blocked = !canSend || isSending;
+  const ticketed = isTicketed(status);
+  const handleClick = () => {
+    if (!blocked) onSend(finding);
+  };
+  return (
+    <div className="finding-send">
+      <SendChip status={status} />
+      {!ticketed && (
+        <button
+          type="button"
+          className="send-button"
+          aria-disabled={blocked}
+          title={tooltip}
+          onClick={handleClick}
+        >
+          {sendButtonLabel(status)}
+        </button>
+      )}
+      {status?.state === "created" &&
+        status.notes.map((note) => (
+          <p key={note} className="send-message problem">
+            {note}
+          </p>
+        ))}
+      {status?.state === "failed" && (
+        <p className="send-message problem">{status.message}</p>
+      )}
+      {status?.state === "unconfirmed" && (
+        <p className="send-message problem">{status.message}</p>
+      )}
+    </div>
+  );
+}
+
+interface SendChipProps {
+  readonly status?: SendStatus;
+}
+
+function SendChip({ status }: SendChipProps) {
+  if (!status) return <span className="send-chip idle">Not sent</span>;
+  if (status.state === "sending") {
+    return <span className="send-chip busy">Sending</span>;
+  }
+  if (status.state === "unconfirmed") {
+    return <span className="send-chip warn">Couldn&apos;t confirm (not sent)</span>;
+  }
+  if (status.state === "failed") {
+    return <span className="send-chip bad">Failed</span>;
+  }
+  const url = safeTicketUrl(status.webUrl);
+  const number = ticketLabel(status);
+  const text =
+    status.state === "created"
+      ? `Ticket ${number}`.trim()
+      : `Already in Zoho Desk ${number}`.trim();
+  if (!url) return <span className="send-chip done">{text}</span>;
+  return (
+    <a
+      className="send-chip done"
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {text}
+    </a>
+  );
+}
+
+interface SendAllButtonProps {
+  readonly count: number;
+  readonly canSend: boolean;
+  readonly isSending: boolean;
+  readonly tooltip?: string;
+  readonly onSend: () => void;
+}
+
+function SendAllButton({
+  count,
+  canSend,
+  isSending,
+  tooltip,
+  onSend,
+}: SendAllButtonProps) {
+  const blocked = !canSend || isSending || count === 0;
+  const handleClick = () => {
+    if (!blocked) onSend();
+  };
+  return (
+    <button
+      type="button"
+      className="secondary-button"
+      aria-disabled={blocked}
+      title={tooltip}
+      onClick={handleClick}
+    >
+      <span>
+        {isSending
+          ? "Sending to Zoho Desk…"
+          : `Send all findings to Zoho Desk (${count})`}
+      </span>
+    </button>
   );
 }
 

@@ -76,6 +76,12 @@ export interface FindingDetail {
   explanation: string;
 }
 
+/** Which uploaded file a document ID was read from. */
+export interface DocumentMapEntry {
+  doc_id: string;
+  source_file: string;
+}
+
 /** Exact top-level Workpaper Agent payload rendered by the frontend. */
 export interface Workpaper {
   case_id: string;
@@ -83,4 +89,12 @@ export interface Workpaper {
   summary: Summary;
   findings?: readonly FindingDetail[];
   evidence_resolution?: EvidenceResolution | null;
+  /** Upload runs only: document ID to source file. */
+  documents?: readonly DocumentMapEntry[];
+  /** Upload runs only: document IDs that two files were read as. */
+  ambiguous_doc_ids?: readonly string[];
+  /** Upload runs only: files not linked to any document. */
+  unmapped_files?: readonly string[];
+  /** Upload runs only: final file names, in the order the files were sent. */
+  uploaded_files?: readonly string[];
 }

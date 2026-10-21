@@ -7,7 +7,7 @@ import type {
 
 /**
  * Display-only labels. The raw values (case IDs, action codes, the "Clean"
- * finding label) stay unchanged in data, API calls and feedback records.
+ * finding label) stay unchanged in data, API calls and stored data.
  */
 
 export function caseDisplayName(caseId: string): string {

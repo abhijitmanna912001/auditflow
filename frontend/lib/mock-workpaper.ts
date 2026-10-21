@@ -10,6 +10,9 @@ export type MaybeWorkpaper = Workpaper | null;
 export interface WorkpaperOutcome {
   readonly workpaper: MaybeWorkpaper;
   readonly message: string | null;
+  // Upload runs only: the File objects that were sent, in the order sent
+  // (matches `uploaded_files` in the response). Held in memory only.
+  readonly uploadedFiles?: readonly File[];
 }
 
 const failed = (message: string | null = null): WorkpaperOutcome => ({
@@ -60,7 +63,11 @@ export async function fetchWorkpaperFromUpload(files: File[], useResolver: boole
     }
     const data = await resp.json();
     if (data?.case_id && Array.isArray(data?.rows) && data?.summary) {
-      return { workpaper: data as Workpaper, message: null };
+      return {
+        workpaper: data as Workpaper,
+        message: null,
+        uploadedFiles: [...files],
+      };
     }
     return failed();
   } catch {
