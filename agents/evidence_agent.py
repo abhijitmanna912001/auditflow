@@ -23,8 +23,9 @@ import sys
 import anthropic
 
 from intake_agent import run_intake_agent
-
-MODEL = "claude-sonnet-5"
+from model_config import settings_for
+from model_response import parse_json_response
+from usage_log import create_message
 
 # Copied verbatim from docs/agent-spec.md section 2 ("System prompt:").
 SYSTEM_PROMPT = (
@@ -127,16 +128,15 @@ def run_evidence_agent(
     user_message = _build_user_message(case_id, transaction_id, intake_documents)
 
     client = client or anthropic.Anthropic()
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=16000,
+    response = create_message(
+        client,
+        "evidence",
+        {"format": {"type": "json_schema", "schema": OUTPUT_SCHEMA}},
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_message}],
-        output_config={"format": {"type": "json_schema", "schema": OUTPUT_SCHEMA}},
     )
 
-    text = next(block.text for block in response.content if block.type == "text")
-    parsed = json.loads(text)
+    parsed = parse_json_response(response, "evidence", settings_for("evidence").model)
     transactions = parsed["transactions"]
 
     if len(transactions) != 1:

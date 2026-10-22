@@ -17,8 +17,9 @@ from pathlib import Path
 
 import anthropic
 
-
-MODEL = "claude-sonnet-5"
+from model_config import settings_for
+from model_response import parse_json_response
+from usage_log import create_message
 
 # Copied verbatim from docs/agent-spec.md section 1 ("System prompt:").
 SYSTEM_PROMPT = (
@@ -221,16 +222,15 @@ def _call_intake(
     same system prompt; the schema is OUTPUT_SCHEMA unless the upload path
     passes its own (with source_file)."""
     client = client or anthropic.Anthropic()
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=16000,
+    response = create_message(
+        client,
+        "intake",
+        {"format": {"type": "json_schema", "schema": schema or OUTPUT_SCHEMA}},
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_content}],
-        output_config={"format": {"type": "json_schema", "schema": schema or OUTPUT_SCHEMA}},
     )
 
-    text = next(block.text for block in response.content if block.type == "text")
-    parsed = json.loads(text)
+    parsed = parse_json_response(response, "intake", settings_for("intake").model)
 
     return parsed["documents"]
 

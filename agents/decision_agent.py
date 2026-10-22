@@ -45,8 +45,9 @@ import sys
 import anthropic
 
 from anomaly_agent import run_intake_evidence_anomaly
-
-MODEL = "claude-sonnet-5"
+from model_config import settings_for
+from model_response import parse_json_response
+from usage_log import create_message
 
 # Copied verbatim from docs/agent-spec.md section 4 ("System prompt:").
 SYSTEM_PROMPT = (
@@ -237,16 +238,15 @@ def run_decision_agent(
     )
 
     client = client or anthropic.Anthropic()
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=16000,
+    response = create_message(
+        client,
+        "decision",
+        {"format": {"type": "json_schema", "schema": _REASON_REQUEST_SCHEMA}},
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_message}],
-        output_config={"format": {"type": "json_schema", "schema": _REASON_REQUEST_SCHEMA}},
     )
 
-    text = next(block.text for block in response.content if block.type == "text")
-    parsed = json.loads(text)
+    parsed = parse_json_response(response, "decision", settings_for("decision").model)
     reason_entries = parsed["transactions"]
 
     if len(reason_entries) != 1:

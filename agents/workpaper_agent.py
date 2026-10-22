@@ -42,8 +42,9 @@ from evidence_agent import run_evidence_agent, run_evidence_agent_with_resolver
 from file_map import build_file_map
 from finding_id import make_finding_id
 from intake_agent import run_intake_agent, run_intake_agent_from_documents
-
-MODEL = "claude-sonnet-5"
+from model_config import settings_for
+from model_response import parse_json_response
+from usage_log import create_message
 
 DEFAULT_ASSUMED_MINUTES_PER_ITEM = 3
 
@@ -206,17 +207,16 @@ def _generate_finding_labels(
     {transaction_id: finding_summary}."""
     client = client or anthropic.Anthropic()
     user_message = _build_finding_label_message(transactions_with_findings)
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=16000,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": user_message}],
-        output_config={
+    response = create_message(
+        client,
+        "workpaper",
+        {
             "format": {"type": "json_schema", "schema": _FINDING_LABEL_REQUEST_SCHEMA}
         },
+        system=SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": user_message}],
     )
-    text = next(block.text for block in response.content if block.type == "text")
-    parsed = json.loads(text)
+    parsed = parse_json_response(response, "workpaper", settings_for("workpaper").model)
     return {row["transaction_id"]: row["finding_summary"] for row in parsed["rows"]}
 
 

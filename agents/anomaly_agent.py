@@ -26,8 +26,9 @@ import anthropic
 
 from evidence_agent import run_evidence_agent
 from intake_agent import run_intake_agent
-
-MODEL = "claude-opus-5"
+from model_config import settings_for
+from model_response import parse_json_response
+from usage_log import create_message
 
 # Copied verbatim from docs/agent-spec.md section 3 ("System prompt:").
 SYSTEM_PROMPT = (
@@ -188,16 +189,15 @@ def run_anomaly_agent(
     user_message = _build_user_message(evidence_transaction, intake_documents)
 
     client = client or anthropic.Anthropic()
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=16000,
+    response = create_message(
+        client,
+        "anomaly",
+        {"format": {"type": "json_schema", "schema": OUTPUT_SCHEMA}},
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_message}],
-        output_config={"format": {"type": "json_schema", "schema": OUTPUT_SCHEMA}},
     )
 
-    text = next(block.text for block in response.content if block.type == "text")
-    parsed = json.loads(text)
+    parsed = parse_json_response(response, "anomaly", settings_for("anomaly").model)
     transactions = parsed["transactions"]
 
     if len(transactions) != 1:

@@ -25,3 +25,6 @@ scratch_make_test_pdfs.py
 test-uploads/
 
 .claude/
+
+# Output of evaluation/model_compare.py (counts only, regenerated each run).
+evaluation/model_compare_runs/
