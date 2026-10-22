@@ -34,10 +34,6 @@ from __future__ import annotations
 import json
 import sys
 
-from observability import configure_neatlogs, shutdown_neatlogs
-
-configure_neatlogs()
-
 import anthropic
 
 from anomaly_agent import run_anomaly_agent
@@ -344,8 +340,6 @@ def run_workpaper_agent(
         "rows": _build_rows(decision_transactions, evidence_by_transaction_id, client),
         "summary": _summarize(decision_transactions, assumed_minutes_per_item),
     }
-
-    shutdown_neatlogs()
 
     return result
 

@@ -45,7 +45,6 @@ DATASET_DIR = REPO_ROOT / "dataset"
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "agents"))
 
-from observability import configure_neatlogs, shutdown_neatlogs  # noqa: E402
 from file_map import make_unique_filenames  # noqa: E402
 from connectors.ticket_content import (  # noqa: E402
     build_description,
@@ -61,8 +60,6 @@ from connectors.zoho_desk import (  # noqa: E402
     ZohoRateLimitError,
 )
 
-configure_neatlogs()
-
 from workpaper_agent import (  # noqa: E402 (needs sys.path set first)
     run_full_pipeline,
     run_full_pipeline_from_documents,
@@ -73,7 +70,6 @@ from workpaper_agent import (  # noqa: E402 (needs sys.path set first)
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     yield
-    shutdown_neatlogs()
 
 
 app = FastAPI(title="AuditFlow Orchestration API", lifespan=lifespan)

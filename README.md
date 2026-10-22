@@ -39,10 +39,6 @@ Audit review is often slowed less by the final judgment than by collecting evide
 
 ![AuditFlow case selector](docs/screenshots/case-selector.png)
 
-**Neatlogs execution observability**
-
-![AuditFlow Neatlogs trace](docs/screenshots/neatlogs-trace.png)
-
 ## Five-agent pipeline
 
 ```text
@@ -65,7 +61,7 @@ On transactions where the Evidence Agent's first pass lands below a confidence t
 
 ## Architecture and model strategy
 
-AO (Agent Orchestrator) coordinates the pipeline; a FastAPI backend exposes the full run via `POST /run-case` (benchmark cases) and `POST /run-case-upload` (real documents); Neatlogs provides LLM tracing for workflow execution, model usage, latency, token consumption, and cost. Anthropic Claude is used with a focused mixed-model strategy:
+AO (Agent Orchestrator) coordinates the pipeline; a FastAPI backend exposes the full run via `POST /run-case` (benchmark cases) and `POST /run-case-upload` (real documents). Anthropic Claude is used with a focused mixed-model strategy:
 
 | Agent | Model |
 |---|---|
@@ -96,12 +92,12 @@ Real PDF and image documents can be uploaded and run through the full five-agent
 | Frontend | Next.js, React, TypeScript |
 | API | Python, FastAPI, Uvicorn |
 | Reasoning | Anthropic Claude Sonnet 5 and Claude Opus 5 |
-| Orchestration / tracing | AO (Agent Orchestrator), Neatlogs |
+| Orchestration | AO (Agent Orchestrator) |
 | Deployment | Vercel frontend, Render backend |
 
 ## Run locally
 
-Prerequisites: Python 3.13.5, Node.js, and `ANTHROPIC_API_KEY`. Set `NEATLOGS_API_KEY` to enable tracing.
+Prerequisites: Python 3.13.5, Node.js, and `ANTHROPIC_API_KEY`.
 
 ```bash
 git clone https://github.com/abhijitmanna912001/auditflow.git
