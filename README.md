@@ -23,7 +23,7 @@ Audit review is often slowed less by the final judgment than by collecting evide
 
 ### Benchmark results
 
-**14 cases · repeated-run results: 13 pass every run, 1 is known to vary.** In repeated runs (3 per case), 13 of 14 cases produced the expected findings and routing every time. The ambiguous mixed goods/service case (CASE_06) occasionally returns no finding. The tax-calculation case (CASE_14) used to be detected in only about half of runs; after a change to how the tax arithmetic is checked it was detected in 20 of 20 test runs and in 9 of 9 live runs. Earlier single-run verification showed 100% routing accuracy, but repeated runs show that is not stable. We are working on CASE_06.
+Most benchmark cases pass on every run. Missing purchase order and missing receipt findings are produced by code, not by the model. A few cases have varied between runs in earlier testing (for example CASE_06, where the Evidence stage occasionally returned nothing). A full re-measurement on the current code has not been done.
 
 ## Product Preview
 
@@ -61,15 +61,19 @@ On transactions where the Evidence Agent's first pass lands below a confidence t
 
 ## Architecture and model strategy
 
-AO (Agent Orchestrator) coordinates the pipeline; a FastAPI backend exposes the full run via `POST /run-case` (benchmark cases) and `POST /run-case-upload` (real documents). Anthropic Claude is used with a focused mixed-model strategy:
+AO (Agent Orchestrator) coordinates the pipeline; a FastAPI backend exposes the full run via `POST /run-case` (benchmark cases) and `POST /run-case-upload` (real documents). Anthropic Claude is used with a focused mixed-model strategy.
 
-| Agent | Model |
-|---|---|
-| Intake | Claude Sonnet 5 |
-| Evidence | Claude Sonnet 5 |
-| Anomaly | Claude Opus 5 |
-| Decision | Claude Sonnet 5 |
-| Workpaper | Claude Sonnet 5 |
+The table distinguishes code defaults from the live configuration reported by the server.
+
+| Agent | Code default (without model overrides) | Live model reported on 24 October 2026 | Live effort |
+|---|---|---|---|
+| Intake | `claude-sonnet-5` | `claude-sonnet-5` | API default; no effort set |
+| Evidence | `claude-sonnet-5` | `claude-sonnet-5-5` | `medium` |
+| Anomaly | `claude-opus-5` | `claude-opus-5-5` | `medium` |
+| Decision | `claude-sonnet-5` | `claude-sonnet-5-5` | `medium` |
+| Workpaper | `claude-sonnet-5` | `claude-sonnet-5-5` | `medium` |
+
+The live assignments were reported from server logs at 11:36 IST on 24 October 2026. Render environment variables override code defaults where configured. Live assignments are a dated snapshot and may change.
 
 The Anomaly Agent uses the stronger model because exception classification is the most nuanced reasoning step.
 
@@ -77,7 +81,7 @@ The Anomaly Agent uses the stronger model because exception classification is th
 
 The benchmark contains 14 controlled scenarios: clean cases, duplicate invoices, amount and currency mismatches, tax calculation errors, missing POs and receipts, vendor mismatches, date inconsistencies, multi-issue cases, and incomplete or conflicting evidence. These are evaluation fixtures—not customer audits.
 
-**Known limitations:** one case varies between runs. `CASE_06` is an intentionally more ambiguous mixed goods/service scenario whose Evidence Agent output sometimes reports nothing missing, after which a finding is often not raised. The Evidence Resolver does not fully handle this: it only runs a second pass when evidence confidence is below 0.7, and in our tests the wrong Evidence outputs had confidence of 0.90 or higher, so the second pass would not have been triggered. The tax check covers the arithmetic sum only: a tax amount that contradicts a stated rate while the sum still reconciles is not detected. Documented honestly rather than hidden.
+**Known limitations:** The benchmark contains 14 controlled synthetic scenarios, not customer audits. The earlier model-comparison run was stopped at 47 of 56 planned runs to conserve credits; a separate six-run rehearsal was saved separately. Each case/configuration in the 47-run comparison had at most one completed run, so that comparison does not establish repeatability on the current code. Missing purchase-order and missing-receipt findings are now produced by code rather than the model, but a full re-measurement of the current code has not been done. Some cases varied in earlier testing, including CASE_06, where the Evidence stage occasionally returned nothing.
 
 Detected exceptions are routed to a reviewer, who can inspect the finding, evidence, confidence, rationale, and workpaper context. The current UI supports **Clear exception**, **Request evidence**, and **Escalate** actions, and every decision is persisted server-side (`POST /feedback`) and viewable in a decision history dashboard (`GET /feedback/history`).
 
