@@ -9,6 +9,7 @@ environment (never printed). CI only compiles this file.
     python evaluation/model_compare.py --configs A,B,C,D --repeats 3 --cap-usd 12
     python evaluation/model_compare.py --configs A,B,C,D --repeats 3 --cap-usd 12 --run
     python evaluation/model_compare.py --smoke --run        # 1 case, 1 run, $0.50 cap
+    python evaluation/model_compare.py --report-from DIR    # rebuild the reports from DIR/runs.jsonl
 
 Configurations (docs: scratch/model-test-design.md):
     A  today's models, no effort set (the API default applies)
@@ -29,7 +30,11 @@ plus max_tokens of output, at that model's price) is added to the spend so far;
 if that would pass the cap the call is not made and the run stops.
 
 Results (counts, types and ids only, never document text) go to a git-ignored
-folder: runs.jsonl, report.md and three CSV files.
+folder: runs.jsonl, report.md and three CSV files. Each runs.jsonl line is
+flushed as it is written. If the run is interrupted (Ctrl-C) or stopped by the
+cap, the reports are written from what was collected and the exit status is
+non-zero (130 interrupted, 3 cap). --report-from rebuilds the reports from a
+runs.jsonl, complete or partial, with no model call and no API key.
 """
 
 from __future__ import annotations
@@ -61,6 +66,8 @@ SMOKE_CAP_USD = 0.50
 SMOKE_CASE = "CASE_04"  # has a finding, so all five agents are called
 DEFAULT_PASS1_CAP_USD = 12.0
 INFRA_WARNING_FRACTION = 0.05
+EXIT_CAP_STOP = 3
+EXIT_INTERRUPTED = 130  # the shell convention for SIGINT
 
 # ---- configurations -------------------------------------------------------
 
@@ -354,9 +361,11 @@ def id_stability(id_sets: list[list[str]]) -> float | None:
 
 
 def run_benchmark(schedule, ground_truth, dataset_dir, client, evaluate, cap_usd, effort, results_path,
-                  pipeline=None, progress=print) -> tuple[list[dict], bool]:
+                  pipeline=None, progress=print, results: list | None = None) -> tuple[list[dict], bool]:
     """Run the schedule serially. Returns (results, stopped_by_cap). Each
-    finished run is appended to results_path (JSON lines) straight away."""
+    finished run is appended to results_path (JSON lines) and flushed straight
+    away. Pass `results` to keep the runs finished so far if KeyboardInterrupt
+    escapes the loop."""
     _prepare_paths()
     from model_config import use_config
     from price_table import estimate_cost
@@ -372,7 +381,7 @@ def run_benchmark(schedule, ground_truth, dataset_dir, client, evaluate, cap_usd
                 decision_client=client, workpaper_client=client,
             )
 
-    results: list[dict] = []
+    results = [] if results is None else results
     stopped = False
     with collect_usage() as records, pre_call_guard(SpendGuard(cap_usd, records)):
         for number, (repeat, case_id, config) in enumerate(schedule, start=1):
@@ -402,6 +411,8 @@ def run_benchmark(schedule, ground_truth, dataset_dir, client, evaluate, cap_usd
             results.append(row)
             with open(results_path, "a") as f:
                 f.write(json.dumps(row) + "\n")
+                f.flush()
+                os.fsync(f.fileno())
             spent = sum(r["cost_usd"] for r in results)
             progress(
                 f"[{number}/{len(schedule)}] {case_id} {config} repeat {repeat}: {row['status']}"
@@ -596,6 +607,74 @@ def write_reports(out_dir: Path, summary: dict, run_info: dict) -> list[Path]:
     return [out_dir / n for n in ("report.md", "summary_by_config.csv", "summary_by_case.csv", "summary_by_agent.csv")]
 
 
+# ---- reading results back -------------------------------------------------
+
+REQUIRED_ROW_KEYS = ("config", "case_id", "status", "calls", "cost_usd", "latency_s")
+
+
+def load_runs(path: Path) -> tuple[list[dict], list[int]]:
+    """(rows, skipped_line_numbers) from a runs.jsonl. A line that is not valid
+    JSON, not an object, or lacks the keys the summary needs (for example a
+    last line cut short by a crash) is skipped, never fatal. Blank lines are
+    ignored."""
+    rows: list[dict] = []
+    skipped: list[int] = []
+    with open(path, errors="replace") as f:
+        for number, line in enumerate(f, start=1):
+            if not line.strip():
+                continue
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                skipped.append(number)
+                continue
+            if not isinstance(row, dict) or any(k not in row for k in REQUIRED_ROW_KEYS):
+                skipped.append(number)
+                continue
+            rows.append(row)
+    return rows, skipped
+
+
+def run_counts_text(results: list[dict]) -> list[str]:
+    """How many runs per config and per case within each config."""
+    lines = []
+    for config in sorted({r["config"] for r in results}):
+        per_case = Counter(r["case_id"] for r in results if r["config"] == config)
+        total = sum(per_case.values())
+        cases = ", ".join(f"{case}={n}" for case, n in sorted(per_case.items()))
+        lines.append(f"config {config}: {total} runs ({cases})")
+    return lines
+
+
+def report_from(directory: Path, out=print) -> int:
+    """Rebuild report.md and the CSV files in `directory` from its runs.jsonl.
+    No model call, no API key, works on a partial file."""
+    path = directory / "runs.jsonl"
+    if not path.is_file():
+        print(f"No runs.jsonl in {directory}", file=sys.stderr)
+        return 2
+    results, skipped = load_runs(path)
+    out(f"Read {len(results)} runs from {path}")
+    if skipped:
+        out(f"Skipped {len(skipped)} unreadable line(s): {', '.join(map(str, skipped))} (malformed JSON or missing fields)")
+    counts = run_counts_text(results)
+    for line in counts or ["no runs in the file; the reports will be empty"]:
+        out(f"  {line}")
+    run_info = {
+        "source": f"{path} (rebuilt with --report-from; no model call)",
+        "runs in file": len(results),
+        "unreadable lines skipped": ", ".join(map(str, skipped)) if skipped else "none",
+        "runs per config and case": "; ".join(counts) or "none",
+        "estimated spend": f"${sum(r['cost_usd'] for r in results):.4f} (from response usage and agents/price_table.py)",
+    }
+    summary = summarize(results)
+    paths = write_reports(directory, summary, run_info)
+    out("Wrote:\n" + "\n".join(f"  {p}" for p in paths))
+    for warning in infra_warnings(summary):
+        out(warning)
+    return 0
+
+
 # ---- command line ---------------------------------------------------------
 
 
@@ -624,11 +703,15 @@ def parse_args(argv=None):
                         help=f"one case ({SMOKE_CASE}) once under the first config with a ${SMOKE_CAP_USD:.2f} cap, "
                              "to calibrate against the Console (still needs --run)")
     parser.add_argument("--run", action="store_true", help="make real model calls (needs ANTHROPIC_API_KEY)")
+    parser.add_argument("--report-from", default=None, metavar="DIR",
+                        help="rebuild report.md and the CSV files from DIR/runs.jsonl (may be partial); no model call, no API key")
     return parser.parse_args(argv)
 
 
 def main(argv=None) -> int:
     args = parse_args(argv)
+    if args.report_from:
+        return report_from(Path(args.report_from))
     configs = [c.strip().upper() for c in args.configs.split(",") if c.strip()]
     bad = [c for c in configs if c not in CONFIG_MODELS]
     if bad or not configs:
@@ -683,8 +766,16 @@ def main(argv=None) -> int:
     print(f"\nLIVE RUN: {len(schedule)} pipeline runs, cap ${cap:.2f}, results in {out_dir}")
     print(f"Code path: {CODE_PATH}")
 
-    results, stopped = run_benchmark(schedule, ground_truth, dataset_dir, client, evaluate, cap, args.effort, results_path)
+    results: list[dict] = []
+    interrupted = stopped = False
+    try:
+        _, stopped = run_benchmark(schedule, ground_truth, dataset_dir, client, evaluate, cap, args.effort,
+                                   results_path, results=results)
+    except KeyboardInterrupt:
+        interrupted = True
+        print("\nInterrupted; writing the reports from the runs finished so far.", file=sys.stderr)
 
+    status = " - INTERRUPTED" if interrupted else " - STOPPED BY THE SPEND CAP" if stopped else ""
     run_info = {
         "date (UTC)": stamp,
         "code path": CODE_PATH,
@@ -694,13 +785,21 @@ def main(argv=None) -> int:
         "seed": args.seed,
         "spend cap": f"${cap:.2f}",
         "estimated spend": f"${sum(r['cost_usd'] for r in results):.4f} (from response usage and agents/price_table.py)",
-        "completed": f"{len(results)} of {len(schedule)} runs" + (" - STOPPED BY THE SPEND CAP" if stopped else ""),
+        "completed": f"{len(results)} of {len(schedule)} runs{status}",
+        "runs per config and case": "; ".join(run_counts_text(results)) or "none",
     }
     summary = summarize(results)
     paths = write_reports(out_dir, summary, run_info)
     print("\nWrote:\n" + "\n".join(f"  {p}" for p in paths + [results_path]))
     for warning in infra_warnings(summary):
         print(warning)
+    if interrupted:
+        print(f"Interrupted after {len(results)} of {len(schedule)} runs. Reports are in {out_dir}", file=sys.stderr)
+        return EXIT_INTERRUPTED
+    if stopped:
+        print(f"Stopped by the spend cap after {len(results)} of {len(schedule)} runs. Reports are in {out_dir}",
+              file=sys.stderr)
+        return EXIT_CAP_STOP
     if args.smoke:
         spent = sum(r["cost_usd"] for r in results)
         print(f"\nSMOKE: estimated cost ${spent:.4f}. Compare with the Console's usage and cost for this API key "

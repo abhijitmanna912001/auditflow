@@ -438,3 +438,100 @@ def test_smoke_runs_one_case_once_with_the_fifty_cent_cap(monkeypatch, capsys, t
 def test_unknown_config_or_case_is_refused(capsys):
     assert mc.main(["--configs", "A,Z"]) == 2
     assert mc.main(["--cases", "CASE_99"]) == 2
+
+
+# ---- report-from, interrupt and cap stop ----------------------------------
+
+
+def _write_runs(directory, rows, tail=""):
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / "runs.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows) + tail)
+
+
+@pytest.fixture
+def no_model(monkeypatch):
+    monkeypatch.setattr(anthropic, "Anthropic", lambda *a, **k: pytest.fail("no client expected"))
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+
+
+def test_report_from_a_partial_file_counts_runs_per_config_and_case(tmp_path, capsys, no_model):
+    _write_runs(tmp_path, [_row("A", "CASE_01"), _row("A", "CASE_01"), _row("A", "CASE_02"), _row("B", "CASE_01")])
+    assert mc.main(["--report-from", str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert "Read 4 runs" in out
+    assert "config A: 3 runs (CASE_01=2, CASE_02=1)" in out and "config B: 1 runs (CASE_01=1)" in out
+    assert {p.name for p in tmp_path.iterdir()} == {
+        "runs.jsonl", "report.md", "summary_by_config.csv", "summary_by_case.csv", "summary_by_agent.csv"}
+    assert "runs per config and case" in (tmp_path / "report.md").read_text()
+
+
+def test_report_from_an_empty_file_writes_empty_reports(tmp_path, capsys, no_model):
+    (tmp_path / "runs.jsonl").write_text("")
+    assert mc.main(["--report-from", str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert "Read 0 runs" in out and "no runs in the file" in out
+    assert (tmp_path / "report.md").exists()
+    header, *rows = (tmp_path / "summary_by_config.csv").read_text().splitlines()
+    assert header.startswith("config,runs") and rows == []
+
+
+def test_report_from_skips_a_malformed_last_line_and_says_so(tmp_path, capsys, no_model):
+    _write_runs(tmp_path, [_row("A", "CASE_01"), _row("A", "CASE_02")], tail='{"config": "A", "case_id": "CASE_03", "sta')
+    assert mc.main(["--report-from", str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert "Read 2 runs" in out and "Skipped 1 unreadable line(s): 3" in out
+    assert "CASE_03" not in (tmp_path / "summary_by_case.csv").read_text()
+    assert "unreadable lines skipped**: 3" in (tmp_path / "report.md").read_text()
+
+
+def test_report_from_a_missing_runs_file_is_refused(tmp_path, capsys, no_model):
+    assert mc.main(["--report-from", str(tmp_path)]) == 2
+    assert "No runs.jsonl" in capsys.readouterr().err
+
+
+def test_each_run_is_on_disk_as_soon_as_it_finishes(tmp_path):
+    seen = []
+
+    def pipeline(case_folder, client):
+        seen.append((tmp_path / "runs.jsonl").read_text().count("\n") if (tmp_path / "runs.jsonl").exists() else 0)
+        raise ValueError("stop here")
+
+    schedule = [(1, "CASE_01", "A"), (1, "CASE_02", "A")]
+    mc.run_benchmark(schedule, GROUND_TRUTH, DATASET, None, evaluate, 100.0, "medium",
+                     tmp_path / "runs.jsonl", pipeline=pipeline, progress=lambda *_: None)
+    assert seen == [0, 1]                                   # run 1 was already a complete line before run 2 began
+    assert all(json.loads(line) for line in (tmp_path / "runs.jsonl").read_text().splitlines())
+
+
+def test_interrupt_writes_reports_from_what_was_collected_and_exits_nonzero(monkeypatch, capsys, tmp_path):
+    monkeypatch.setattr(anthropic, "Anthropic", lambda **kw: object())
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-sentinel-do-not-print")
+
+    def interrupted(*args, results=None, **kw):
+        results.append(_row("A", "CASE_01"))
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(mc, "run_benchmark", interrupted)
+    code = mc.main(["--configs", "A", "--cases", "CASE_01,CASE_02", "--repeats", "1", "--cap-usd", "5",
+                    "--run", "--out", str(tmp_path)])
+    captured = capsys.readouterr()
+    assert code == mc.EXIT_INTERRUPTED != 0
+    assert "Traceback" not in captured.out + captured.err
+    (run_dir,) = list(tmp_path.iterdir())
+    assert str(run_dir) in captured.err and "Interrupted after 1 of 2 runs" in captured.err
+    assert "INTERRUPTED" in (run_dir / "report.md").read_text()
+    assert "CASE_01" in (run_dir / "summary_by_case.csv").read_text()
+
+
+def test_cap_stop_writes_reports_and_exits_nonzero(monkeypatch, capsys, tmp_path):
+    client = FakeClient()
+    monkeypatch.setattr(anthropic, "Anthropic", lambda **kw: client)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-sentinel-do-not-print")
+    code = mc.main(["--configs", "A", "--cases", "CASE_01", "--repeats", "1", "--cap-usd", "0.0001",
+                    "--run", "--out", str(tmp_path)])
+    captured = capsys.readouterr()
+    assert code == mc.EXIT_CAP_STOP != 0
+    assert client.requests == []
+    (run_dir,) = list(tmp_path.iterdir())
+    assert str(run_dir) in captured.err and "Stopped by the spend cap" in captured.err
+    assert "STOPPED BY THE SPEND CAP" in (run_dir / "report.md").read_text()
