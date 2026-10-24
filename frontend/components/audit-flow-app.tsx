@@ -23,8 +23,30 @@ import {
   unmappedNotice,
   type SendStatus,
 } from "../lib/zoho-desk";
+import {
+  checkLocalFiles,
+  cleanUpAfterDisconnect,
+  isCurrentRun,
+  startRun,
+  summarizeSelection,
+  type ImportedFile,
+  type SelectionSummary,
+} from "../lib/drive-files";
+import { getDriveSession, isDriveConfigured } from "../lib/google-drive";
+import {
+  finishedRunState,
+  resolveStageState,
+  showsResults,
+  stageStateLabel,
+  type RunState,
+} from "../lib/run-progress";
 import { AccessCodeControl } from "./access-code-control";
 import { DriveConnectButton } from "./drive-connect-button";
+import {
+  DriveFilePicker,
+  driveSelectHint,
+  useDriveState,
+} from "./drive-file-picker";
 import {
   actionLabel,
   caseDisplayName,
@@ -42,8 +64,6 @@ import type {
 import { Icon } from "./icons";
 import { PrintReport } from "./print-report";
 
-type RunState = "ready" | "running" | "complete";
-type StageState = "idle" | "active" | "complete";
 
 interface AuditCase {
   id: `CASE_${string}`;
@@ -90,12 +110,6 @@ const stages: Stage[] = [
     icon: "▤",
   },
 ];
-
-const stageStateLabel: Record<StageState, string> = {
-  idle: "not started",
-  active: "in progress",
-  complete: "done",
-};
 
 const cases = [
   {
@@ -224,21 +238,17 @@ function isTicketed(status: SendStatus | undefined): boolean {
 
 const formatConfidence = (value: Confidence) => `${Math.round(value * 100)}%`;
 
-function resolveStageState(
-  index: number,
-  activeStage: number,
-  runState: RunState,
-): StageState {
-  if (runState === "ready") return "idle";
-  if (index < activeStage) return "complete";
-  if (index === activeStage && runState === "running") return "active";
-  if (runState === "complete") return "complete";
-  return "idle";
-}
-
 export function AuditFlowApp() {
   const [selectedCase, setSelectedCase] = useState<CaseId>(cases[0].id);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  // Which of the uploaded files came from Google Drive, by Drive file id.
+  // Kept in memory to spot repeats; the ids are never sent anywhere.
+  const [driveIds] = useState(() => new WeakMap<File, string>());
+  const [driveBusy, setDriveBusy] = useState<string | null>(null);
+  const [selectionNotice, setSelectionNotice] =
+    useState<SelectionSummary | null>(null);
+  const driveState = useDriveState();
+  const driveConfigured = isDriveConfigured();
   const [useResolver, setUseResolver] = useState(false);
   const [runState, setRunState] = useState<RunState>("ready");
   const [activeStage, setActiveStage] = useState(-1);
@@ -257,6 +267,8 @@ export function AuditFlowApp() {
   const companyInput = useRef<HTMLInputElement>(null);
   const isSendingRef = useRef(false);
   const runToken = useRef(0);
+  // Whether the run on the page (finished or still running) used Drive files.
+  const runUsedDrive = useRef(false);
   const timers = useRef<number[]>([]);
 
   const selectedCaseInfo =
@@ -290,6 +302,7 @@ export function AuditFlowApp() {
     } as Workpaper;
   }, [workpaper, selectedCase]);
   const isComplete = runState === "complete";
+  const hasResults = showsResults(runState);
   const ranOnUpload = (completedRun?.uploadedFileCount ?? 0) > 0;
   const resultsSourceLabel = ranOnUpload
     ? "Results from your documents"
@@ -315,7 +328,9 @@ export function AuditFlowApp() {
     timers.current.forEach((timer) => window.clearTimeout(timer));
     timers.current = [];
     setSelectedRow(null);
-    runToken.current += 1;
+    const run = startRun(runToken);
+    runUsedDrive.current =
+      selectedCase === "UPLOAD" && uploadedFiles.some((file) => driveIds.has(file));
     setSendStatuses({});
     setSendMessages([]);
     setSendHadProblem(false);
@@ -333,6 +348,8 @@ export function AuditFlowApp() {
       selectedCase === "UPLOAD"
         ? await fetchWorkpaperFromUpload(uploadedFiles, useResolver)
         : await fetchWorkpaper(selectedCase);
+    // A newer run, or a Drive disconnect, has replaced this one.
+    if (!isCurrentRun(runToken, run)) return;
     const payload = outcome.workpaper;
     setRunMessage(outcome.message);
     // Copied at run time, so later UI changes (selectCase clears
@@ -354,9 +371,60 @@ export function AuditFlowApp() {
       completedAt: new Date(),
       uploadedFileCount: selectedCase === "UPLOAD" ? uploadedFiles.length : 0,
     });
-    setActiveStage(stages.length);
-    setRunState("complete");
+    // Without a workpaper the steps didn't finish: sample results are shown
+    // with a warning, but no step is marked done.
+    setActiveStage(payload ? stages.length : -1);
+    setRunState(finishedRunState(payload));
   };
+
+  // Disconnecting Drive removes what came from it: its files, and the
+  // results of a run that used them. Local files and results from runs
+  // without Drive files stay. Tickets already in Zoho Desk are not touched.
+  const dropDriveContent = () => {
+    const cleanup = cleanUpAfterDisconnect(
+      uploadedFiles,
+      (file) => driveIds.has(file),
+      runUsedDrive.current,
+      runToken,
+    );
+    if (cleanup.removed > 0) {
+      setUploadedFiles(cleanup.files);
+      if (cleanup.files.length === 0 && selectedCase === "UPLOAD") {
+        setSelectedCase(cases[0].id);
+      }
+    }
+    if (cleanup.clearResults) {
+      runUsedDrive.current = false;
+      timers.current.forEach((timer) => window.clearTimeout(timer));
+      timers.current = [];
+      setRunState("ready");
+      setActiveStage(-1);
+      setSelectedRow(null);
+      setWorkpaper(null);
+      setBackendLoaded(false);
+      setCompletedRun(null);
+      setRunMessage(null);
+      setUploadSnapshot(null);
+      setSendStatuses({});
+      setSendMessages([]);
+      setSendHadProblem(false);
+    }
+    if (cleanup.removed > 0 || cleanup.clearResults) {
+      setSelectionNotice({
+        headline: cleanup.clearResults
+          ? "Google Drive disconnected. Files from Drive and the results that used them were removed."
+          : "Google Drive disconnected. Files from Drive were removed from this check.",
+        details: [],
+        problem: false,
+      });
+    }
+  };
+
+  // Resubscribed after every render, so the handler sees the latest state.
+  useEffect(() => {
+    if (!driveConfigured) return;
+    return getDriveSession().onDisconnect(dropDriveContent);
+  });
 
   // Builds the PDF from the result already on the page: the browser's print
   // window renders the print-only report. No backend call, nothing stored.
@@ -385,15 +453,51 @@ export function AuditFlowApp() {
     window.print();
   };
 
+  // New local files replace earlier local files; files from Drive stay.
   const handleUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files ?? []);
+    const chosen = Array.from(event.target.files ?? []);
+    const fromDrive = uploadedFiles.filter((file) => driveIds.has(file));
+    const { accepted, skipped } = checkLocalFiles(chosen, fromDrive.length);
+    const files = [...fromDrive, ...accepted];
     setUploadedFiles(files);
+    setSelectionNotice(
+      skipped.length > 0
+        ? summarizeSelection("local", accepted.length, skipped, fromDrive.length)
+        : null,
+    );
     if (files.length > 0) setSelectedCase("UPLOAD");
   };
+
+  const addDriveFiles = (
+    imported: readonly ImportedFile[],
+    summary: SelectionSummary | null,
+  ) => {
+    setSelectionNotice(summary);
+    if (imported.length === 0) return;
+    imported.forEach(({ file, driveId }) => driveIds.set(file, driveId));
+    setUploadedFiles((current) => [
+      ...current,
+      ...imported.map(({ file }) => file),
+    ]);
+    setSelectedCase("UPLOAD");
+  };
+
+  const existingDriveIds = useMemo(
+    () =>
+      new Set(
+        uploadedFiles.flatMap((file) => {
+          const id = driveIds.get(file);
+          return id ? [id] : [];
+        }),
+      ),
+    [uploadedFiles, driveIds],
+  );
+  const driveHint = driveSelectHint(driveState);
 
   const selectCase = (caseId: CaseId) => {
     setSelectedCase(caseId);
     setUploadedFiles([]);
+    setSelectionNotice(null);
   };
 
   const canSend = ranOnUpload && backendLoaded && uploadSnapshot !== null;
@@ -521,7 +625,7 @@ export function AuditFlowApp() {
             <h2 id="case-heading">Check a set of documents</h2>
           </div>
         </div>
-        <div className="case-picker">
+        <div className={`case-picker${driveConfigured ? " with-drive" : ""}`}>
           <label className="select-wrap">
             <span>Sample case</span>
             <select
@@ -550,12 +654,20 @@ export function AuditFlowApp() {
               multiple
               accept=".pdf,.png,.jpg,.jpeg,.webp"
               onChange={handleUpload}
+              disabled={driveBusy !== null}
             />
           </label>
+          <DriveFilePicker
+            existingCount={uploadedFiles.length}
+            existingIds={existingDriveIds}
+            disabled={runState === "running"}
+            onBusy={setDriveBusy}
+            onDone={addDriveFiles}
+          />
           <button
             className="primary-button"
             onClick={beginReview}
-            disabled={runState === "running"}
+            disabled={runState === "running" || driveBusy !== null}
           >
             {runState === "running" ? (
               <>
@@ -570,6 +682,38 @@ export function AuditFlowApp() {
             )}
           </button>
         </div>
+        <p className="upload-limits">
+          PDF, PNG, JPG or WEBP · up to 20 MB each · up to 10 files per check
+        </p>
+        {driveConfigured && (
+          <div className="drive-select-status" role="status">
+            {driveBusy ? (
+              <p className="drive-select-progress">
+                <span className="spinner dark" /> {driveBusy}
+              </p>
+            ) : (
+              <p id="drive-select-hint" className="drive-select-hint">
+                {driveHint ??
+                  "Google Docs, Sheets and Slides files aren't supported yet. Save them as PDF first."}
+              </p>
+            )}
+          </div>
+        )}
+        {selectionNotice && (
+          <div
+            className={`selection-summary${selectionNotice.problem ? " problem" : ""}`}
+            role="status"
+          >
+            <p>{selectionNotice.headline}</p>
+            {selectionNotice.details.length > 0 && (
+              <ul>
+                {selectionNotice.details.map((detail, index) => (
+                  <li key={index}>{detail}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
         {uploadedFiles.length > 0 && (
           <label className="resolver-toggle">
             <input
@@ -596,6 +740,12 @@ export function AuditFlowApp() {
           <p className="eyebrow">02 · PROGRESS</p>
           <span>Read → Match → Check → Route → Report</span>
         </div>
+        {runState === "failed" && (
+          <p className="pipeline-failed" role="status">
+            The check didn&apos;t finish, so these steps weren&apos;t
+            completed.
+          </p>
+        )}
         <div className="stage-grid">
           {stages.map((stage, index) => {
             const stageState = resolveStageState(index, activeStage, runState);
@@ -608,6 +758,8 @@ export function AuditFlowApp() {
                 <span className="stage-icon">
                   {stageState === "complete" ? (
                     <Icon name="check" size={17} />
+                  ) : stageState === "failed" ? (
+                    <Icon name="close" size={15} />
                   ) : (
                     stage.icon
                   )}
@@ -622,7 +774,7 @@ export function AuditFlowApp() {
         </div>
       </section>
 
-      {isComplete && (
+      {hasResults && (
         <section className="results" aria-labelledby="workpaper-heading">
           <div className="workpaper-header">
             <div>

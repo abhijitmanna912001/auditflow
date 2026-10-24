@@ -38,6 +38,11 @@ export function readDriveConfig(values: {
   };
 }
 
+// The public identifiers the Picker needs. None of them are secrets.
+export function getDriveConfig(): DriveConfig {
+  return configuredDrive;
+}
+
 // The feature flag: Drive stays hidden unless all three values are set.
 export function isDriveConfigured(config: DriveConfig = configuredDrive): boolean {
   return config.clientId !== "" && config.apiKey !== "" && config.appId !== "";
@@ -91,6 +96,7 @@ export class DriveSession {
   // Bumped on disconnect, so a token Google returns afterwards is discarded.
   private generation = 0;
   private readonly listeners = new Set<() => void>();
+  private readonly disconnectListeners = new Set<() => void>();
 
   constructor(private readonly options: DriveSessionOptions) {}
 
@@ -105,10 +111,26 @@ export class DriveSession {
     };
   }
 
+  // Told when the user disconnects Drive, so anything taken from Drive can be
+  // dropped. Not called when a token merely expires.
+  onDisconnect(listener: () => void): () => void {
+    this.disconnectListeners.add(listener);
+    return () => {
+      this.disconnectListeners.delete(listener);
+    };
+  }
+
   // The current token, or null when not connected or expired. Callers must
   // not keep it: ask again for every request.
   getAccessToken(): string | null {
     return this.state === "connected" ? this.token : null;
+  }
+
+  // Called when Google rejects a token before its expected expiry, for
+  // example after the user removed access in their Google Account. Only the
+  // token that was rejected is dropped, never a newer one.
+  markTokenRejected(token: string): void {
+    if (this.state === "connected" && this.token === token) this.expire();
   }
 
   // Must be called from a click handler so Google's popup is not blocked.
@@ -128,6 +150,7 @@ export class DriveSession {
     this.generation += 1;
     this.clearToken();
     this.setState("disconnected");
+    this.disconnectListeners.forEach((listener) => listener());
     if (!token) return "unconfirmed";
     let oauth2: OAuth2Api;
     try {

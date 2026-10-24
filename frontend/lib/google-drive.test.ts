@@ -157,6 +157,22 @@ describe("expiry", () => {
   });
 });
 
+describe("token rejected by Google", () => {
+  it("drops only the token Google rejected and asks to reconnect", async () => {
+    const google = fakeOAuth2();
+    const session = sessionWith(google.api);
+    const result = session.connect();
+    await flush();
+    google.respond({ access_token: TOKEN, expires_in: 3599 });
+    await result;
+    session.markTokenRejected("some-older-token");
+    expect(session.getAccessToken()).toBe(TOKEN);
+    session.markTokenRejected(TOKEN);
+    expect(session.getState()).toBe("expired");
+    expect(session.getAccessToken()).toBeNull();
+  });
+});
+
 describe("disconnect", () => {
   async function connected(google = fakeOAuth2()) {
     const session = sessionWith(google.api);
@@ -242,6 +258,46 @@ describe("disconnect", () => {
     google.respond({ access_token: "second-token", expires_in: 3599 });
     expect(await again).toBe("connected");
     expect(session.getAccessToken()).toBe("second-token");
+  });
+
+  it("tells disconnect listeners once the token is gone, before revocation", async () => {
+    const google = fakeOAuth2();
+    const order: string[] = [];
+    google.api.revoke.mockImplementation((_token, done) => {
+      order.push("revoke");
+      done?.({ successful: true });
+    });
+    const { session } = await connected(google);
+    session.onDisconnect(() => order.push(`disconnect:${session.getAccessToken()}`));
+    await session.disconnect();
+    expect(order).toEqual(["disconnect:null", "revoke"]);
+  });
+
+  it("doesn't tell disconnect listeners about expiry, a rejected token or a failed connect", async () => {
+    const google = fakeOAuth2();
+    const session = sessionWith(google.api);
+    const onDisconnect = vi.fn();
+    session.onDisconnect(onDisconnect);
+    const failed = session.connect();
+    await flush();
+    google.fail("popup_closed");
+    await failed;
+    const ok = session.connect();
+    await flush();
+    google.respond({ access_token: TOKEN, expires_in: 3599 });
+    await ok;
+    session.markTokenRejected(TOKEN);
+    expect(session.getState()).toBe("expired");
+    expect(onDisconnect).not.toHaveBeenCalled();
+  });
+
+  it("stops telling a listener once it unsubscribes", async () => {
+    const { session } = await connected();
+    const onDisconnect = vi.fn();
+    const stop = session.onDisconnect(onDisconnect);
+    stop();
+    await session.disconnect();
+    expect(onDisconnect).not.toHaveBeenCalled();
   });
 
   it("notifies listeners on every state change", async () => {

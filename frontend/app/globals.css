@@ -381,6 +381,19 @@ h2 {
   border-color: #40a37b;
   background: #40a37b;
 }
+.stage.failed {
+  color: #8d6a62;
+}
+.stage.failed .stage-icon {
+  color: #a33b2f;
+  border: 1px dashed #d9a79b;
+  background: #fdf6f1;
+}
+.pipeline-failed {
+  margin: 0 0 13px;
+  font-size: 12px;
+  color: #a33b2f;
+}
 .results {
   border-top: 1px solid #d8dfd9;
   padding-top: 29px;
@@ -1412,5 +1425,88 @@ a.send-chip.done {
   .workpaper-meta .secondary-button {
     width: 100%;
     min-height: 44px;
+  }
+}
+
+/* Select from Google Drive (upload controls) */
+.case-picker.with-drive {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto auto auto;
+}
+.drive-select-button {
+  background: transparent;
+  cursor: pointer;
+}
+.drive-select-button:hover:not([aria-disabled="true"]) {
+  background: #f1f5f2;
+}
+.drive-select-button[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.drive-select-button:focus-visible {
+  outline: 2px solid #198073;
+  outline-offset: 2px;
+}
+.upload-button:has(input:disabled) {
+  opacity: 0.55;
+}
+.upload-button input:disabled {
+  cursor: not-allowed;
+}
+.spinner.dark {
+  border-color: #3b5b5d40;
+  border-top-color: #3b5b5d;
+  flex: none;
+}
+.upload-limits,
+.drive-select-hint,
+.drive-select-progress {
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: #778788;
+}
+.drive-select-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #3b5b5d;
+  overflow-wrap: anywhere;
+}
+.selection-summary {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #b9d7ca;
+  border-radius: 8px;
+  background: #f3faf6;
+  color: #2f6d55;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.selection-summary.problem {
+  border-color: #e6c9b8;
+  background: #fdf6f1;
+  color: #8a3b2c;
+}
+.selection-summary p {
+  margin: 0;
+  font-weight: 600;
+}
+.selection-summary ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 3px;
+}
+@media (max-width: 1000px) {
+  .case-picker.with-drive {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 620px) {
+  .case-picker.with-drive {
+    grid-template-columns: 1fr;
+  }
+  .drive-select-button {
+    width: 100%;
   }
 }
