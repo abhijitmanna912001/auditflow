@@ -1,12 +1,13 @@
 // Google Picker, used to choose individual Drive files. Picking a file with
 // the app id set grants this app drive.file access to that file only, so no
-// wider Drive scope is needed. Folders can't be chosen and nothing is
-// scanned.
+// wider Drive scope is needed. Folders can be opened to find files, but a
+// folder itself can't be chosen, and nothing is scanned.
 //
 // The Drive token is handed to the Picker for this one dialog and is not kept
 // here.
 
 import {
+  GOOGLE_FOLDER,
   importDriveFiles,
   MAX_FILES_PER_RUN,
   SUPPORTED_TYPES,
@@ -17,6 +18,14 @@ import {
 
 const GAPI_SCRIPT_URL = "https://apis.google.com/js/api.js";
 const LOAD_TIMEOUT_MS = 15_000;
+
+// What the Picker lists: the supported file types, plus folders so the user
+// can open them. Folders have their own MIME type, and Google's reference
+// doesn't say a MIME filter exempts them, so the folder type is listed
+// alongside setIncludeFolders(true) to keep them visible. Folders stay
+// unselectable, and importDriveFiles still refuses anything that isn't a
+// supported file.
+export const PICKER_VIEW_MIME_TYPES = [...SUPPORTED_TYPES, GOOGLE_FOLDER].join(",");
 
 // The parts of google.picker used here.
 interface DocsView {
@@ -95,8 +104,8 @@ export function openPicker(api: PickerApi, options: PickerOptions): Promise<Pick
     };
     try {
       const view = new api.DocsView(api.ViewId.DOCS)
-        .setMimeTypes(SUPPORTED_TYPES.join(","))
-        .setIncludeFolders(false)
+        .setMimeTypes(PICKER_VIEW_MIME_TYPES)
+        .setIncludeFolders(true)
         .setSelectFolderEnabled(false);
       picker = new api.PickerBuilder()
         .addView(view)

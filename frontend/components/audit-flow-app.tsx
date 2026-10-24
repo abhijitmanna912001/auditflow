@@ -688,7 +688,7 @@ export function AuditFlowApp() {
         {driveConfigured && (
           <div className="drive-select-status" role="status">
             {driveBusy ? (
-              <p className="drive-select-progress">
+              <p id="drive-select-progress" className="drive-select-progress">
                 <span className="spinner dark" /> {driveBusy}
               </p>
             ) : (

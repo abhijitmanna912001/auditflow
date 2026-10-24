@@ -1,6 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
-import { MAX_FILES_PER_RUN } from "./drive-files";
-import { openPicker, selectDriveFiles, type PickerApi, type PickerResponse } from "./google-picker";
+import { checkTypeAndSize, GOOGLE_FOLDER, MAX_FILES_PER_RUN, SUPPORTED_TYPES } from "./drive-files";
+import {
+  openPicker,
+  PICKER_VIEW_MIME_TYPES,
+  selectDriveFiles,
+  type PickerApi,
+  type PickerResponse,
+} from "./google-picker";
 
 const TOKEN = "test-drive-token-not-real";
 const PDF = new TextEncoder().encode("%PDF-1.7\n%%EOF");
@@ -79,12 +85,22 @@ function fakePicker() {
   return { api, calls, picker, respond: (data: PickerResponse) => callback?.(data) };
 }
 
+describe("folder browsing", () => {
+  it("adds folders to what the Picker lists, not to what can be imported", () => {
+    expect(PICKER_VIEW_MIME_TYPES.split(",")).toEqual([...SUPPORTED_TYPES, GOOGLE_FOLDER]);
+    expect(SUPPORTED_TYPES).not.toContain(GOOGLE_FOLDER);
+    expect(checkTypeAndSize(GOOGLE_FOLDER, undefined)).toBe("folder");
+  });
+});
+
 describe("openPicker", () => {
-  it("offers several individual files of the supported types, and no folders", () => {
+  it("lists folders to open and supported files to pick, but folders can't be picked", () => {
     const google = fakePicker();
     void openPicker(google.api, OPTIONS);
-    expect(google.calls.setMimeTypes).toEqual(["application/pdf,image/png,image/jpeg,image/webp"]);
-    expect(google.calls.setIncludeFolders).toEqual([false]);
+    expect(google.calls.setMimeTypes).toEqual([
+      "application/pdf,image/png,image/jpeg,image/webp,application/vnd.google-apps.folder",
+    ]);
+    expect(google.calls.setIncludeFolders).toEqual([true]);
     expect(google.calls.setSelectFolderEnabled).toEqual([false]);
     expect(google.calls.enableFeature).toEqual(["multiselect"]);
     expect(google.calls.setMaxItems).toEqual([4]);
@@ -244,6 +260,41 @@ describe("selectDriveFiles", () => {
     google.respond({ action: "picked", docs: [{ id: "a1", name: "inv.pdf", mimeType: "application/pdf" }] });
     expect(await outcome).toEqual({ kind: "disconnected" });
     expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it("still refuses a folder or Google-native file the Picker returns, and imports the rest", async () => {
+    const google = fakePicker();
+    const fetchImpl = vi.fn(async (url: string) =>
+      new URL(url).searchParams.get("alt") === "media"
+        ? new Response(PDF)
+        : new Response(JSON.stringify({ name: "inv.pdf", mimeType: "application/pdf", size: String(PDF.byteLength) })),
+    );
+    const outcome = selectDriveFiles({
+      ...base,
+      existingCount: 0,
+      getToken: () => TOKEN,
+      loadPicker: async () => google.api,
+      fetchImpl,
+    });
+    await vi.waitFor(() => expect(google.picker.setVisible).toHaveBeenCalled());
+    google.respond({
+      action: "picked",
+      docs: [
+        { id: "folder1", name: "Invoices 2026", mimeType: "application/vnd.google-apps.folder" },
+        { id: "sheet1", name: "Ledger", mimeType: "application/vnd.google-apps.spreadsheet" },
+        { id: "a1", name: "inv.pdf", mimeType: "application/pdf", sizeBytes: PDF.byteLength },
+      ],
+    });
+    const result = await outcome;
+    expect(result.kind).toBe("imported");
+    if (result.kind !== "imported") return;
+    expect(result.result.accepted.map((f) => f.driveId)).toEqual(["a1"]);
+    expect(result.result.skipped).toEqual([
+      { name: "Invoices 2026", reason: "folder" },
+      { name: "Ledger", reason: "google_native" },
+    ]);
+    const requested = fetchImpl.mock.calls.map(([url]) => new URL(url).pathname.split("/").pop());
+    expect(new Set(requested)).toEqual(new Set(["a1"]));
   });
 
   it("reports a Picker that fails to load", async () => {

@@ -134,7 +134,7 @@ function DriveFilePickerControl({
       className="upload-button drive-select-button"
       onClick={() => void select()}
       aria-disabled={blocked}
-      aria-describedby="drive-select-hint"
+      aria-describedby={working ? "drive-select-progress" : "drive-select-hint"}
     >
       {working ? <span className="spinner dark" /> : <DriveIcon />}
       <span>{working ? "Working…" : "Select from Google Drive"}</span>

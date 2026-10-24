@@ -23,7 +23,7 @@ export type SupportedType = keyof typeof EXTENSIONS;
 export const SUPPORTED_TYPES = Object.keys(EXTENSIONS) as SupportedType[];
 
 const GOOGLE_NATIVE_PREFIX = "application/vnd.google-apps.";
-const GOOGLE_FOLDER = "application/vnd.google-apps.folder";
+export const GOOGLE_FOLDER = "application/vnd.google-apps.folder";
 const DRIVE_FILES_URL = "https://www.googleapis.com/drive/v3/files/";
 const METADATA_FIELDS = "id,name,mimeType,size,trashed,capabilities/canDownload";
 const METADATA_TIMEOUT_MS = 20_000;

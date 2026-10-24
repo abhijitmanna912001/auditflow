@@ -1267,6 +1267,65 @@ td small {
   }
 }
 
+/* Disconnect Google Drive confirmation */
+.drive-disconnect-dialog {
+  width: min(420px, calc(100vw - 32px));
+  max-width: none;
+  padding: 0;
+  border: 1px solid #cad5cf;
+  border-radius: 12px;
+  background: #fbfaf6;
+  color: #17363a;
+  box-shadow: 0 18px 48px #14323433;
+}
+.drive-disconnect-dialog::backdrop {
+  background: #14323466;
+}
+.drive-disconnect-content {
+  display: grid;
+  gap: 12px;
+  padding: 22px 20px 20px;
+}
+.drive-disconnect-content h2 {
+  margin: 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  color: #143d40;
+}
+.drive-disconnect-content p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #476767;
+}
+.drive-disconnect-content p + p {
+  margin-top: 8px;
+}
+.drive-disconnect-actions {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  margin-top: 6px;
+}
+.drive-disconnect-actions .access-code-btn {
+  padding: 0 16px;
+}
+.drive-disconnect-actions .access-code-btn:focus-visible {
+  outline: 2px solid #198073;
+  outline-offset: 2px;
+}
+.drive-disconnect-actions .access-code-btn-outline:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+@media (max-width: 620px) {
+  .drive-disconnect-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Send to Zoho Desk */
 .sr-only {
   position: absolute;

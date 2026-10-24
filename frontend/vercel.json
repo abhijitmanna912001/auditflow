@@ -1,7 +1,8 @@
 {
   "git": {
     "deploymentEnabled": {
-      "feature/google-drive-connect": false
+      "feature/google-drive-connect": false,
+      "feature/drive-*": false
     }
   }
 }
