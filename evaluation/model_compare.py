@@ -322,21 +322,51 @@ def classify_failure(exc: BaseException) -> str:
     return "other"
 
 
-def score_run(expected: dict, workpaper: dict, evaluate) -> dict:
+PRESENCE_TYPES = ("missing_po", "missing_receipt")
+
+
+def _presence_miss_counts(predicted_types, expected_types) -> tuple[int, int]:
+    """(dropped, spurious) missing_po/missing_receipt types: expected but not
+    predicted, and predicted but not expected."""
+    predicted = set(predicted_types) & set(PRESENCE_TYPES)
+    expected = set(expected_types) & set(PRESENCE_TYPES)
+    return len(expected - predicted), len(predicted - expected)
+
+
+def score_run(expected: dict, workpaper: dict, evaluate, model_findings: list[dict] | None = None) -> dict:
     """Score one finished pipeline run. `evaluate` is evaluation/evaluate.py
-    (its score_case is the scorer the README's accuracy comes from)."""
+    (its score_case is the scorer the README's accuracy comes from).
+
+    model_findings: the Anomaly model's own findings, before the presence step
+    (agents/anomaly_agent.collect_model_findings). When given, the row also
+    carries them and the same type scores for them, so one run is a paired
+    before/after comparison. The final fields are unchanged."""
     scored = evaluate.score_case(expected, workpaper)
     findings = workpaper.get("findings", [])
     predicted_types = sorted({f["type"] for f in findings})
     expected_types = {f["type"] for f in expected.get("expected_findings", [])}
-    return {
+    dropped, spurious = _presence_miss_counts(predicted_types, expected_types)
+    row = {
         "action_correct": bool(scored["action_correct"]),
         "false_positive": bool(scored["false_positive"]),
         "missed_exception": bool(scored["missed_exception"]),
         "exact_types": set(predicted_types) == expected_types,
         "predicted_types": predicted_types,
         "finding_ids": sorted(f["finding_id"] for f in findings),
+        "missing_dropped": dropped,
+        "missing_spurious": spurious,
     }
+    if model_findings is not None:
+        model_types = sorted({f["type"] for f in model_findings})
+        m_dropped, m_spurious = _presence_miss_counts(model_types, expected_types)
+        row.update(
+            model_findings=[{"type": f["type"], "documents": list(f["documents"])} for f in model_findings],
+            model_predicted_types=model_types,
+            model_exact_types=set(model_types) == expected_types,
+            model_missing_dropped=m_dropped,
+            model_missing_spurious=m_spurious,
+        )
+    return row
 
 
 def percentile(values: list[float], pct: float) -> float | None:
@@ -369,6 +399,7 @@ def run_benchmark(schedule, ground_truth, dataset_dir, client, evaluate, cap_usd
     _prepare_paths()
     from model_config import use_config
     from price_table import estimate_cost
+    from anomaly_agent import collect_model_findings
     from usage_log import collect_usage, pre_call_guard
 
     if pipeline is None:
@@ -389,9 +420,11 @@ def run_benchmark(schedule, ground_truth, dataset_dir, client, evaluate, cap_usd
             started = time.perf_counter()
             row = {"config": config, "case_id": case_id, "repeat": repeat, "failed_agent": None}
             try:
-                with use_config(config_settings(config, effort)):
+                with use_config(config_settings(config, effort)), collect_model_findings() as model_runs:
                     workpaper = pipeline(str(dataset_dir / case_id) + "/", client)
-                row.update(status="ok", **score_run(ground_truth[case_id], workpaper, evaluate))
+                # a pipeline that never reached the Anomaly step leaves this empty
+                model_findings = [f for findings in model_runs for f in findings] if model_runs else None
+                row.update(status="ok", **score_run(ground_truth[case_id], workpaper, evaluate, model_findings))
             except Exception as exc:  # every failure becomes a recorded cause
                 row.update(
                     status=classify_failure(exc), failed_agent=getattr(exc, "agent", None),
@@ -453,7 +486,16 @@ def summarize(results: list[dict]) -> dict:
             if s is not None:
                 stability_pairs.append((s * len(sets), len(sets)))
         calls = [c for r in rows for c in r["calls"]]
+        # Paired before/after: only runs that recorded the model's own findings.
+        paired = [r for r in scored if r.get("model_exact_types") is not None]
         by_config[config] = {
+            "paired_runs": len(paired),
+            "model_exact_type_rate": _rate(sum(1 for r in paired if r["model_exact_types"]), len(paired)),
+            "final_exact_type_rate": _rate(sum(1 for r in paired if r["exact_types"]), len(paired)),
+            "model_missing_dropped": sum(r["model_missing_dropped"] for r in paired),
+            "model_missing_spurious": sum(r["model_missing_spurious"] for r in paired),
+            "final_missing_dropped": sum(r["missing_dropped"] for r in paired),
+            "final_missing_spurious": sum(r["missing_spurious"] for r in paired),
             "runs": len(rows),
             "scored_runs": len(scored),
             "action_pass_rate": _rate(sum(1 for r in scored if r["action_correct"]), len(scored)),
@@ -549,6 +591,20 @@ def report_markdown(summary: dict, run_info: dict) -> str:
             f"{_pct(s['id_stability'])} | {s['false_positives']} | {s['missed_exceptions']} | {s['total_cost_usd']:.4f} | "
             f"{_num(s['mean_cost_usd'], 4)} | {_num(s['mean_latency_s'])} | {_num(s['p95_latency_s'])} |"
         )
+    paired_rows = [(c, s) for c, s in summary["by_config"].items() if s["paired_runs"]]
+    if paired_rows:
+        lines += ["", "## Before and after the presence step", "",
+                  "Same runs, same model output. Before = the Anomaly model's own findings; after = the final findings "
+                  "(missing_po and missing_receipt decided by code). Dropped = expected but not reported; spurious = "
+                  "reported but not expected. Only runs that recorded the model's findings are counted.", "",
+                  "| Config | Paired runs | Exact types before | Exact types after | Dropped before | Spurious before | Dropped after | Spurious after |",
+                  "|---|---|---|---|---|---|---|---|"]
+        for c, s in paired_rows:
+            lines.append(
+                f"| {c} | {s['paired_runs']} | {_pct(s['model_exact_type_rate'])} | {_pct(s['final_exact_type_rate'])} | "
+                f"{s['model_missing_dropped']} | {s['model_missing_spurious']} | "
+                f"{s['final_missing_dropped']} | {s['final_missing_spurious']} |"
+            )
     lines += ["", "## Failure causes per configuration", "",
               "| Config | Causes (count) | Infrastructure runs (overload/timeout/connection) |", "|---|---|---|"]
     for c, s in summary["by_config"].items():

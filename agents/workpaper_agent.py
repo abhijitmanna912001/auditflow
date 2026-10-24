@@ -44,6 +44,7 @@ from finding_id import make_finding_id
 from intake_agent import run_intake_agent, run_intake_agent_from_documents
 from model_config import settings_for
 from model_response import parse_json_response
+from presence_check import PRESENCE_TYPES
 from usage_log import create_message
 
 DEFAULT_ASSUMED_MINUTES_PER_ITEM = 3
@@ -154,7 +155,15 @@ def build_findings(anomaly_transaction: dict, workpaper: dict) -> list[dict]:
     findings = []
     seen_ids: dict[str, int] = {}
     for finding in anomaly_transaction["findings"]:
-        base_id = make_finding_id(finding["type"], primary_document)
+        # Presence findings are computed by code and list the transaction's
+        # invoices (sorted), so they anchor on the first invoice; every other
+        # type keeps the row's primary document.
+        anchor = (
+            finding["documents"][0]
+            if finding["type"] in PRESENCE_TYPES and finding["documents"]
+            else primary_document
+        )
+        base_id = make_finding_id(finding["type"], anchor)
         seen_ids[base_id] = seen_ids.get(base_id, 0) + 1
         finding_id = base_id if seen_ids[base_id] == 1 else f"{base_id}-{seen_ids[base_id]}"
         findings.append(

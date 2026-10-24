@@ -51,13 +51,22 @@ class FakeClient:
         number = re.search(r"(?:CASE|TXN)_(\d+)", user)
         case_id = f"CASE_{number.group(1)}" if number else "CASE_00"
         txn = f"TXN_{case_id[-2:]}"
+        # The PO and receipt are present unless the ground truth says they are
+        # missing: the Anomaly step now decides those two findings from them.
+        expected = {f["type"] for f in GROUND_TRUTH.get(case_id, {}).get("expected_findings", [])}
+        present = [("INV-1", "invoice")]
+        if "missing_po" not in expected:
+            present.append(("PO-1", "purchase_order"))
+        if "missing_receipt" not in expected:
+            present.append(("REC-1", "receipt"))
         if system.startswith("You are the Intake Agent"):
             body = {"documents": [{
-                "doc_id": "INV-1", "type": "invoice", "vendor": "V", "amount": 100.0, "tax_amount": None,
+                "doc_id": doc_id, "type": doc_type, "vendor": "V", "amount": 100.0, "tax_amount": None,
                 "subtotal": None, "currency": "INR", "date": "2026-01-01", "references": [],
-                "case_id": case_id, "extraction_notes": None}]}
+                "case_id": case_id, "extraction_notes": None} for doc_id, doc_type in present]}
         elif system.startswith("You are the Evidence Agent"):
-            body = {"transactions": [{"transaction_id": txn, "case_id": case_id, "documents": ["INV-1"],
+            body = {"transactions": [{"transaction_id": txn, "case_id": case_id,
+                                      "documents": [doc_id for doc_id, _ in present],
                                       "missing_evidence": [], "evidence_confidence": 0.9, "notes": "n"}]}
         elif system.startswith("You are the Anomaly Agent"):
             body = {"transactions": [{"transaction_id": txn, "case_id": case_id, "findings": [
@@ -378,6 +387,42 @@ def test_warning_only_above_five_percent_of_runs():
     warnings = mc.infra_warnings(two_in_twenty)
     assert len(warnings) == 1 and "config A" in warnings[0] and "api_timeout=1" in warnings[0]
     assert "api_connection=1" in warnings[0]
+
+
+def test_run_records_the_models_own_findings_beside_the_final_ones(tmp_path):
+    # CASE_06 truly lacks a receipt. The model drops it and invents a missing_po;
+    # code removes the invented one and restores the dropped one.
+    client = FakeClient(findings_for=lambda case_id: ["missing_po"])
+    results, _, path = run([(1, "CASE_06", "C"), (1, "CASE_04", "C")], client, tmp_path=tmp_path)
+    case_06, case_04 = results
+    assert case_06["model_predicted_types"] == ["missing_po"]
+    assert case_06["model_findings"] == [{"type": "missing_po", "documents": ["INV-1"]}]
+    assert case_06["model_exact_types"] is False
+    assert (case_06["model_missing_dropped"], case_06["model_missing_spurious"]) == (1, 1)
+    assert case_06["predicted_types"] == ["missing_receipt"] and case_06["exact_types"] is True
+    assert (case_06["missing_dropped"], case_06["missing_spurious"]) == (0, 0)
+    # CASE_04 has a finding of its own in the ground truth; the model's missing_po is spurious
+    assert case_04["model_missing_spurious"] == 1 and case_04["missing_spurious"] == 0
+    assert json.loads(path.read_text().splitlines()[0])["model_predicted_types"] == ["missing_po"]
+
+
+def test_score_run_without_model_findings_has_no_paired_fields():
+    clean = {"rows": [{"finding": "Clean", "action": "auto_clear"}], "findings": []}
+    scored = mc.score_run(GROUND_TRUTH["CASE_01"], clean, evaluate)
+    assert "model_predicted_types" not in scored and scored["missing_dropped"] == 0
+
+
+def test_report_has_a_before_after_section_only_when_runs_are_paired():
+    old = mc.summarize([_row("A", "CASE_01")])
+    assert old["by_config"]["A"]["paired_runs"] == 0
+    assert "Before and after" not in mc.report_markdown(old, {})
+    paired = dict(_row("A", "CASE_06"), model_exact_types=False, model_predicted_types=["missing_po"],
+                  model_missing_dropped=1, model_missing_spurious=1, missing_dropped=0, missing_spurious=0)
+    summary = mc.summarize([paired, _row("A", "CASE_01")])
+    s = summary["by_config"]["A"]
+    assert (s["paired_runs"], s["model_exact_type_rate"], s["final_exact_type_rate"]) == (1, 0.0, 1.0)
+    text = mc.report_markdown(summary, {})
+    assert "## Before and after the presence step" in text and "| A | 1 | 0% | 100% | 1 | 1 | 0 | 0 |" in text
 
 
 def test_reports_are_written_as_markdown_and_csv(tmp_path):

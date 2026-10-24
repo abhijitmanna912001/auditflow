@@ -91,7 +91,10 @@ def test_run_anomaly_agent_enforces_deterministic_join_keys():
 
     assert result["case_id"] == "CASE_99"
     assert result["transaction_id"] == "TXN_99"
-    assert result["findings"] == [fake_finding]
+    # the model's finding is kept as is; the fixture has no receipt, so code
+    # appends missing_receipt after it (see presence_check.py)
+    assert result["findings"][0] == fake_finding
+    assert [f["type"] for f in result["findings"]] == ["vendor_mismatch", "missing_receipt"]
 
     sent_message = client.messages.last_kwargs["messages"][0]["content"]
     # both the evidence map and the underlying document field values (e.g.
@@ -105,8 +108,10 @@ def test_run_anomaly_agent_allows_empty_findings():
     client = _FakeClient(
         [{"transaction_id": "TXN_99", "case_id": "CASE_99", "findings": []}]
     )
+    receipt = dict(_INTAKE_DOCUMENTS[1], doc_id="REC-9901", type="receipt")
+    evidence = dict(_EVIDENCE_TRANSACTION, documents=["INV-9901", "PO-9901", "REC-9901"])
 
-    result = run_anomaly_agent(_EVIDENCE_TRANSACTION, _INTAKE_DOCUMENTS, client=client)
+    result = run_anomaly_agent(evidence, _INTAKE_DOCUMENTS + [receipt], client=client)
 
     assert result["findings"] == []
 

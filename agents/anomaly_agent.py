@@ -19,8 +19,12 @@ Usage:
 
 from __future__ import annotations
 
+import contextlib
+import contextvars
+import copy
 import json
 import sys
+from typing import Iterator
 
 import anthropic
 
@@ -28,7 +32,26 @@ from evidence_agent import run_evidence_agent
 from intake_agent import run_intake_agent
 from model_config import settings_for
 from model_response import parse_json_response
+from presence_check import merge_presence_findings
 from usage_log import create_message
+
+# Off by default. evaluation/model_compare.py turns it on to see the model's
+# own findings, before the presence step replaces missing_po/missing_receipt.
+_model_findings_sink: contextvars.ContextVar[list | None] = contextvars.ContextVar(
+    "anomaly_model_findings_sink", default=None
+)
+
+
+@contextlib.contextmanager
+def collect_model_findings() -> Iterator[list[list[dict]]]:
+    """Yield a list that gets one entry per run_anomaly_agent call: the model's
+    findings exactly as returned, before the presence step."""
+    collected: list[list[dict]] = []
+    token = _model_findings_sink.set(collected)
+    try:
+        yield collected
+    finally:
+        _model_findings_sink.reset(token)
 
 # Copied verbatim from docs/agent-spec.md section 3 ("System prompt:").
 SYSTEM_PROMPT = (
@@ -212,6 +235,15 @@ def run_anomaly_agent(
     # already know rather than trust the model's echo of them.
     transaction["case_id"] = case_id
     transaction["transaction_id"] = transaction_id
+
+    # missing_po / missing_receipt are decided by code, not the model: drop
+    # whatever the model said about them and append the computed findings.
+    sink = _model_findings_sink.get()
+    if sink is not None:
+        sink.append(copy.deepcopy(transaction["findings"]))
+    transaction["findings"] = merge_presence_findings(
+        transaction["findings"], evidence_transaction, intake_documents
+    )
 
     return transaction
 
