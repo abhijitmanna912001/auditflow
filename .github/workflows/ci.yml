@@ -32,3 +32,31 @@ jobs:
 
       - name: Run agent unit tests
         run: pytest agents/ connectors/ -v
+
+  frontend:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      # No NEXT_PUBLIC_GOOGLE_* values here, so this also checks the build
+      # with the Drive button switched off.
+      - name: Build
+        run: npm run build

@@ -24,6 +24,7 @@ import {
   type SendStatus,
 } from "../lib/zoho-desk";
 import { AccessCodeControl } from "./access-code-control";
+import { DriveConnectButton } from "./drive-connect-button";
 import {
   actionLabel,
   caseDisplayName,
@@ -486,6 +487,7 @@ export function AuditFlowApp() {
           <div className="topbar-status">
             <span className="live-dot" /> Document checks · findings for review
           </div>
+          <DriveConnectButton />
           <AccessCodeControl onChange={ignoreAccessCodeChange} />
         </div>
       </header>

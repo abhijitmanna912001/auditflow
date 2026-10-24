@@ -120,6 +120,10 @@ npm run dev
 
 The API defaults to `http://127.0.0.1:8000`; set `NEXT_PUBLIC_API_BASE_URL` to point the frontend at another backend.
 
+Google Drive (optional, in progress): setting `NEXT_PUBLIC_GOOGLE_CLIENT_ID`, `NEXT_PUBLIC_GOOGLE_API_KEY` and `NEXT_PUBLIC_GOOGLE_APP_ID` in `frontend/.env.local` (see `frontend/.env.example`) shows a Connect Google Drive button. It only connects and disconnects for now, using the `drive.file` scope; the access token stays in the tab's memory and is never sent to the backend. Open the app at `http://localhost:3000`, the origin registered for the OAuth client.
+
+Frontend checks: `npm run typecheck`, `npm test` and `npm run build` in `frontend/`.
+
 ## API
 
 ```http

@@ -1185,6 +1185,75 @@ td small {
   }
 }
 
+/* Google Drive connection (page header) */
+.drive-connect {
+  position: relative;
+}
+.drive-connect-toggle {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #155d57;
+  border-radius: 8px;
+  background: #155d57;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.drive-connect-toggle:hover:not(:disabled) {
+  background: #0e4e49;
+}
+.drive-connect-toggle.connected {
+  border-color: #cad5cf;
+  background: transparent;
+  color: #3b5b5d;
+}
+.drive-connect-toggle.connected:hover {
+  background: #f1f5f2;
+}
+.drive-connect-toggle:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.drive-connect-status {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  z-index: 20;
+  width: 260px;
+  max-width: calc(100vw - 36px);
+  margin: 0;
+  padding: 10px 12px;
+  background: white;
+  border: 1px solid #cad5cf;
+  border-radius: 10px;
+  box-shadow: 0 10px 28px #14323422;
+  font-size: 12px;
+  color: #398064;
+}
+.drive-connect-status:empty {
+  display: none;
+}
+.drive-connect-status.problem {
+  color: #a33b2f;
+}
+.drive-connect-status a {
+  color: inherit;
+  font-weight: 700;
+}
+@media (max-width: 620px) {
+  .drive-connect {
+    margin-right: 8px;
+  }
+  .drive-connect-wide {
+    display: none;
+  }
+  .drive-connect-status {
+    right: -60px;
+  }
+}
+
 /* Send to Zoho Desk */
 .sr-only {
   position: absolute;
