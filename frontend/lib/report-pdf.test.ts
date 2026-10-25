@@ -12,10 +12,11 @@ vi.mock("./api-client", () => ({
 import type { Workpaper } from "../types/workpaper";
 import { apiFetch } from "./api-client";
 import { workpaperPayloadFallback } from "./mock-workpaper";
-import { generateReportPdf, reportPdfFileName, ReportPdfDataError } from "./report-pdf";
+import { generateReportPdf, reportPdfFileName, reportPdfFileNameFor, ReportPdfDataError } from "./report-pdf";
 import { extractPdfText } from "./testing/pdf-text";
 import {
   buildReportDocument,
+  isUploadedRun,
   CONFIDENCE_NOTE,
   formatReportDate,
   NO_COMPANY_NAME,
@@ -656,5 +657,62 @@ describe("report file name", () => {
 
   it("rejects an invalid date", () => {
     expect(() => reportPdfFileName("CASE_14", new Date(Number.NaN))).toThrow(ReportPdfDataError);
+  });
+});
+
+describe("upload runs the backend labels CASE_<digits>", () => {
+  // The backend runs uploads under a synthetic ID like CASE_922486 (seen in
+  // manual testing) and returns the uploaded files and their document map.
+  const UPLOADED = ["BNK-1014.pdf", "INV-1014.pdf", "LED-1014.pdf", "PO-1014.pdf", "REC-1014.pdf"];
+  const workpaper: Workpaper = {
+    ...CASE_14,
+    case_id: "CASE_922486",
+    uploaded_files: UPLOADED,
+    documents: UPLOADED.map((name) => ({ doc_id: name.replace(/\.pdf$/, ""), source_file: name })),
+  };
+  const input = { workpaper, completedAt: COMPLETED_AT, companyName: COMPANY };
+
+  it("are recognised by their upload metadata, not their case ID", () => {
+    expect(isUploadedRun(workpaper)).toBe(true);
+    expect(isUploadedRun({ ...workpaper, documents: undefined })).toBe(true);
+    expect(isUploadedRun({ ...workpaper, uploaded_files: undefined })).toBe(true);
+    expect(isUploadedRun({ ...CASE_14, case_id: "UPLOADED_1761380000000" })).toBe(true);
+    expect(isUploadedRun(CASE_14)).toBe(false);
+    expect(isUploadedRun({ ...CASE_14, case_id: "CASE_922486" })).toBe(false);
+    expect(isUploadedRun({ ...CASE_14, uploaded_files: [], documents: [] })).toBe(false);
+  });
+
+  it("are labelled as uploaded documents in the report", () => {
+    const content = toReportContent(input);
+    expect(content).toMatchObject({ title: "Uploaded documents", caseId: null, source: "Uploaded documents" });
+    const definition = buildReportDocument(input);
+    expect(definition.info.title).toBe("AuditFlow report – Uploaded documents");
+    const text = reportText(definition);
+    expect(text).toMatch(/Case\nNot applicable \(uploaded documents\)/);
+    expect(text).toMatch(/Source\nUploaded documents/);
+    expect(text).not.toMatch(/922486|Sample case/);
+  });
+
+  it("keep their uploaded files, document IDs, company and finding", () => {
+    const content = toReportContent(input);
+    expect(content.companyName).toBe(COMPANY);
+    expect(content.documents).toEqual(UPLOADED.map((name) => ({ name, documentIds: [name.replace(/\.pdf$/, "")] })));
+    expect(content.findings).toEqual(toReportContent({ ...input, workpaper: CASE_14 }).findings);
+  });
+
+  it("are named Uploaded-documents, while a sample case keeps its case name", () => {
+    expect(reportPdfFileNameFor(workpaper, COMPLETED_AT)).toBe("AuditFlow_Report_Uploaded-documents_2026-10-25_090507.pdf");
+    expect(reportPdfFileNameFor(CASE_14, COMPLETED_AT)).toBe("AuditFlow_Report_Case-14_2026-10-25_090507.pdf");
+    expect(reportPdfFileNameFor({ ...CASE_14, case_id: "UPLOADED_1761380000000" }, COMPLETED_AT)).toBe(
+      "AuditFlow_Report_Uploaded-documents_2026-10-25_090507.pdf",
+    );
+  });
+
+  it("still list a sample case as that case", () => {
+    expect(toReportContent({ workpaper: CASE_14, completedAt: COMPLETED_AT, sourceDocuments: CASE_14_FILES })).toMatchObject({
+      title: "Case 14",
+      caseId: "CASE_14",
+      source: "Sample case (Case 14)",
+    });
   });
 });

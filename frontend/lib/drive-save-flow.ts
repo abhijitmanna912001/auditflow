@@ -55,7 +55,7 @@ export function noticeFor(result: DriveSaveResult): DriveSaveNotice {
 }
 
 export interface DriveSaveModules {
-  readonly loadGenerator: () => Promise<Pick<typeof import("./report-pdf"), "generateReportPdf" | "reportPdfFileName">>;
+  readonly loadGenerator: () => Promise<Pick<typeof import("./report-pdf"), "generateReportPdf" | "reportPdfFileNameFor">>;
   readonly loadSaver: () => Promise<Pick<typeof import("./drive-report-upload"), "getDriveReportSaver">>;
 }
 
@@ -83,7 +83,9 @@ export async function saveReportToDrive(
       // uploaded-file list takes precedence inside the generator.
       sourceDocuments: sampleCaseDocuments(report.workpaper.case_id),
     });
-    fileName = generator.reportPdfFileName(report.workpaper.case_id, report.completedAt);
+    // Named from the run itself, so an upload run (which the backend gives
+    // a CASE_<digits> ID) is named "Uploaded-documents", not after that ID.
+    fileName = generator.reportPdfFileNameFor(report.workpaper, report.completedAt);
     save = saver.getDriveReportSaver;
   } catch {
     // The report data was rejected or the code couldn't load. Nothing was sent.

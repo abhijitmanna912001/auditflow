@@ -24,7 +24,7 @@ import {
   type DriveSaveReport,
 } from "./drive-save-flow";
 import { workpaperPayloadFallback } from "./mock-workpaper";
-import { generateReportPdf, reportPdfFileName, type ReportPdfInput } from "./report-pdf";
+import { generateReportPdf, reportPdfFileNameFor, type ReportPdfInput } from "./report-pdf";
 import { toReportContent } from "./report-pdf-document";
 import { SAMPLE_CASE_IDS, sampleCaseDocuments } from "./sample-case-documents";
 import { FakeDrive, fakeSession, TINY_PDF, TOKEN, type RecordedRequest } from "./testing/fake-drive";
@@ -48,7 +48,7 @@ function setup() {
   const session = fakeSession(drive);
   const saver = createDriveReportSaver({ session, fetchImpl: drive.fetch, wait: async () => {} });
   const modules: DriveSaveModules = {
-    loadGenerator: async () => ({ generateReportPdf, reportPdfFileName }),
+    loadGenerator: async () => ({ generateReportPdf, reportPdfFileNameFor }),
     loadSaver: async () => ({ getDriveReportSaver: () => saver }),
   };
   return { drive, session, saver, modules };
@@ -243,7 +243,7 @@ describe("source documents in the saved report", () => {
           inputs.push(input);
           return generateReportPdf(input);
         },
-        reportPdfFileName,
+        reportPdfFileNameFor,
       }),
       loadSaver: async () => ({ getDriveReportSaver: () => saver }),
     };
@@ -303,6 +303,69 @@ describe("source documents in the saved report", () => {
   });
 });
 
+describe("upload runs the backend labels CASE_<digits>", () => {
+  // Modelled on a real upload run seen in manual testing: the backend runs
+  // uploads under a synthetic case ID such as CASE_922486 and returns the
+  // uploaded files and their document map. The finding is Case 14's, from
+  // the saved fixture, since these were Case 14's documents as PDFs.
+  const UPLOADED = ["BNK-1014.pdf", "INV-1014.pdf", "LED-1014.pdf", "PO-1014.pdf", "REC-1014.pdf"];
+  const uploadWorkpaper: Workpaper = {
+    ...CASE_14,
+    case_id: "CASE_922486",
+    uploaded_files: UPLOADED,
+    documents: UPLOADED.map((name) => ({ doc_id: name.replace(/\.pdf$/, ""), source_file: name })),
+  };
+
+  async function saveAndRead(workpaper: Workpaper, companyName: string | null) {
+    const { drive, modules } = setup();
+    const notice = await saveReportToDrive(report({ workpaper, companyName }), modules);
+    const [file] = [...drive.items.values()].filter((item) => item.mimeType === "application/pdf");
+    const text = extractPdfText(file.bytes!).text;
+    return { notice, file, text, lines: text.split("\n") };
+  }
+
+  it("names and labels the report as uploaded documents, not as a case", async () => {
+    const { notice, file, lines, text } = await saveAndRead(uploadWorkpaper, "Kaveri Traders");
+    const name = "AuditFlow_Report_Uploaded-documents_2026-10-25_090507.pdf";
+    expect(file.name).toBe(name);
+    expect(notice).toEqual({
+      tone: "ok",
+      text: `Saved to Google Drive as “${name}” in My Drive › AuditFlow › Kaveri Traders › 2026-10.`,
+    });
+    expect(lines).toContain("Case Not applicable (uploaded documents)");
+    expect(lines).toContain("Source Uploaded documents");
+    expect(lines.some((line) => line.startsWith("Uploaded documents · 25 October 2026, 09:05:07"))).toBe(true);
+    expect(text).not.toMatch(/922486|Sample case/);
+  });
+
+  it("keeps the company, uploaded files, document IDs and finding unchanged", async () => {
+    const { lines, text } = await saveAndRead(uploadWorkpaper, "Kaveri Traders");
+    const [finding] = CASE_14.findings!;
+    expect(lines).toContain("Company Kaveri Traders");
+    expect(lines).toContain("# File Read as");
+    UPLOADED.forEach((name, index) =>
+      expect(lines).toContain(`${index + 1} ${name} ${name.replace(/\.pdf$/, "")}`),
+    );
+    expect(lines).toContain("Finding 1 of 1: Tax calculation mismatch");
+    expect(lines).toContain("Reference AF-a14c61b6b9");
+    expect(text.replace(/\s+/g, " ")).toContain(finding.explanation);
+    expect(lines).toContain("Main document INV-1014");
+    expect(lines).toContain("Related documents INV-1014");
+    expect(lines).toContain("Confidence 97%");
+  });
+
+  it("still names and labels sample Case 14 as Case 14, with its five source files", async () => {
+    const { notice, file, lines } = await saveAndRead(CASE_14, null);
+    expect(file.name).toBe(FILE_NAME);
+    expect(notice.text).toContain(`“${FILE_NAME}”`);
+    expect(lines).toContain("Case Case 14 (CASE_14)");
+    expect(lines).toContain("Source Sample case (Case 14)");
+    ["BNK-1014.txt", "INV-1014.txt", "LED-1014.txt", "PO-1014.txt", "REC-1014.txt"].forEach((name, index) =>
+      expect(lines).toContain(`${index + 1} ${name}`),
+    );
+  });
+});
+
 describe("repeated clicks", () => {
   it("start only one save while one is running", async () => {
     let finish: (notice: DriveSaveNotice) => void = () => {};
@@ -344,7 +407,7 @@ describe("lazy loading", () => {
     const saved: DriveSaveResult = { status: "saved", fileId: "f1", fileName: "R.pdf", folderPath: ["AuditFlow"], message: "Saved." };
     vi.doMock("./report-pdf", () => {
       loaded.push("report-pdf");
-      return { generateReportPdf: async () => TINY_PDF, reportPdfFileName: () => "R.pdf" };
+      return { generateReportPdf: async () => TINY_PDF, reportPdfFileNameFor: () => "R.pdf" };
     });
     vi.doMock("./drive-report-upload", () => {
       loaded.push("drive-report-upload");

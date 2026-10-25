@@ -104,6 +104,28 @@ export function formatReportDate(date: Date): string {
   return `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}, ${time} (UTC${sign}${offsetText})`;
 }
 
+/**
+ * Whether a result came from uploaded documents. Decided by the upload
+ * metadata the backend returns for such a run (its uploaded files or its
+ * document-to-file map), not by the case ID: the backend runs uploads under
+ * a synthetic "CASE_<digits>" ID that looks like a sample case. An
+ * "UPLOADED_..." ID (the frontend's own label) also counts.
+ */
+export function isUploadedRun(workpaper: Workpaper): boolean {
+  const hasItems = (value: unknown) => Array.isArray(value) && value.length > 0;
+  return (
+    hasItems(workpaper.uploaded_files) ||
+    hasItems(workpaper.documents) ||
+    (typeof workpaper.case_id === "string" && workpaper.case_id.trim().startsWith("UPLOADED"))
+  );
+}
+
+/** The case ID a report is named after: upload runs all read "Uploaded documents". */
+export const UPLOADED_CASE_ID = "UPLOADED";
+
+export const reportCaseId = (workpaper: Workpaper) =>
+  isUploadedRun(workpaper) ? UPLOADED_CASE_ID : workpaper.case_id;
+
 export const isValidDate = (value: unknown): value is Date =>
   value instanceof Date && !Number.isNaN(value.getTime());
 
@@ -257,8 +279,8 @@ export function toReportContent(input: ReportPdfInput): ReportContent {
     );
   }
 
-  const isUpload = caseId.startsWith("UPLOADED");
-  const title = caseDisplayName(caseId);
+  const isUpload = isUploadedRun(workpaper as Workpaper);
+  const title = caseDisplayName(isUpload ? UPLOADED_CASE_ID : caseId);
   const company = typeof companyName === "string" ? singleLine(companyName) : "";
 
   return {

@@ -1,7 +1,9 @@
+import type { Workpaper } from "../types/workpaper";
 import { caseDisplayName } from "./display-labels";
 import {
   buildReportDocument,
   isValidDate,
+  reportCaseId,
   ReportPdfDataError,
   type ReportPdfInput,
 } from "./report-pdf-document";
@@ -77,4 +79,13 @@ export function reportPdfFileName(caseId: string, completedAt: Date): string {
   const date = [completedAt.getFullYear(), pad(completedAt.getMonth() + 1), pad(completedAt.getDate())].join("-");
   const time = [completedAt.getHours(), completedAt.getMinutes(), completedAt.getSeconds()].map(pad).join("");
   return `AuditFlow_Report_${caseName}_${date}_${time}.pdf`;
+}
+
+/**
+ * The file name for a completed run's report. An upload run is named
+ * "Uploaded-documents" whatever case ID the backend gave it (see
+ * isUploadedRun()); a sample case keeps its own, such as "Case-14".
+ */
+export function reportPdfFileNameFor(workpaper: Workpaper, completedAt: Date): string {
+  return reportPdfFileName(reportCaseId(workpaper), completedAt);
 }
