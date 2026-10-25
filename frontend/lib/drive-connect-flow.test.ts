@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it, vi } from "vitest";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { DriveConnectMessageView } from "../components/drive-connect-button";
+import { clearanceBelowPanel, DriveConnectMessageView } from "../components/drive-connect-button";
 import {
   connectNotice,
   DisconnectFlow,
@@ -301,5 +301,59 @@ describe("Google Drive message placement", () => {
     expect(button).toContain('connected: "Disconnect"');
     expect(button).toContain('expired: "Reconnect"');
     expect(button).toContain('aria-describedby="drive-connect-status"');
+  });
+});
+
+describe("messages and the open Access code panel", () => {
+  // Positions measured in the browser at 400px wide: the message area
+  // starts at 81px, the open panel spans 106–386px across and ends at 283px.
+  const area = { top: 81, left: 18, right: 382 };
+  const panel = { bottom: 283, left: 106, right: 386 };
+
+  it("need no room while the panel is closed", () => {
+    expect(clearanceBelowPanel(area, null)).toBe(0);
+  });
+
+  it("move below an open panel that would cover them, with a small gap", () => {
+    expect(clearanceBelowPanel(area, panel)).toBe(283 + 8 - 81);
+    expect(clearanceBelowPanel(area, { ...panel, bottom: 283.2 })).toBe(211);
+  });
+
+  it("stay put when the panel ends above them or sits beside them", () => {
+    expect(clearanceBelowPanel(area, { ...panel, bottom: 70 })).toBe(0);
+    expect(clearanceBelowPanel({ top: 81, left: 18, right: 100 }, panel)).toBe(0);
+  });
+
+  const view = (props: Partial<Parameters<typeof DriveConnectMessageView>[0]>) =>
+    renderToStaticMarkup(
+      createElement(DriveConnectMessageView, { expired: false, notice: null, onDismiss: () => {}, ...props }),
+    );
+  const spacer = '<div class="drive-connect-messages-spacer" aria-hidden="true" style="height:210px"></div>';
+
+  it("keep a passing message, with its close button, below the room made for the panel", () => {
+    const html = view({ notice: connectNotice("cancelled")!, clearance: 210 });
+    expect(html).toContain(spacer);
+    expect(html.indexOf(spacer)).toBeLessThan(html.indexOf("Google Drive wasn&#x27;t connected."));
+    expect(html).toContain('aria-label="Close this Google Drive message"');
+  });
+
+  it("keep expired access shown below the panel too", () => {
+    const html = view({ expired: true, clearance: 210 });
+    expect(html).toContain(spacer);
+    expect(html).toContain("Google Drive access expired. Reconnect to keep using Drive.");
+  });
+
+  it("take no extra room without a message or without an open panel", () => {
+    expect(view({ clearance: 210 })).not.toContain("spacer");
+    expect(view({ notice: connectNotice("cancelled")!, clearance: 0 })).not.toContain("spacer");
+  });
+
+  it("are measured against the panel by the live message area", () => {
+    const source = readFileSync(new URL("../components/drive-connect-button.tsx", import.meta.url), "utf-8");
+    const area = source.slice(source.indexOf("function DriveConnectMessageArea"), source.indexOf("interface DriveConnectMessageViewProps"));
+    expect(area).toContain("useClearOfAccessPanel(expired || notice !== null)");
+    expect(area).toContain('document.getElementById("access-code-panel")');
+    expect(area).toContain('document.querySelector(".access-code")');
+    expect(area).toContain("clearance={clearance}");
   });
 });

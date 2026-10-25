@@ -7,6 +7,7 @@ import {
   useState,
   useSyncExternalStore,
   type MouseEvent,
+  type Ref,
   type RefObject,
   type SyntheticEvent,
 } from "react";
@@ -128,25 +129,91 @@ export function DriveConnectMessages() {
 function DriveConnectMessageArea() {
   const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const notice = useSyncExternalStore(subscribeNotices, getNotice, getServerNotice);
+  const expired = state === "expired";
+  const { areaRef, clearance } = useClearOfAccessPanel(expired || notice !== null);
   return (
     <DriveConnectMessageView
-      expired={state === "expired"}
+      expired={expired}
       notice={notice}
       onDismiss={() => getDriveNotices().dismiss()}
+      areaRef={areaRef}
+      clearance={clearance}
     />
   );
+}
+
+// Space kept between the open Access code panel and the messages below it.
+const PANEL_GAP = 8;
+
+/**
+ * How far the messages must move down so they start below the Access code
+ * panel, or 0 when the panel is closed or wouldn't cover them. The panel
+ * is a popover over the top of the page; rather than be hidden under it,
+ * the messages make room for it while it is open.
+ */
+export function clearanceBelowPanel(
+  area: { readonly top: number; readonly left: number; readonly right: number },
+  panel: { readonly bottom: number; readonly left: number; readonly right: number } | null,
+  gap = PANEL_GAP,
+): number {
+  if (!panel || panel.right <= area.left || panel.left >= area.right) return 0;
+  return Math.max(0, Math.ceil(panel.bottom + gap - area.top));
+}
+
+// While messages show, keeps them clear of the Access code panel: measured
+// when the panel opens, closes or changes size, and when the window does.
+function useClearOfAccessPanel(active: boolean) {
+  const areaRef = useRef<HTMLDivElement>(null);
+  const [clearance, setClearance] = useState(0);
+  useEffect(() => {
+    const area = areaRef.current;
+    const control = document.querySelector(".access-code");
+    if (!active || !area || !control) {
+      setClearance(0);
+      return;
+    }
+    const measure = () => {
+      const panel = document.getElementById("access-code-panel");
+      // The spacer sits inside the area, so the area's own top never moves.
+      setClearance(clearanceBelowPanel(area.getBoundingClientRect(), panel?.getBoundingClientRect() ?? null));
+    };
+    measure();
+    const changes = new MutationObserver(measure);
+    changes.observe(control, { childList: true, subtree: true, characterData: true });
+    const resizes = new ResizeObserver(measure);
+    resizes.observe(area);
+    window.addEventListener("resize", measure);
+    return () => {
+      changes.disconnect();
+      resizes.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [active]);
+  return { areaRef, clearance };
 }
 
 interface DriveConnectMessageViewProps {
   readonly expired: boolean;
   readonly notice: Notice | null;
   readonly onDismiss: () => void;
+  readonly areaRef?: Ref<HTMLDivElement>;
+  /** Room to leave above the messages for the open Access code panel. */
+  readonly clearance?: number;
 }
 
-export function DriveConnectMessageView({ expired, notice, onDismiss }: DriveConnectMessageViewProps) {
+export function DriveConnectMessageView({
+  expired,
+  notice,
+  onDismiss,
+  areaRef,
+  clearance = 0,
+}: DriveConnectMessageViewProps) {
   const visible = expired || notice !== null;
   return (
-    <div className={`drive-connect-messages${visible ? " has-messages" : ""}`}>
+    <div ref={areaRef} className={`drive-connect-messages${visible ? " has-messages" : ""}`}>
+      {visible && clearance > 0 && (
+        <div className="drive-connect-messages-spacer" aria-hidden="true" style={{ height: clearance }} />
+      )}
       {/* Read out once by screen readers, and the header button's
           description. The boxes below are what everyone sees. */}
       <p id="drive-connect-status" className="sr-only" role="status" aria-live="polite">
