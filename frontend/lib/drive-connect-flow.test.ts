@@ -146,11 +146,17 @@ describe("header button source", () => {
     expect(source).not.toContain("access was removed.");
   });
 
-  it("uses a labelled modal dialog with Cancel and Disconnect Google Drive", () => {
+  it("uses a labelled modal dialog with Cancel and Disconnect", () => {
     expect(source).toContain("showModal()");
     expect(source).toContain('aria-labelledby="drive-disconnect-title"');
     expect(source).toContain('aria-describedby="drive-disconnect-body"');
+    expect(source).toContain('<h2 id="drive-disconnect-title">Disconnect Google Drive?</h2>');
     expect(source).toMatch(/>\s*Cancel\s*</);
-    expect(source).toContain('"Disconnect Google Drive"');
+  });
+
+  it("labels the confirm button Disconnect, named Disconnect Google Drive for assistive tech", () => {
+    expect(source).toContain('{busy ? "Disconnecting…" : "Disconnect"}');
+    expect(source).toContain('aria-label={busy ? undefined : "Disconnect Google Drive"}');
+    expect(source).not.toContain('"Disconnecting…" : "Disconnect Google Drive"');
   });
 });

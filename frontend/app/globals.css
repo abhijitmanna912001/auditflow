@@ -1305,7 +1305,7 @@ td small {
 }
 .drive-disconnect-actions {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
   margin-top: 6px;
 }
@@ -1319,11 +1319,6 @@ td small {
 .drive-disconnect-actions .access-code-btn-outline:disabled {
   opacity: 0.5;
   cursor: default;
-}
-@media (max-width: 620px) {
-  .drive-disconnect-actions {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Send to Zoho Desk */

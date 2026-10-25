@@ -209,8 +209,9 @@ function DisconnectDialog({ phase, onCancel, onConfirm, returnFocusTo }: Disconn
             className="access-code-btn access-code-btn-solid"
             onClick={onConfirm}
             disabled={busy}
+            aria-label={busy ? undefined : "Disconnect Google Drive"}
           >
-            {busy ? "Disconnecting…" : "Disconnect Google Drive"}
+            {busy ? "Disconnecting…" : "Disconnect"}
           </button>
         </div>
       </div>
