@@ -21,7 +21,12 @@ export interface ReportPdfInput {
   readonly workpaper: Workpaper;
   /** When the run completed, in the browser's local time zone. */
   readonly completedAt: Date;
-  /** Optional. A missing or blank name prints as "Not provided". */
+  /**
+   * The app's Company name field (`company` in
+   * components/audit-flow-app.tsx, shown for upload runs), passed as typed.
+   * Never inferred from the documents. A missing or blank name prints as
+   * NO_COMPANY_NAME.
+   */
   readonly companyName?: string | null;
   /**
    * Optional: the file names of every source document in the run, for a
@@ -42,6 +47,7 @@ export class ReportPdfDataError extends Error {
 }
 
 export const CONFIDENCE_NOTE = "Confidence is for reference.";
+export const NO_COMPANY_NAME = "No company named";
 
 export interface ReportDocument {
   /** File name for uploaded documents, otherwise the document ID. */
@@ -422,7 +428,7 @@ export function layoutReport(content: ReportContent): PdfDocumentDefinition {
       { text: "Document review report", style: "title" },
       { text: `${content.title} · ${content.reportDate}`, style: "subtitle" },
       factsTable([
-        ["Company", content.companyName ?? "Not provided"],
+        ["Company", content.companyName ?? NO_COMPANY_NAME],
         ["Report date", content.reportDate],
         ["Case", caseText],
         ["Source", content.source],
@@ -489,7 +495,19 @@ export function layoutReport(content: ReportContent): PdfDocumentDefinition {
       note: { fontSize: 9, italics: true, color: COLOR.muted, margin: [0, 2, 0, 6] },
       footer: { fontSize: 8, color: COLOR.muted },
     },
-    defaultStyle: { font: "Roboto", fontSize: 10, lineHeight: 1.25, color: COLOR.ink },
+    defaultStyle: {
+      font: "Roboto",
+      fontSize: 10,
+      lineHeight: 1.25,
+      color: COLOR.ink,
+      // No ligatures. With them, "fi" and "ffi" are drawn as one glyph whose
+      // text is only a multi-character ToUnicode entry, and extractors that
+      // read one character per glyph turn "finding" into "fnding". Must be
+      // an object with false values: fontkit (via pdfkit) removes a feature
+      // only for `false` in an object; an array like ["-liga"] can only add.
+      // A new object per report, as fontkit adds its defaults to it.
+      fontFeatures: { liga: false, clig: false },
+    },
   };
 }
 
