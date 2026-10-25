@@ -11,6 +11,7 @@
 import type { Workpaper } from "../types/workpaper";
 import type { DriveSaveResult } from "./drive-report-upload";
 import type { DriveState } from "./google-drive";
+import { sampleCaseDocuments } from "./sample-case-documents";
 
 /** The completed run the report is made from. */
 export interface DriveSaveReport {
@@ -77,6 +78,10 @@ export async function saveReportToDrive(
       workpaper: report.workpaper,
       completedAt: report.completedAt,
       companyName: report.companyName,
+      // A sample case's full file list, so the report names every source
+      // document and not only those its findings cite. An upload run's own
+      // uploaded-file list takes precedence inside the generator.
+      sourceDocuments: sampleCaseDocuments(report.workpaper.case_id),
     });
     fileName = generator.reportPdfFileName(report.workpaper.case_id, report.completedAt);
     save = saver.getDriveReportSaver;

@@ -24,8 +24,11 @@ import {
   type DriveSaveReport,
 } from "./drive-save-flow";
 import { workpaperPayloadFallback } from "./mock-workpaper";
-import { generateReportPdf, reportPdfFileName } from "./report-pdf";
+import { generateReportPdf, reportPdfFileName, type ReportPdfInput } from "./report-pdf";
+import { toReportContent } from "./report-pdf-document";
+import { SAMPLE_CASE_IDS, sampleCaseDocuments } from "./sample-case-documents";
 import { FakeDrive, fakeSession, TINY_PDF, TOKEN, type RecordedRequest } from "./testing/fake-drive";
+import { extractPdfText } from "./testing/pdf-text";
 
 const CASE_14: Workpaper = JSON.parse(
   readFileSync(new URL("./fixtures/case-14-workpaper.json", import.meta.url), "utf8"),
@@ -138,7 +141,12 @@ describe("saving the completed report", () => {
   it("saves the same bytes the generator makes, under the app's company name", async () => {
     const { drive, modules } = setup();
     await saveReportToDrive(report({ companyName: "Kaveri Traders" }), modules);
-    const expected = await generateReportPdf({ workpaper: CASE_14, completedAt: COMPLETED_AT, companyName: "Kaveri Traders" });
+    const expected = await generateReportPdf({
+      workpaper: CASE_14,
+      completedAt: COMPLETED_AT,
+      companyName: "Kaveri Traders",
+      sourceDocuments: sampleCaseDocuments("CASE_14"),
+    });
     const month = drive.folderAt("AuditFlow", "Kaveri Traders", "2026-10")!;
     const [file] = drive.children(month.id);
     // Each PDF gets its own creation time and random document /ID, so
@@ -220,6 +228,78 @@ describe("saving the completed report", () => {
     [{ status: "failed", reason: "permission", message: "No." }, "problem"],
   ] as const)("maps a %j result to a %s message", (result, tone) => {
     expect(noticeFor(result as DriveSaveResult).tone).toBe(tone);
+  });
+});
+
+describe("source documents in the saved report", () => {
+  const CASE_14_FILES = ["BNK-1014.txt", "INV-1014.txt", "LED-1014.txt", "PO-1014.txt", "REC-1014.txt"];
+
+  // The real generator, recording what it was asked to make.
+  function recordingModules(saver: ReturnType<typeof createDriveReportSaver>) {
+    const inputs: ReportPdfInput[] = [];
+    const modules: DriveSaveModules = {
+      loadGenerator: async () => ({
+        generateReportPdf: (input: ReportPdfInput) => {
+          inputs.push(input);
+          return generateReportPdf(input);
+        },
+        reportPdfFileName,
+      }),
+      loadSaver: async () => ({ getDriveReportSaver: () => saver }),
+    };
+    return { inputs, modules };
+  }
+
+  it("lists all five Case 14 source files in the PDF saved to Drive, not just INV-1014", async () => {
+    const { drive, saver } = setup();
+    const { inputs, modules } = recordingModules(saver);
+    expect((await saveReportToDrive(report(), modules)).tone).toBe("ok");
+    expect(inputs[0].sourceDocuments).toEqual(CASE_14_FILES);
+
+    // Read the text back out of the bytes Drive received.
+    const [file] = [...drive.items.values()].filter((item) => item.mimeType === "application/pdf");
+    const lines = extractPdfText(file.bytes!).text.split("\n");
+    CASE_14_FILES.forEach((name, index) => expect(lines).toContain(`${index + 1} ${name}`));
+    expect(lines).not.toContain("6 INV-1014");
+    // The finding still cites only INV-1014.
+    expect(lines).toContain("Related documents INV-1014");
+  });
+
+  it.each(SAMPLE_CASE_IDS)("passes %s's complete source file list to the generator", async (caseId) => {
+    const { saver } = setup();
+    const { inputs, modules } = recordingModules(saver);
+    // A clean result for this case: it cites only its first document.
+    const files = sampleCaseDocuments(caseId)!;
+    const firstId = files[0].replace(/\.txt$/, "");
+    const workpaper: Workpaper = {
+      case_id: caseId,
+      rows: [{ ...CASE_14.rows[0], document: firstId, finding: "Clean", evidence: [firstId], action: "auto_clear" }],
+      summary: { ...CASE_14.summary, auto_cleared: 1, human_review: 0, critical: 0 },
+      findings: [],
+    };
+    expect((await saveReportToDrive(report({ workpaper }), modules)).tone).toBe("ok");
+    expect(inputs[0].sourceDocuments).toEqual(files);
+    expect(toReportContent(inputs[0]).documents.map((document) => document.name)).toEqual(files);
+  });
+
+  it("keeps an upload run's own uploaded files and document mapping", async () => {
+    const { saver } = setup();
+    const { inputs, modules } = recordingModules(saver);
+    const workpaper: Workpaper = {
+      ...CASE_14,
+      case_id: "UPLOADED_1761380000000",
+      uploaded_files: ["Invoice scan.pdf", "Bank statement.pdf"],
+      documents: [
+        { doc_id: "INV-1014", source_file: "Invoice scan.pdf" },
+        { doc_id: "BNK-1014", source_file: "Bank statement.pdf" },
+      ],
+    };
+    expect((await saveReportToDrive(report({ workpaper, companyName: "Kaveri Traders" }), modules)).tone).toBe("ok");
+    expect(inputs[0].sourceDocuments).toBeUndefined();
+    expect(toReportContent(inputs[0]).documents).toEqual([
+      { name: "Invoice scan.pdf", documentIds: ["INV-1014"] },
+      { name: "Bank statement.pdf", documentIds: ["BNK-1014"] },
+    ]);
   });
 });
 
