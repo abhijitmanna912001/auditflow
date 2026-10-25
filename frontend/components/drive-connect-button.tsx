@@ -14,6 +14,7 @@ import {
   connectNotice,
   disconnectNotice,
   DisconnectFlow,
+  getDriveNotices,
   type DisconnectPhase,
   type Notice,
 } from "../lib/drive-connect-flow";
@@ -25,7 +26,7 @@ import {
 } from "../lib/google-drive";
 
 const GOOGLE_CONNECTIONS_URL = "https://myaccount.google.com/connections";
-const NOTICE_MS = 8000;
+export const DRIVE_EXPIRED_TEXT = "Google Drive access expired. Reconnect to keep using Drive.";
 
 // The verb shown before "Google Drive"; narrow screens drop "Google".
 const buttonVerb: Record<Exclude<DriveState, "connecting">, string> = {
@@ -38,6 +39,9 @@ const subscribe = (listener: () => void) => getDriveSession().subscribe(listener
 const getSnapshot = () => getDriveSession().getState();
 const getServerSnapshot = (): DriveState => "disconnected";
 const getServerPhase = (): DisconnectPhase => "closed";
+const subscribeNotices = (listener: () => void) => getDriveNotices().subscribe(listener);
+const getNotice = () => getDriveNotices().get();
+const getServerNotice = (): Notice | null => null;
 
 // One button that connects, disconnects or reconnects Google Drive for this
 // tab. Hidden unless the three NEXT_PUBLIC_GOOGLE_* values are set.
@@ -48,7 +52,7 @@ export function DriveConnectButton() {
 
 function DriveConnectControl() {
   const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const [notice, setNotice] = useState<Notice | null>(null);
+  const notices = getDriveNotices();
   const [flow] = useState(() => new DisconnectFlow(() => getDriveSession().disconnect()));
   const subscribeFlow = useCallback((listener: () => void) => flow.subscribe(listener), [flow]);
   const phase = useSyncExternalStore(subscribeFlow, () => flow.getPhase(), getServerPhase);
@@ -60,33 +64,26 @@ function DriveConnectControl() {
     void loadGoogleOAuth2().catch(() => {});
   }, []);
 
-  // A notice is a passing message about a problem; the button label carries
-  // the state.
-  useEffect(() => {
-    if (!notice) return;
-    const timer = window.setTimeout(() => setNotice(null), NOTICE_MS);
-    return () => window.clearTimeout(timer);
-  }, [notice]);
-
+  // A notice is a passing message about a problem, shown below the page
+  // header (DriveConnectMessages); the button label carries the state.
   const connect = async () => {
-    setNotice(null);
-    setNotice(connectNotice(await getDriveSession().connect()));
+    notices.dismiss();
+    notices.show(connectNotice(await getDriveSession().connect()));
   };
 
   const confirmDisconnect = async () => {
     const outcome = await flow.confirm();
-    if (outcome) setNotice(disconnectNotice(outcome));
+    if (outcome) notices.show(disconnectNotice(outcome));
   };
 
   const onClick = () => {
     if (state === "connected") {
-      setNotice(null);
+      notices.dismiss();
       flow.request();
     } else {
       void connect();
     }
   };
-  const expired = state === "expired";
 
   return (
     <div className="drive-connect">
@@ -107,27 +104,82 @@ function DriveConnectControl() {
           </>
         )}
       </button>
-      <p
-        id="drive-connect-status"
-        className={`drive-connect-status${notice?.problem || expired ? " problem" : ""}`}
-        role="status"
-      >
-        {expired ? "Google Drive access expired. Reconnect to keep using Drive." : notice?.text}
-        {!expired && notice?.showGoogleLink && (
-          <>
-            {" "}
-            <a href={GOOGLE_CONNECTIONS_URL} target="_blank" rel="noopener noreferrer">
-              Check your Google Account
-            </a>
-          </>
-        )}
-      </p>
       <DisconnectDialog
         phase={phase}
         onCancel={() => flow.cancel()}
         onConfirm={() => void confirmDisconnect()}
         returnFocusTo={toggleRef}
       />
+    </div>
+  );
+}
+
+// The message area below the page header for Google Drive: expired access,
+// which stays until the user reconnects or disconnects, and the passing
+// message from the last connect or disconnect attempt, which closes by
+// itself after a few seconds or with its close button. In the page flow, so
+// it never sits on the header buttons, the access code panel or the header's
+// divider. Hidden unless Drive is set up.
+export function DriveConnectMessages() {
+  if (!isDriveConfigured()) return null;
+  return <DriveConnectMessageArea />;
+}
+
+function DriveConnectMessageArea() {
+  const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const notice = useSyncExternalStore(subscribeNotices, getNotice, getServerNotice);
+  return (
+    <DriveConnectMessageView
+      expired={state === "expired"}
+      notice={notice}
+      onDismiss={() => getDriveNotices().dismiss()}
+    />
+  );
+}
+
+interface DriveConnectMessageViewProps {
+  readonly expired: boolean;
+  readonly notice: Notice | null;
+  readonly onDismiss: () => void;
+}
+
+export function DriveConnectMessageView({ expired, notice, onDismiss }: DriveConnectMessageViewProps) {
+  const visible = expired || notice !== null;
+  return (
+    <div className={`drive-connect-messages${visible ? " has-messages" : ""}`}>
+      {/* Read out once by screen readers, and the header button's
+          description. The boxes below are what everyone sees. */}
+      <p id="drive-connect-status" className="sr-only" role="status" aria-live="polite">
+        {[expired ? DRIVE_EXPIRED_TEXT : null, notice?.text].filter(Boolean).join(" ")}
+      </p>
+      {expired && (
+        <div className="status-message problem">
+          <p>{DRIVE_EXPIRED_TEXT}</p>
+        </div>
+      )}
+      {notice && (
+        <div className={`status-message dismissible ${notice.problem ? "problem" : "ok"}`}>
+          <p>
+            {notice.text}
+            {notice.showGoogleLink && (
+              <>
+                {" "}
+                <a href={GOOGLE_CONNECTIONS_URL} target="_blank" rel="noopener noreferrer">
+                  Check your Google Account
+                </a>
+              </>
+            )}
+          </p>
+          <button
+            type="button"
+            className="status-message-close"
+            aria-label="Close this Google Drive message"
+            onClick={onDismiss}
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

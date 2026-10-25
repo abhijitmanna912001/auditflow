@@ -1,6 +1,17 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it, vi } from "vitest";
-import { connectNotice, DisconnectFlow, disconnectNotice } from "./drive-connect-flow";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { DriveConnectMessageView } from "../components/drive-connect-button";
+import {
+  connectNotice,
+  DisconnectFlow,
+  disconnectNotice,
+  getDriveNotices,
+  NOTICE_MS,
+  NoticeBoard,
+  type Notice,
+} from "./drive-connect-flow";
 import type { DisconnectOutcome } from "./google-drive";
 
 // A disconnect that only finishes when the test says so.
@@ -158,5 +169,137 @@ describe("header button source", () => {
     expect(source).toContain('{busy ? "Disconnecting…" : "Disconnect"}');
     expect(source).toContain('aria-label={busy ? undefined : "Disconnect Google Drive"}');
     expect(source).not.toContain('"Disconnecting…" : "Disconnect Google Drive"');
+  });
+});
+
+describe("passing connect and disconnect messages", () => {
+  const notice: Notice = { text: "Google Drive wasn't connected.", problem: true, showGoogleLink: false };
+
+  it("close by themselves after about six seconds", () => {
+    vi.useFakeTimers();
+    try {
+      expect(NOTICE_MS).toBe(6000);
+      const board = new NoticeBoard();
+      const changes = vi.fn();
+      board.subscribe(changes);
+      board.show(notice);
+      expect(board.get()).toBe(notice);
+      vi.advanceTimersByTime(5999);
+      expect(board.get()).toBe(notice);
+      vi.advanceTimersByTime(1);
+      expect(board.get()).toBeNull();
+      expect(changes).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("close at once with the close button, and don't come back", () => {
+    vi.useFakeTimers();
+    try {
+      const board = new NoticeBoard();
+      board.show(notice);
+      board.dismiss();
+      expect(board.get()).toBeNull();
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("restart the timer when a newer message replaces an older one", () => {
+    vi.useFakeTimers();
+    try {
+      const board = new NoticeBoard();
+      board.show(notice);
+      vi.advanceTimersByTime(4000);
+      const newer = connectNotice("popup_blocked")!;
+      board.show(newer);
+      vi.advanceTimersByTime(4000);
+      expect(board.get()).toBe(newer);
+      vi.advanceTimersByTime(2000);
+      expect(board.get()).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("is one board for the whole tab", () => {
+    expect(getDriveNotices()).toBe(getDriveNotices());
+  });
+});
+
+describe("Google Drive message area", () => {
+  const view = (props: Partial<Parameters<typeof DriveConnectMessageView>[0]>) =>
+    renderToStaticMarkup(
+      createElement(DriveConnectMessageView, { expired: false, notice: null, onDismiss: () => {}, ...props }),
+    );
+  const notice = connectNotice("scope_denied")!;
+
+  it("shows a passing message with a labelled close button", () => {
+    const html = view({ notice });
+    expect(html).toContain('<div class="status-message dismissible problem"><p>Google Drive access wasn&#x27;t allowed, so AuditFlow can&#x27;t use Drive.</p>');
+    expect(html).toContain('<button type="button" class="status-message-close" aria-label="Close this Google Drive message"><span aria-hidden="true">×</span></button>');
+  });
+
+  it("keeps expired access on screen, with no close button, until it is resolved", () => {
+    vi.useFakeTimers();
+    try {
+      // However long passes, expired access is not a passing notice.
+      const board = new NoticeBoard();
+      board.show(notice);
+      vi.advanceTimersByTime(60_000);
+      const html = view({ expired: true, notice: board.get() });
+      expect(html).toContain('<div class="status-message problem"><p>Google Drive access expired. Reconnect to keep using Drive.</p></div>');
+      expect(html).not.toContain("status-message-close");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("shows expired access and a passing message separately", () => {
+    const html = view({ expired: true, notice });
+    expect(html.indexOf("access expired")).toBeLessThan(html.indexOf("access wasn&#x27;t allowed"));
+    expect(html.match(/status-message-close/g)).toHaveLength(1);
+  });
+
+  it("announces through one live region that also describes the header button", () => {
+    const html = view({ notice });
+    expect(html.match(/role="status"/g)).toHaveLength(1);
+    expect(html).toContain('<p id="drive-connect-status" class="sr-only" role="status" aria-live="polite">');
+  });
+
+  it("takes no room when there is nothing to show", () => {
+    expect(view({})).toBe(
+      '<div class="drive-connect-messages"><p id="drive-connect-status" class="sr-only" role="status" aria-live="polite"></p></div>',
+    );
+  });
+
+  it("links to the Google Account when Google didn't confirm removal", () => {
+    expect(view({ notice: disconnectNotice("unconfirmed")! })).toContain('href="https://myaccount.google.com/connections"');
+  });
+});
+
+describe("Google Drive message placement", () => {
+  // Line endings normalised: a Windows checkout may use CRLF.
+  const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf-8").replace(/\r\n/g, "\n");
+  const app = read("../components/audit-flow-app.tsx");
+  const button = read("../components/drive-connect-button.tsx");
+  const css = read("../app/globals.css");
+
+  it("sits in the page flow right below the header, not under the header button", () => {
+    expect(app).toContain("      </header>\n      <DriveConnectMessages />");
+    const control = button.slice(button.indexOf("function DriveConnectControl"), button.indexOf("export function DriveConnectMessages"));
+    expect(control).not.toContain('id="drive-connect-status"');
+    expect(css).not.toContain(".drive-connect-status");
+    const area = css.slice(css.indexOf(".drive-connect-messages {"), css.indexOf("}", css.indexOf(".drive-connect-messages {")));
+    expect(area).not.toContain("position: absolute");
+  });
+
+  it("keeps the header button's labels and its description link", () => {
+    expect(button).toContain('disconnected: "Connect"');
+    expect(button).toContain('connected: "Disconnect"');
+    expect(button).toContain('expired: "Reconnect"');
+    expect(button).toContain('aria-describedby="drive-connect-status"');
   });
 });

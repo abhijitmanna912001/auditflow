@@ -41,7 +41,7 @@ import {
   type RunState,
 } from "../lib/run-progress";
 import { AccessCodeControl } from "./access-code-control";
-import { DriveConnectButton } from "./drive-connect-button";
+import { DriveConnectButton, DriveConnectMessages } from "./drive-connect-button";
 import {
   DRIVE_SAVE_HINT,
   DRIVE_SAVE_HINT_ID,
@@ -618,6 +618,7 @@ export function AuditFlowApp() {
           <AccessCodeControl onChange={ignoreAccessCodeChange} />
         </div>
       </header>
+      <DriveConnectMessages />
 
       <section className="hero" id="top">
         <div>

@@ -1250,32 +1250,6 @@ td small {
   opacity: 0.6;
   cursor: default;
 }
-.drive-connect-status {
-  position: absolute;
-  right: 0;
-  top: 40px;
-  z-index: 20;
-  width: 260px;
-  max-width: calc(100vw - 36px);
-  margin: 0;
-  padding: 10px 12px;
-  background: white;
-  border: 1px solid #cad5cf;
-  border-radius: 10px;
-  box-shadow: 0 10px 28px #14323422;
-  font-size: 12px;
-  color: #398064;
-}
-.drive-connect-status:empty {
-  display: none;
-}
-.drive-connect-status.problem {
-  color: #a33b2f;
-}
-.drive-connect-status a {
-  color: inherit;
-  font-weight: 700;
-}
 @media (max-width: 620px) {
   .drive-connect {
     margin-right: 8px;
@@ -1283,9 +1257,53 @@ td small {
   .drive-connect-wide {
     display: none;
   }
-  .drive-connect-status {
-    right: -60px;
-  }
+}
+
+/* Google Drive messages below the page header: in the page flow, so they
+   never overlap the header buttons, the access code panel or the divider. */
+.drive-connect-messages {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.drive-connect-messages.has-messages {
+  margin-top: 14px;
+}
+.status-message.dismissible {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.status-message p {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.status-message a {
+  color: inherit;
+  font-weight: 700;
+}
+.status-message-close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin: -6px -8px -6px 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.status-message-close:hover {
+  background: #0000000d;
+}
+.status-message-close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
 }
 
 /* Disconnect Google Drive confirmation */

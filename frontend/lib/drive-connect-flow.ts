@@ -43,6 +43,66 @@ export function disconnectNotice(outcome: DisconnectOutcome): Notice | null {
   }
 }
 
+// How long a passing connect or disconnect message stays on screen.
+export const NOTICE_MS = 6000;
+
+// The passing message from the last connect or disconnect attempt, shown in
+// the message area below the page header. It goes away by itself after
+// NOTICE_MS, when the user closes it, or when a newer one replaces it.
+// Lasting states, such as expired access, are not notices: they come from
+// the Drive session and stay until resolved.
+export class NoticeBoard {
+  private notice: Notice | null = null;
+  private timer: ReturnType<typeof setTimeout> | null = null;
+  private readonly listeners = new Set<() => void>();
+
+  constructor(private readonly showMs = NOTICE_MS) {}
+
+  get(): Notice | null {
+    return this.notice;
+  }
+
+  subscribe(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
+  // Shows a notice (replacing any other), or clears it when null.
+  show(notice: Notice | null): void {
+    this.clearTimer();
+    if (notice) this.timer = setTimeout(() => this.dismiss(), this.showMs);
+    if (this.notice === notice) return;
+    this.notice = notice;
+    this.emit();
+  }
+
+  dismiss(): void {
+    this.show(null);
+  }
+
+  private clearTimer(): void {
+    if (this.timer !== null) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+  }
+
+  private emit(): void {
+    this.listeners.forEach((listener) => listener());
+  }
+}
+
+let driveNotices: NoticeBoard | null = null;
+
+// The one notice board for this tab, shared by the header button and the
+// message area.
+export function getDriveNotices(): NoticeBoard {
+  driveNotices ??= new NoticeBoard();
+  return driveNotices;
+}
+
 export type DisconnectPhase = "closed" | "confirming" | "disconnecting";
 
 // Disconnecting asks first, in AuditFlow's own dialog. Cancel changes
