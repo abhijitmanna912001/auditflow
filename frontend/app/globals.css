@@ -715,18 +715,38 @@ td small {
   color: #af4d45;
   background: #fbe3df;
 }
-.report-action {
-  display: grid;
-  justify-items: end;
-  gap: 4px;
+/* Status messages (Drive save outcomes, Google Drive connection notices):
+   left-aligned, full width, wrapping long file names and folder paths. */
+.status-message {
+  margin: 0;
+  padding: 9px 12px;
+  border: 1px solid #d7ded7;
+  border-radius: 8px;
+  background: #f4f6f3;
+  color: #3b5b5d;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
-.report-action small {
-  color: #778788;
-  font-size: 10px;
+.status-message.ok {
+  border-color: #b9d7ca;
+  background: #eef7f1;
+  color: #2f6f55;
 }
-.drive-save-action p {
-  max-width: 360px;
-  text-align: right;
+.status-message.warning {
+  border-color: #ecd7ad;
+  background: #fdf6e8;
+  color: #7a5016;
+}
+.status-message.problem {
+  border-color: #efc8c1;
+  background: #fbefed;
+  color: #a33b2f;
+}
+.drive-save-status {
+  min-width: 0;
 }
 .secondary-button {
   height: 34px;
@@ -858,12 +878,6 @@ td small {
   .empty-detail {
     margin-top: 24px;
     margin-bottom: 12px;
-  }
-  .report-action {
-    justify-items: start;
-  }
-  .drive-save-action p {
-    text-align: left;
   }
 }
 @media print {

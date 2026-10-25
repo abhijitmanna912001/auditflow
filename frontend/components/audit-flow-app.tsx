@@ -42,7 +42,15 @@ import {
 } from "../lib/run-progress";
 import { AccessCodeControl } from "./access-code-control";
 import { DriveConnectButton } from "./drive-connect-button";
-import { DriveSaveButton } from "./drive-save-button";
+import {
+  DRIVE_SAVE_HINT,
+  DRIVE_SAVE_HINT_ID,
+  DriveSaveAction,
+  DriveSaveStatus,
+  showsDriveSaveAction,
+  showsDriveSaveStatus,
+  useDriveSave,
+} from "./drive-save-button";
 import { ResultsActions, SAVE_PDF_HINT_ID } from "./results-actions";
 import {
   DriveFilePicker,
@@ -503,6 +511,19 @@ export function AuditFlowApp() {
   };
 
   const canSend = ranOnUpload && backendLoaded && uploadSnapshot !== null;
+  // Save to Google Drive for the completed run; a new run starts afresh.
+  const driveSave = useDriveSave(
+    isComplete && backendLoaded && workpaper && completedRun
+      ? {
+          workpaper,
+          completedAt: completedRun.completedAt,
+          // The Company name field only exists for upload runs; a sample
+          // case has no company.
+          companyName: ranOnUpload ? company : null,
+        }
+      : null,
+    completedRun?.completedAt.getTime() ?? "no-run",
+  );
   const allFindings = useMemo(
     () => workpaper?.findings ?? [],
     [workpaper],
@@ -809,20 +830,9 @@ export function AuditFlowApp() {
               ) : null
             }
             driveSave={
-              <DriveSaveButton
-                key={completedRun?.completedAt.getTime() ?? "no-run"}
-                report={
-                  isComplete && backendLoaded && workpaper && completedRun
-                    ? {
-                        workpaper,
-                        completedAt: completedRun.completedAt,
-                        // The Company name field only exists for upload
-                        // runs; a sample case has no company.
-                        companyName: ranOnUpload ? company : null,
-                      }
-                    : null
-                }
-              />
+              showsDriveSaveAction(driveSave) ? (
+                <DriveSaveAction control={driveSave} />
+              ) : null
             }
             sendAll={
               backendLoaded ? (
@@ -836,10 +846,24 @@ export function AuditFlowApp() {
               ) : null
             }
             caption={
-              backendLoaded ? (
-                <span id={SAVE_PDF_HINT_ID}>
-                  {"Save PDF report opens your browser's print window. Choose Save as PDF."}
-                </span>
+              backendLoaded || showsDriveSaveAction(driveSave) ? (
+                <>
+                  {backendLoaded && (
+                    <span id={SAVE_PDF_HINT_ID}>
+                      {"Save PDF report opens your browser's print window. Choose Save as PDF."}
+                    </span>
+                  )}
+                  {backendLoaded && showsDriveSaveAction(driveSave) && " "}
+                  {/* Only while the Drive button shows. */}
+                  {showsDriveSaveAction(driveSave) && (
+                    <span id={DRIVE_SAVE_HINT_ID}>{DRIVE_SAVE_HINT}</span>
+                  )}
+                </>
+              ) : null
+            }
+            status={
+              showsDriveSaveStatus(driveSave) ? (
+                <DriveSaveStatus control={driveSave} />
               ) : null
             }
           />

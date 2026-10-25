@@ -77,6 +77,13 @@ describe("results action row styles", () => {
     expect(buttons).toContain("max-width: 100%;");
   });
 
+  it("left-aligns status messages and wraps long file names and paths", () => {
+    const message = rule(".status-message");
+    expect(message).toContain("text-align: left;");
+    expect(message).toContain("overflow-wrap: anywhere;");
+    for (const tone of ["ok", "warning", "problem"]) expect(rule(`.status-message.${tone}`)).toContain("color:");
+  });
+
   it("left-aligns the row and lets buttons share the width on narrow screens", () => {
     const narrow = css.indexOf("@media (max-width: 620px)", css.indexOf(".results-actions-hint {"));
     expect(narrow).toBeGreaterThan(0);
@@ -97,7 +104,19 @@ describe("results header source", () => {
     expect(block).toContain("onClick={saveReport}");
     expect(block).toContain("onSend={() => void sendFindings(pendingFindings)}");
     expect(block).toContain("canSend={canSend}");
-    expect(block).toContain("isComplete && backendLoaded && workpaper && completedRun");
+    expect(block).toContain("showsDriveSaveAction(driveSave)");
+    // Save to Google Drive's report: only a completed run with backend results.
+    const hook = app.slice(app.indexOf("const driveSave = useDriveSave("), app.indexOf("<ResultsActions"));
+    expect(hook).toContain("isComplete && backendLoaded && workpaper && completedRun");
+  });
+
+  it("shows the Drive hint only while the Drive button shows, and one message area below the row", () => {
+    const start = app.indexOf("<ResultsActions");
+    // Up to the row's own closing "/>" (indented under <ResultsActions).
+    const block = app.slice(start, app.indexOf("\n          />", start));
+    expect(block).toMatch(/\{showsDriveSaveAction\(driveSave\) && \(\s*<span id=\{DRIVE_SAVE_HINT_ID\}>\{DRIVE_SAVE_HINT\}<\/span>/);
+    expect(block).toContain("<DriveSaveStatus control={driveSave} />");
+    expect(app.match(/<DriveSaveStatus /g)).toHaveLength(1);
   });
 
   it("keeps the resolver badge and results source out of the action row", () => {

@@ -10,7 +10,16 @@ vi.mock("./api-client", () => ({
   friendlyApiError: vi.fn(async () => null),
 }));
 
-import { DriveSaveButton, DriveSaveView } from "../components/drive-save-button";
+import {
+  DRIVE_SAVE_HINT,
+  DRIVE_SAVE_HINT_ID,
+  DriveSaveAction,
+  DriveSaveStatus,
+  showsDriveSaveAction,
+  showsDriveSaveStatus,
+  useDriveSave,
+  type DriveSaveControl,
+} from "../components/drive-save-button";
 import type { Workpaper } from "../types/workpaper";
 import { apiFetch } from "./api-client";
 import { createDriveReportSaver, type DriveSaveResult } from "./drive-report-upload";
@@ -80,48 +89,79 @@ describe("when the Save to Google Drive action shows", () => {
   });
 
   it("renders nothing here, where the Drive variables aren't set and Drive isn't connected", () => {
-    expect(renderToStaticMarkup(createElement(DriveSaveButton, { report: report() }))).toBe("");
-    expect(renderToStaticMarkup(createElement(DriveSaveButton, { report: null }))).toBe("");
+    // The real hook, rendered on the server: no Drive set-up, not connected.
+    const probe = (withReport: boolean) =>
+      renderToStaticMarkup(
+        createElement(function Probe() {
+          const control = useDriveSave(withReport ? report() : null, 1);
+          return createElement("div", null, createElement(DriveSaveAction, { control }), createElement(DriveSaveStatus, { control }));
+        }),
+      );
+    expect(probe(true)).toBe("<div></div>");
+    expect(probe(false)).toBe("<div></div>");
   });
 });
 
-describe("the button and its messages", () => {
-  const view = (props: Partial<Parameters<typeof DriveSaveView>[0]>) =>
-    renderToStaticMarkup(
-      createElement(DriveSaveView, { visible: true, saving: false, notice: null, onSave: () => {}, ...props }),
-    );
+describe("the button and its message area", () => {
+  const control = (extra: Partial<DriveSaveControl> = {}): DriveSaveControl => ({
+    visible: true,
+    saving: false,
+    notice: null,
+    save: () => {},
+    ...extra,
+  });
+  const action = (extra: Partial<DriveSaveControl> = {}) =>
+    renderToStaticMarkup(createElement(DriveSaveAction, { control: control(extra) }));
+  const status = (extra: Partial<DriveSaveControl> = {}) =>
+    renderToStaticMarkup(createElement(DriveSaveStatus, { control: control(extra) }));
 
   it("renders nothing when hidden and there is nothing to report", () => {
-    expect(view({ visible: false })).toBe("");
+    expect(action({ visible: false })).toBe("");
+    expect(status({ visible: false })).toBe("");
   });
 
-  it("is a separate, enabled Save to Google Drive button", () => {
-    const html = view({});
+  it("is a separate, enabled Save to Google Drive button described by its hint", () => {
+    const html = action();
     expect(html).toContain("Save to Google Drive");
     expect(html).not.toContain("Save PDF report");
     expect(html).not.toMatch(/disabled/);
+    expect(html).toContain(`aria-describedby="${DRIVE_SAVE_HINT_ID}"`);
+    expect(DRIVE_SAVE_HINT).toBe("Save to Google Drive saves the PDF in the AuditFlow folder in your Drive.");
   });
 
-  it("is disabled and says so while saving", () => {
-    const html = view({ saving: true });
+  it("is disabled and busy while saving, and the message area says it is saving", () => {
+    const html = action({ saving: true });
     expect(html).toMatch(/<button[^>]*disabled=""/);
     expect(html).toContain('aria-busy="true"');
     expect(html).toContain("Saving to Google Drive…");
+    expect(status({ saving: true })).toContain('<p class="status-message saving">Saving the report to Google Drive…</p>');
   });
 
-  it.each([
-    ["ok", 'class="send-message ok" role="status"'],
-    ["warning", 'class="send-notice" role="alert"'],
-    ["problem", 'class="send-message problem" role="alert"'],
-  ] as const)("shows a %s message", (tone, markup) => {
-    const html = view({ notice: { tone, text: "Message text" } });
-    expect(html).toContain(`<p ${markup}>Message text</p>`);
+  it("has one polite, atomic status region, there before any message", () => {
+    expect(status()).toBe('<div class="drive-save-status" role="status" aria-live="polite" aria-atomic="true"></div>');
+    const html = status({ notice: { tone: "ok", text: "Saved." } });
+    expect(html.match(/role="status"/g)).toHaveLength(1);
+    expect(html).not.toMatch(/role="alert"/);
   });
 
-  it("keeps the last outcome visible after Drive disconnects, without the button", () => {
-    const html = view({ visible: false, notice: { tone: "warning", text: "Upload not confirmed." } });
-    expect(html).toContain("Upload not confirmed.");
-    expect(html).not.toContain("<button");
+  it.each(["ok", "warning", "problem"] as const)("shows a %s message in its own style", (tone) => {
+    expect(status({ notice: { tone, text: "Message text" } })).toContain(
+      `<p class="status-message ${tone}">Message text</p>`,
+    );
+  });
+
+  it("keeps a long file name and folder path whole in the message, for the CSS to wrap", () => {
+    const name = `AuditFlow_Report_Uploaded-documents_2026-10-25_175420 ${"(2)".repeat(1)}.pdf`;
+    const text = `Saved to Google Drive as “${name}” in My Drive › AuditFlow › ${"Very Long Company Name ".repeat(6).trim()} › 2026-10.`;
+    expect(status({ notice: { tone: "ok", text } })).toContain(text);
+  });
+
+  it("keeps the last outcome after Drive disconnects, without the button", () => {
+    const notice = { tone: "warning", text: "Upload not confirmed." } as const;
+    expect(action({ visible: false, notice })).toBe("");
+    expect(status({ visible: false, notice })).toContain("Upload not confirmed.");
+    expect(showsDriveSaveStatus(control({ visible: false, notice }))).toBe(true);
+    expect(showsDriveSaveAction(control({ visible: false, notice }))).toBe(false);
   });
 });
 
@@ -486,7 +526,8 @@ describe("source", () => {
   });
 
   it("adds the Drive button separately, for completed results, with the app's company field", () => {
-    expect(app).toContain("<DriveSaveButton");
+    expect(app).toContain("useDriveSave(");
+    expect(app).toContain("<DriveSaveAction control={driveSave} />");
     expect(app).toContain("isComplete && backendLoaded && workpaper && completedRun");
     expect(app).toContain("companyName: ranOnUpload ? company : null");
     expect(button).not.toContain("saveReport");
