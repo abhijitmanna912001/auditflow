@@ -1,0 +1,40 @@
+{
+  "case_id": "CASE_14",
+  "rows": [
+    {
+      "document": "INV-1014",
+      "finding": "Invoice total doesn't reconcile (tax mismatch)",
+      "evidence": [
+        "INV-1014"
+      ],
+      "confidence": 0.97,
+      "action": "human_review"
+    }
+  ],
+  "summary": {
+    "items_reviewed": 1,
+    "auto_cleared": 0,
+    "human_review": 1,
+    "critical": 1,
+    "assumed_minutes_per_item": 3,
+    "estimated_minutes_saved": 0
+  },
+  "findings": [
+    {
+      "finding_id": "AF-a14c61b6b9",
+      "type": "tax_mismatch",
+      "label": "Tax calculation mismatch",
+      "row_document": "INV-1014",
+      "primary_document": "INV-1014",
+      "documents": [
+        "INV-1014"
+      ],
+      "transaction_documents": [
+        "INV-1014"
+      ],
+      "severity": "high",
+      "confidence": 0.97,
+      "explanation": "INV-1014 does not internally reconcile: its stated subtotal of 200000 plus tax of 36000 equals 236000, which is 10000 less than its stated total of 246000, the amount actually paid and posted."
+    }
+  ]
+}
