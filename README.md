@@ -124,7 +124,12 @@ npm run dev
 
 The API defaults to `http://127.0.0.1:8000`; set `NEXT_PUBLIC_API_BASE_URL` to point the frontend at another backend.
 
-Google Drive (optional, in progress): setting `NEXT_PUBLIC_GOOGLE_CLIENT_ID`, `NEXT_PUBLIC_GOOGLE_API_KEY` and `NEXT_PUBLIC_GOOGLE_APP_ID` in `frontend/.env.local` (see `frontend/.env.example`) shows a Connect Google Drive button. It only connects and disconnects for now, using the `drive.file` scope; the access token stays in the tab's memory and is never sent to the backend. Open the app at `http://localhost:3000`, the origin registered for the OAuth client.
+Google Drive (optional): setting `NEXT_PUBLIC_GOOGLE_CLIENT_ID`, `NEXT_PUBLIC_GOOGLE_API_KEY` and `NEXT_PUBLIC_GOOGLE_APP_ID` in `frontend/.env.local` (see `frontend/.env.example`) turns on the Drive features; with any of them empty, no Drive control appears. After Connect Google Drive in the header:
+
+- **Select from Google Drive** adds PDF or image files from Drive to a check, alongside local uploads.
+- **Save to Google Drive** appears next to Save PDF report once a check has completed. It creates the PDF report in the browser and saves it as a new file in `My Drive / AuditFlow / <Company> / <YYYY-MM>`. Company is the Company name field for uploaded documents, or "No company named" when that is blank and for sample cases. An existing file is never overwritten: saving again gives a name ending in `(2)`, `(3)` and so on. Save PDF report still opens the browser's print window.
+
+Drive uses the `drive.file` scope, so AuditFlow only sees files and folders it created or that were selected in it. The access token stays in the tab's memory: it is never stored, never put in a URL and never sent to the backend, and saving to Drive makes no backend request or model call. Open the app at `http://localhost:3000`, the origin registered for the OAuth client. The manual checks with a real Google account are in `docs/testing/drive-report-save-stage3-manual-test.md` (not yet run).
 
 Frontend checks: `npm run typecheck`, `npm test` and `npm run build` in `frontend/`.
 
