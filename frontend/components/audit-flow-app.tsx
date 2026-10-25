@@ -42,6 +42,7 @@ import {
 } from "../lib/run-progress";
 import { AccessCodeControl } from "./access-code-control";
 import { DriveConnectButton } from "./drive-connect-button";
+import { DriveSaveButton } from "./drive-save-button";
 import {
   DriveFilePicker,
   driveSelectHint,
@@ -802,6 +803,20 @@ export function AuditFlowApp() {
                   </small>
                 </div>
               )}
+              <DriveSaveButton
+                key={completedRun?.completedAt.getTime() ?? "no-run"}
+                report={
+                  isComplete && backendLoaded && workpaper && completedRun
+                    ? {
+                        workpaper,
+                        completedAt: completedRun.completedAt,
+                        // The Company name field only exists for upload
+                        // runs; a sample case has no company.
+                        companyName: ranOnUpload ? company : null,
+                      }
+                    : null
+                }
+              />
               {backendLoaded && (
                 <SendAllButton
                   count={pendingFindings.length}

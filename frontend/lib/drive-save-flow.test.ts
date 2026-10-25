@@ -1,0 +1,368 @@
+import { readFileSync } from "node:fs";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+// The AuditFlow backend client, mocked so the tests can prove saving to
+// Drive never goes through it.
+vi.mock("./api-client", () => ({
+  apiFetch: vi.fn(async () => new Response("{}", { status: 200 })),
+  friendlyApiError: vi.fn(async () => null),
+}));
+
+import { DriveSaveButton, DriveSaveView } from "../components/drive-save-button";
+import type { Workpaper } from "../types/workpaper";
+import { apiFetch } from "./api-client";
+import { createDriveReportSaver, type DriveSaveResult } from "./drive-report-upload";
+import {
+  DriveSaveFlow,
+  noticeFor,
+  saveReportToDrive,
+  showsDriveSave,
+  type DriveSaveModules,
+  type DriveSaveNotice,
+  type DriveSaveReport,
+} from "./drive-save-flow";
+import { workpaperPayloadFallback } from "./mock-workpaper";
+import { generateReportPdf, reportPdfFileName } from "./report-pdf";
+import { FakeDrive, fakeSession, TINY_PDF, TOKEN, type RecordedRequest } from "./testing/fake-drive";
+
+const CASE_14: Workpaper = JSON.parse(
+  readFileSync(new URL("./fixtures/case-14-workpaper.json", import.meta.url), "utf8"),
+);
+const COMPLETED_AT = new Date(2026, 9, 25, 9, 5, 7);
+const FILE_NAME = "AuditFlow_Report_Case-14_2026-10-25_090507.pdf";
+const report = (extra: Partial<DriveSaveReport> = {}): DriveSaveReport => ({
+  workpaper: CASE_14,
+  completedAt: COMPLETED_AT,
+  companyName: null,
+  ...extra,
+});
+
+// The real generator and the real saver, against the fake Drive API.
+function setup() {
+  const drive = new FakeDrive();
+  const session = fakeSession(drive);
+  const saver = createDriveReportSaver({ session, fetchImpl: drive.fetch, wait: async () => {} });
+  const modules: DriveSaveModules = {
+    loadGenerator: async () => ({ generateReportPdf, reportPdfFileName }),
+    loadSaver: async () => ({ getDriveReportSaver: () => saver }),
+  };
+  return { drive, session, saver, modules };
+}
+
+const isUpload = (r: RecordedRequest) => r.url.pathname === "/upload/drive/v3/files";
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
+describe("when the Save to Google Drive action shows", () => {
+  const all = { driveConfigured: true, driveState: "connected", hasCompletedReport: true } as const;
+
+  it("shows with the feature flag on, Drive connected and a completed report", () => {
+    expect(showsDriveSave(all)).toBe(true);
+  });
+
+  it("is hidden when the feature flag is off", () => {
+    expect(showsDriveSave({ ...all, driveConfigured: false })).toBe(false);
+  });
+
+  it.each(["disconnected", "connecting", "expired"] as const)("is hidden while Drive is %s", (driveState) => {
+    expect(showsDriveSave({ ...all, driveState })).toBe(false);
+  });
+
+  it("is hidden without a completed report", () => {
+    expect(showsDriveSave({ ...all, hasCompletedReport: false })).toBe(false);
+  });
+
+  it("renders nothing here, where the Drive variables aren't set and Drive isn't connected", () => {
+    expect(renderToStaticMarkup(createElement(DriveSaveButton, { report: report() }))).toBe("");
+    expect(renderToStaticMarkup(createElement(DriveSaveButton, { report: null }))).toBe("");
+  });
+});
+
+describe("the button and its messages", () => {
+  const view = (props: Partial<Parameters<typeof DriveSaveView>[0]>) =>
+    renderToStaticMarkup(
+      createElement(DriveSaveView, { visible: true, saving: false, notice: null, onSave: () => {}, ...props }),
+    );
+
+  it("renders nothing when hidden and there is nothing to report", () => {
+    expect(view({ visible: false })).toBe("");
+  });
+
+  it("is a separate, enabled Save to Google Drive button", () => {
+    const html = view({});
+    expect(html).toContain("Save to Google Drive");
+    expect(html).not.toContain("Save PDF report");
+    expect(html).not.toMatch(/disabled/);
+  });
+
+  it("is disabled and says so while saving", () => {
+    const html = view({ saving: true });
+    expect(html).toMatch(/<button[^>]*disabled=""/);
+    expect(html).toContain('aria-busy="true"');
+    expect(html).toContain("Saving to Google Drive…");
+  });
+
+  it.each([
+    ["ok", 'class="send-message ok" role="status"'],
+    ["warning", 'class="send-notice" role="alert"'],
+    ["problem", 'class="send-message problem" role="alert"'],
+  ] as const)("shows a %s message", (tone, markup) => {
+    const html = view({ notice: { tone, text: "Message text" } });
+    expect(html).toContain(`<p ${markup}>Message text</p>`);
+  });
+
+  it("keeps the last outcome visible after Drive disconnects, without the button", () => {
+    const html = view({ visible: false, notice: { tone: "warning", text: "Upload not confirmed." } });
+    expect(html).toContain("Upload not confirmed.");
+    expect(html).not.toContain("<button");
+  });
+});
+
+describe("saving the completed report", () => {
+  it("shows the confirmed file name and destination after a successful save", async () => {
+    const { drive, modules } = setup();
+    const notice = await saveReportToDrive(report(), modules);
+    expect(notice).toEqual({
+      tone: "ok",
+      text: `Saved to Google Drive as “${FILE_NAME}” in My Drive › AuditFlow › No company named › 2026-10.`,
+    });
+    const [file] = [...drive.items.values()].filter((item) => item.mimeType === "application/pdf");
+    expect(file.name).toBe(FILE_NAME);
+    expect(new TextDecoder().decode(file.bytes!.subarray(0, 5))).toBe("%PDF-");
+  });
+
+  it("saves the same bytes the generator makes, under the app's company name", async () => {
+    const { drive, modules } = setup();
+    await saveReportToDrive(report({ companyName: "Kaveri Traders" }), modules);
+    const expected = await generateReportPdf({ workpaper: CASE_14, completedAt: COMPLETED_AT, companyName: "Kaveri Traders" });
+    const month = drive.folderAt("AuditFlow", "Kaveri Traders", "2026-10")!;
+    const [file] = drive.children(month.id);
+    // Each PDF gets its own creation time and random document /ID, so
+    // compare everything but those.
+    const strip = (bytes: Uint8Array) =>
+      Buffer.from(bytes)
+        .toString("latin1")
+        .replace(/\(D:\d+Z\)/, "")
+        .replace(/\/ID \[<[0-9a-f]+> <[0-9a-f]+>\]/, "");
+    expect(strip(file.bytes!)).toBe(strip(expected));
+  });
+
+  it("shows the saver's safe message when the save fails", async () => {
+    const { drive, modules } = setup();
+    drive.failNext(isUpload, 403);
+    expect(await saveReportToDrive(report(), modules)).toEqual({
+      tone: "problem",
+      text: "Google Drive didn't allow AuditFlow to save the report.",
+    });
+  });
+
+  it("warns, and says where to look, when the upload can't be confirmed", async () => {
+    const { drive, modules } = setup();
+    drive.failNext(isUpload, "network");
+    drive.failNext(isUpload, "network");
+    const notice = await saveReportToDrive(report(), modules);
+    expect(notice.tone).toBe("warning");
+    expect(notice.text).toMatch(/^Upload not confirmed\. AuditFlow can't tell whether the report was saved/);
+    expect(notice.text).toContain(`Look for “${FILE_NAME}” in My Drive › AuditFlow › No company named › 2026-10 before saving again.`);
+  });
+
+  it("never reports success when Drive is disconnected during the save", async () => {
+    const { drive, session, modules } = setup();
+    drive.failNext(isUpload, "hang");
+    const pending = saveReportToDrive(report(), modules);
+    await vi.waitFor(() => expect(drive.requests.some(isUpload)).toBe(true));
+    session.disconnect();
+    const notice = await pending;
+    expect(notice.tone).toBe("warning");
+    expect(notice.text).not.toMatch(/^Saved/);
+  });
+
+  it("asks to connect when Drive was disconnected before the save", async () => {
+    const { drive, session, modules } = setup();
+    session.disconnect();
+    expect(await saveReportToDrive(report(), modules)).toEqual({
+      tone: "problem",
+      text: "Connect Google Drive to save the report.",
+    });
+    expect(drive.requests).toHaveLength(0);
+  });
+
+  it("reports a report that can't be made, without contacting Drive", async () => {
+    const { drive, modules } = setup();
+    // The offline sample result has items needing review but no finding details.
+    const notice = await saveReportToDrive(report({ workpaper: workpaperPayloadFallback }), modules);
+    expect(notice).toEqual({ tone: "problem", text: "The report couldn't be prepared for Google Drive. Try again." });
+    expect(drive.requests).toHaveLength(0);
+  });
+
+  it("calls neither the AuditFlow backend nor a model, and sends nothing but Drive requests", async () => {
+    const globalFetch = vi.fn();
+    vi.stubGlobal("fetch", globalFetch);
+    const { drive, modules } = setup();
+    await saveReportToDrive(report(), modules);
+    expect(apiFetch).not.toHaveBeenCalled();
+    expect(globalFetch).not.toHaveBeenCalled();
+    expect(drive.requests.length).toBeGreaterThan(0);
+    for (const request of drive.requests) {
+      expect(request.url.origin).toBe("https://www.googleapis.com");
+      expect(request.url.href).not.toContain(TOKEN);
+      expect(request.headers.has("X-Access-Code")).toBe(false);
+    }
+  });
+
+  it.each([
+    [{ status: "saved", fileId: "a", fileName: "R.pdf", folderPath: [], message: "Saved." }, "ok"],
+    [{ status: "uncertain", reason: "network", fileName: "R.pdf", folderPath: [], message: "Look." }, "warning"],
+    [{ status: "failed", reason: "permission", message: "No." }, "problem"],
+  ] as const)("maps a %j result to a %s message", (result, tone) => {
+    expect(noticeFor(result as DriveSaveResult).tone).toBe(tone);
+  });
+});
+
+describe("repeated clicks", () => {
+  it("start only one save while one is running", async () => {
+    let finish: (notice: DriveSaveNotice) => void = () => {};
+    const run = vi.fn(() => new Promise<DriveSaveNotice>((resolve) => (finish = resolve)));
+    const flow = new DriveSaveFlow(run);
+    const phases: string[] = [];
+    flow.subscribe(() => phases.push(flow.getPhase()));
+
+    const first = flow.start(report());
+    expect(flow.getPhase()).toBe("saving");
+    expect(await flow.start(report())).toBeNull();
+    expect(await flow.start(report())).toBeNull();
+    expect(run).toHaveBeenCalledTimes(1);
+
+    finish({ tone: "ok", text: "Saved." });
+    expect(await first).toEqual({ tone: "ok", text: "Saved." });
+    expect(flow.getNotice()).toEqual({ tone: "ok", text: "Saved." });
+    expect(phases).toEqual(["saving", "idle"]);
+
+    // Free again afterwards; a new save clears the old message while it runs.
+    void flow.start(report());
+    expect(flow.getNotice()).toBeNull();
+    expect(run).toHaveBeenCalledTimes(2);
+  });
+
+  it("never upload twice, even if the same saver is asked twice at once", async () => {
+    const { drive, modules } = setup();
+    const [a, b] = await Promise.all([saveReportToDrive(report(), modules), saveReportToDrive(report(), modules)]);
+    expect([a.tone, b.tone].sort()).toEqual(["ok", "problem"]);
+    expect([a.text, b.text]).toContain("A report is already being saved to Google Drive. Wait for it to finish.");
+    expect(drive.requests.filter(isUpload)).toHaveLength(1);
+  });
+});
+
+describe("lazy loading", () => {
+  it("imports the generator and the saver only when saving", async () => {
+    vi.resetModules();
+    const loaded: string[] = [];
+    const saved: DriveSaveResult = { status: "saved", fileId: "f1", fileName: "R.pdf", folderPath: ["AuditFlow"], message: "Saved." };
+    vi.doMock("./report-pdf", () => {
+      loaded.push("report-pdf");
+      return { generateReportPdf: async () => TINY_PDF, reportPdfFileName: () => "R.pdf" };
+    });
+    vi.doMock("./drive-report-upload", () => {
+      loaded.push("drive-report-upload");
+      return { getDriveReportSaver: () => ({ save: async () => saved }) };
+    });
+    try {
+      const flow = await import("./drive-save-flow");
+      expect(loaded).toEqual([]);
+      expect(await flow.saveReportToDrive(report())).toEqual({ tone: "ok", text: "Saved." });
+      expect([...loaded].sort()).toEqual(["drive-report-upload", "report-pdf"]);
+    } finally {
+      vi.doUnmock("./report-pdf");
+      vi.doUnmock("./drive-report-upload");
+      vi.resetModules();
+    }
+  });
+});
+
+describe("source", () => {
+  // Line endings normalised: a Windows checkout may use CRLF.
+  const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf-8").replace(/\r\n/g, "\n");
+  const app = read("../components/audit-flow-app.tsx");
+  const flow = read("./drive-save-flow.ts");
+  const button = read("../components/drive-save-button.tsx");
+
+  it("keeps the Save PDF report button exactly as it was", () => {
+    expect(app).toContain(
+      [
+        "              {backendLoaded && (",
+        '                <div className="report-action">',
+        '                  <button className="secondary-button" onClick={saveReport}>',
+        '                    <Icon name="note" size={15} />',
+        "                    <span>Save PDF report</span>",
+        "                  </button>",
+        "                  <small>",
+        `                    {"Opens your browser's print window. Choose Save as PDF."}`,
+        "                  </small>",
+        "                </div>",
+        "              )}",
+      ].join("\n"),
+    );
+  });
+
+  it("keeps Save PDF report's print-window handler exactly as it was", () => {
+    expect(app).toContain(
+      [
+        "  const saveReport = () => {",
+        "    if (!workpaper || !completedRun) return;",
+        "    const previousTitle = document.title;",
+        "    // Local calendar date, so the file name matches the date in the report",
+        "    // (toISOString would give the UTC date).",
+        "    const { completedAt } = completedRun;",
+        "    const date = [",
+        "      completedAt.getFullYear(),",
+        '      String(completedAt.getMonth() + 1).padStart(2, "0"),',
+        '      String(completedAt.getDate()).padStart(2, "0"),',
+        '    ].join("-");',
+        "    // The page title becomes the browser's suggested PDF file name.",
+        "    const reportName =",
+        "      completedRun.uploadedFileCount > 0",
+        '        ? "uploaded documents"',
+        "        : workpaper.case_id;",
+        "    document.title = `AuditFlow report – ${reportName} – ${date}`;",
+        "    const restoreTitle = () => {",
+        "      document.title = previousTitle;",
+        '      window.removeEventListener("afterprint", restoreTitle);',
+        "    };",
+        '    window.addEventListener("afterprint", restoreTitle);',
+        "    window.print();",
+        "  };",
+      ].join("\n"),
+    );
+    expect(app.match(/window\.print\(\)/g)).toHaveLength(1);
+    expect(app.match(/onClick=\{saveReport\}/g)).toHaveLength(1);
+  });
+
+  it("adds the Drive button separately, for completed results, with the app's company field", () => {
+    expect(app).toContain("<DriveSaveButton");
+    expect(app).toContain("isComplete && backendLoaded && workpaper && completedRun");
+    expect(app).toContain("companyName: ranOnUpload ? company : null");
+    expect(button).not.toContain("saveReport");
+    expect(button).not.toMatch(/window\.print|afterprint|PrintReport/);
+  });
+
+  it("loads the generator and saver only on demand, so they stay out of the first page load", () => {
+    expect(flow).toContain('import("./report-pdf")');
+    expect(flow).toContain('import("./drive-report-upload")');
+    for (const source of [app, flow, button]) {
+      expect(source).not.toMatch(/^import (?!type)[^;]*["']\.\.?\/(lib\/)?(report-pdf|drive-report-upload|drive-folders)["']/m);
+      expect(source).not.toMatch(/^import (?!type)[^;]*["']pdfmake/m);
+    }
+  });
+
+  it.each([
+    ["drive-save-flow.ts", flow],
+    ["drive-save-button.tsx", button],
+  ])("%s uses no backend, access code, storage, console or model", (_, source) => {
+    expect(source).not.toMatch(/apiFetch|api-client|X-Access-Code|API_BASE|anthropic/i);
+    expect(source).not.toMatch(/localStorage|sessionStorage|indexedDB|document\.cookie|console\./);
+  });
+});
