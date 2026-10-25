@@ -887,7 +887,9 @@ export function AuditFlowApp() {
                 />
               </label>
               <p id="company-hint" className="send-hint">
-                Tickets are grouped under this company in Zoho Desk.
+                {driveConfigured
+                  ? "Groups your Zoho Desk tickets and names the Google Drive folder for saved reports. If it's empty, Drive saves go to “No company named”."
+                  : "Tickets are grouped under this company in Zoho Desk."}
               </p>
               {companyMissing && (
                 <p className="send-message problem" role="alert">

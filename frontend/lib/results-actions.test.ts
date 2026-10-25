@@ -3,6 +3,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { ResultsActions } from "../components/results-actions";
+import { NO_COMPANY_NAME } from "./report-pdf-document";
 
 const button = (label: string) => createElement("button", { className: "secondary-button" }, label);
 const render = (props: Partial<Parameters<typeof ResultsActions>[0]>) =>
@@ -124,5 +125,38 @@ describe("results header source", () => {
     expect(meta).toContain("<ResolverBadge");
     expect(meta).toContain('className="contract-note"');
     expect(meta).not.toMatch(/secondary-button|SendAllButton|DriveSave/);
+  });
+});
+
+describe("Company name field", () => {
+  const app = read("../components/audit-flow-app.tsx");
+
+  it("explains both uses of the name, and the Drive folder used when it is empty", () => {
+    const hint =
+      "Groups your Zoho Desk tickets and names the Google Drive folder for saved reports. If it's empty, Drive saves go to “No company named”.";
+    expect(app).toContain(hint);
+    expect(hint).toContain(`“${NO_COMPANY_NAME}”`);
+    // Without Google Drive set up, only the Zoho Desk use is mentioned.
+    expect(app).toContain(': "Tickets are grouped under this company in Zoho Desk."}');
+    expect(app).toMatch(/<p id="company-hint" className="send-hint">\s*\{driveConfigured\s*\?/);
+  });
+
+  it("keeps the required check for sending to Zoho Desk", () => {
+    expect(app).toContain("Company name <em>required</em>");
+    const input = app.slice(app.indexOf("ref={companyInput}"), app.indexOf("/>", app.indexOf("ref={companyInput}")));
+    expect(input).toContain("required");
+    expect(input).toContain("aria-invalid={companyMissing}");
+    expect(input).toContain('aria-describedby="company-hint"');
+    expect(app).toContain(
+      [
+        "    const companyName = company.trim();",
+        "    if (!companyName) {",
+        "      setCompanyMissing(true);",
+        "      companyInput.current?.focus();",
+        "      return;",
+        "    }",
+      ].join("\n"),
+    );
+    expect(app).toContain("Enter the company name before sending.");
   });
 });
