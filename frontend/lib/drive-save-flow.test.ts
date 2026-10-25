@@ -433,22 +433,23 @@ describe("source", () => {
   const flow = read("./drive-save-flow.ts");
   const button = read("../components/drive-save-button.tsx");
 
-  it("keeps the Save PDF report button exactly as it was", () => {
+  it("keeps the Save PDF report button: same class, click handler, icon and label, shown for backend results", () => {
+    // Moved into the results action row; its hint moved to the row's caption.
     expect(app).toContain(
       [
-        "              {backendLoaded && (",
-        '                <div className="report-action">',
-        '                  <button className="secondary-button" onClick={saveReport}>',
-        '                    <Icon name="note" size={15} />',
-        "                    <span>Save PDF report</span>",
-        "                  </button>",
-        "                  <small>",
-        `                    {"Opens your browser's print window. Choose Save as PDF."}`,
-        "                  </small>",
-        "                </div>",
-        "              )}",
+        "              backendLoaded ? (",
+        "                <button",
+        '                  className="secondary-button"',
+        "                  onClick={saveReport}",
+        "                  aria-describedby={SAVE_PDF_HINT_ID}",
+        "                >",
+        '                  <Icon name="note" size={15} />',
+        "                  <span>Save PDF report</span>",
+        "                </button>",
+        "              ) : null",
       ].join("\n"),
     );
+    expect(app).toContain(`{"Save PDF report opens your browser's print window. Choose Save as PDF."}`);
   });
 
   it("keeps Save PDF report's print-window handler exactly as it was", () => {

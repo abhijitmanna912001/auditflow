@@ -1340,18 +1340,46 @@ td small {
   white-space: nowrap;
   border: 0;
 }
-.workpaper-meta .secondary-button[aria-disabled="true"],
+.results-actions .secondary-button[aria-disabled="true"],
+.results-actions .secondary-button:disabled,
 .send-button[aria-disabled="true"] {
   opacity: 0.5;
   cursor: not-allowed;
 }
-.workpaper-meta .secondary-button {
+
+/* Results actions: Save PDF report, Save to Google Drive, Send all
+   findings. One right-aligned row of equal-height buttons that wraps on
+   narrow screens; long labels wrap inside their button. */
+.results-actions-area {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  margin: -6px 0 18px;
+}
+.results-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 0;
+}
+.results-actions .secondary-button {
   height: auto;
-  min-height: 34px;
-  padding-top: 6px;
-  padding-bottom: 6px;
+  min-height: 44px;
+  max-width: 100%;
+  min-width: 0;
+  padding: 8px 14px;
   white-space: normal;
+  overflow-wrap: anywhere;
   text-align: left;
+}
+.results-actions-hint {
+  margin: 0;
+  color: #778788;
+  font-size: 11px;
+  text-align: right;
+  overflow-wrap: anywhere;
 }
 .send-panel {
   display: grid;
@@ -1483,9 +1511,14 @@ a.send-chip.done {
   .workpaper-meta {
     align-items: flex-start;
   }
-  .workpaper-meta .secondary-button {
-    width: 100%;
-    min-height: 44px;
+  .results-actions {
+    justify-content: flex-start;
+  }
+  .results-actions .secondary-button {
+    flex: 1 1 auto;
+  }
+  .results-actions-hint {
+    text-align: left;
   }
 }
 

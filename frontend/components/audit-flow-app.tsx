@@ -43,6 +43,7 @@ import {
 import { AccessCodeControl } from "./access-code-control";
 import { DriveConnectButton } from "./drive-connect-button";
 import { DriveSaveButton } from "./drive-save-button";
+import { ResultsActions, SAVE_PDF_HINT_ID } from "./results-actions";
 import {
   DriveFilePicker,
   driveSelectHint,
@@ -792,17 +793,22 @@ export function AuditFlowApp() {
                   ? resultsSourceLabel
                   : failedRunNote}
               </p>
-              {backendLoaded && (
-                <div className="report-action">
-                  <button className="secondary-button" onClick={saveReport}>
-                    <Icon name="note" size={15} />
-                    <span>Save PDF report</span>
-                  </button>
-                  <small>
-                    {"Opens your browser's print window. Choose Save as PDF."}
-                  </small>
-                </div>
-              )}
+            </div>
+          </div>
+          <ResultsActions
+            savePdf={
+              backendLoaded ? (
+                <button
+                  className="secondary-button"
+                  onClick={saveReport}
+                  aria-describedby={SAVE_PDF_HINT_ID}
+                >
+                  <Icon name="note" size={15} />
+                  <span>Save PDF report</span>
+                </button>
+              ) : null
+            }
+            driveSave={
               <DriveSaveButton
                 key={completedRun?.completedAt.getTime() ?? "no-run"}
                 report={
@@ -817,7 +823,9 @@ export function AuditFlowApp() {
                     : null
                 }
               />
-              {backendLoaded && (
+            }
+            sendAll={
+              backendLoaded ? (
                 <SendAllButton
                   count={pendingFindings.length}
                   canSend={canSend}
@@ -825,9 +833,16 @@ export function AuditFlowApp() {
                   tooltip={sendTooltip}
                   onSend={() => void sendFindings(pendingFindings)}
                 />
-              )}
-            </div>
-          </div>
+              ) : null
+            }
+            caption={
+              backendLoaded ? (
+                <span id={SAVE_PDF_HINT_ID}>
+                  {"Save PDF report opens your browser's print window. Choose Save as PDF."}
+                </span>
+              ) : null
+            }
+          />
           {ranOnUpload && (
             <div className="send-panel">
               <label className="company-field">
