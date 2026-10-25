@@ -69,7 +69,7 @@ the run completed. `YYYY-MM` below means that month.
 | B6 | Check the Documents section of the PDF. | Lists all five: `BNK-1014.txt`, `INV-1014.txt`, `LED-1014.txt`, `PO-1014.txt`, `REC-1014.txt`, with no extra separate `INV-1014` entry. | Not run | |
 | B7 | Check the Findings section. | One finding, "Tax calculation mismatch". Main document and Related documents are both `INV-1014`. The note "Confidence is for reference." is present. No severity is shown. | Not run | |
 | B8 | Select and copy text from the PDF (for example "finding", "Confidence", "qualified"). | Copied text is intact, with no missing letters after "f". | Not run | |
-| B9 | Check the PDF for anything that shouldn't be there. | No access code, no token, no invoice amounts or lines from the source documents' contents. | Not run | |
+| B9 | Check the PDF for anything that shouldn't be there, including the viewer's attachments panel. | No access code and no Google access token anywhere in the PDF. The source documents are identified by file name only: none is embedded or attached, and no raw document text is reproduced (for example the invoice's line items, "Bill To" line or payment terms). Figures in a finding's explanation are allowed where they explain the finding, such as Case 14's subtotal, tax and total. | Not run | |
 
 ## C. Name collision
 
