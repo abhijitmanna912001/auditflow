@@ -23,6 +23,14 @@ export interface ReportPdfInput {
   readonly completedAt: Date;
   /** Optional. A missing or blank name prints as "Not provided". */
   readonly companyName?: string | null;
+  /**
+   * Optional: the file names of every source document in the run, for a
+   * run whose result has no file list of its own (a sample case's result
+   * lists only the documents its findings cite). Used only when the
+   * workpaper has no `uploaded_files` or `documents` list; an upload run's
+   * own list always wins. Names only: the files are never read.
+   */
+  readonly sourceDocuments?: readonly string[];
 }
 
 /** The report data is missing something the report needs, or is malformed. */
@@ -157,15 +165,21 @@ function checkFinding(finding: unknown, index: number): FindingDetail {
   return finding as unknown as FindingDetail;
 }
 
+/** "INV-1014.txt" → "INV-1014". */
+const fileStem = (name: string) => name.replace(/\.[^.]*$/, "");
+
 /**
  * Upload runs list each uploaded file with the document IDs read from it.
- * Sample cases have no file list in the result, so they list the document
- * IDs the result references.
+ * Otherwise the caller's source-document list is used: a document ID the
+ * result references is covered by a file named after it ("INV-1014" by
+ * "INV-1014.txt"), as in the sample case folders. Without either list, the
+ * report lists the document IDs the result references.
  */
 function reportDocuments(
   workpaper: Workpaper,
   rows: readonly WorkpaperRow[],
   findings: readonly FindingDetail[],
+  sourceDocuments: readonly string[],
 ): ReportDocument[] {
   const referenced = unique([
     ...rows.flatMap((row) => [row.document, ...row.evidence]),
@@ -184,7 +198,12 @@ function reportDocuments(
     ...map.map((entry) => entry.source_file),
   ]);
   if (files.length === 0) {
-    return referenced.map((name) => ({ name, documentIds: [] }));
+    const sources = unique(sourceDocuments);
+    const covered = new Set(sources.map(fileStem));
+    return [...sources, ...referenced.filter((id) => !covered.has(id))].map((name) => ({
+      name,
+      documentIds: [],
+    }));
   }
 
   const mapped = new Set(map.map((entry) => singleLine(entry.doc_id)));
@@ -203,7 +222,8 @@ function reportDocuments(
 
 /** Checks the completed result and picks out what the report shows. */
 export function toReportContent(input: ReportPdfInput): ReportContent {
-  const { workpaper, completedAt, companyName } = (input ?? {}) as Partial<ReportPdfInput>;
+  const { workpaper, completedAt, companyName, sourceDocuments = [] } =
+    (input ?? {}) as Partial<ReportPdfInput>;
   if (!isObject(workpaper)) {
     throw new ReportPdfDataError("There is no completed result to make a report from.");
   }
@@ -244,7 +264,12 @@ export function toReportContent(input: ReportPdfInput): ReportContent {
     itemsReviewed: requireCount(workpaper.summary.items_reviewed, "count of items reviewed"),
     itemsNeedingReview: requireCount(workpaper.summary.human_review, "count of items needing review"),
     itemsCleared: requireCount(workpaper.summary.auto_cleared, "count of items cleared"),
-    documents: reportDocuments(workpaper, rows, findings),
+    documents: reportDocuments(
+      workpaper,
+      rows,
+      findings,
+      requireStrings(sourceDocuments, "source document list"),
+    ),
     findings: findings.map((finding) => {
       const row = rows.find((candidate) => candidate.document === finding.row_document);
       return {

@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { describe, expect, it, vi } from "vitest";
 
@@ -29,10 +29,11 @@ import {
 const CASE_14: Workpaper = JSON.parse(
   readFileSync(new URL("./fixtures/case-14-workpaper.json", import.meta.url), "utf8"),
 );
-const CASE_14_INVOICE = readFileSync(
-  new URL("../../dataset/CASE_14/INV-1014.txt", import.meta.url),
-  "utf8",
-);
+// The real Case 14 source folder: its file names are what the report lists;
+// its contents must never appear in the report.
+const CASE_14_DIR = new URL("../../dataset/CASE_14/", import.meta.url);
+const CASE_14_FILES = readdirSync(CASE_14_DIR).sort();
+const CASE_14_SOURCES = CASE_14_FILES.map((name) => readFileSync(new URL(name, CASE_14_DIR), "utf8"));
 
 // Local time, so the expected date and file name don't depend on the time
 // zone the tests run in.
@@ -154,15 +155,25 @@ describe("generating the PDF", () => {
 });
 
 describe("Case 14 report content", () => {
-  const content = toReportContent({ workpaper: CASE_14, completedAt: COMPLETED_AT, companyName: COMPANY });
-  const text = textOf({ workpaper: CASE_14, completedAt: COMPLETED_AT, companyName: COMPANY });
+  const input = {
+    workpaper: CASE_14,
+    completedAt: COMPLETED_AT,
+    companyName: COMPANY,
+    sourceDocuments: CASE_14_FILES,
+  };
+  const content = toReportContent(input);
+  const text = textOf(input);
   const [finding] = CASE_14.findings ?? [];
 
-  it("uses the real Case 14 result", () => {
+  it("uses the real Case 14 result and source folder", () => {
     expect(CASE_14.case_id).toBe("CASE_14");
     expect(CASE_14.findings).toHaveLength(1);
     expect(finding.type).toBe("tax_mismatch");
     expect(finding.primary_document).toBe("INV-1014");
+    // The result itself names only the document its finding cites.
+    expect(CASE_14.uploaded_files).toBeUndefined();
+    expect(CASE_14.documents).toBeUndefined();
+    expect(CASE_14_FILES).toEqual(["BNK-1014.txt", "INV-1014.txt", "LED-1014.txt", "PO-1014.txt", "REC-1014.txt"]);
   });
 
   it("shows the company name, the report date and the case", () => {
@@ -174,9 +185,33 @@ describe("Case 14 report content", () => {
     expect(text).toContain("Sample case (Case 14)");
   });
 
-  it("lists the documents in the result", () => {
-    expect(content.documents).toEqual([{ name: "INV-1014", documentIds: [] }]);
-    expect(text).toContain("INV-1014");
+  it("lists all five source files once each, with no extra entry for the cited INV-1014", () => {
+    const names = content.documents.map((document) => document.name);
+    expect(names).toEqual(CASE_14_FILES);
+    expect(new Set(names).size).toBe(names.length);
+    expect(names).not.toContain("INV-1014");
+    for (const name of CASE_14_FILES) expect(text).toContain(name);
+  });
+
+  it("falls back to the cited document IDs when no source list is given", () => {
+    const documents = toReportContent({ workpaper: CASE_14, completedAt: COMPLETED_AT }).documents;
+    expect(documents).toEqual([{ name: "INV-1014", documentIds: [] }]);
+  });
+
+  it("still lists a cited document that has no file in the source list", () => {
+    const documents = toReportContent({
+      ...input,
+      sourceDocuments: CASE_14_FILES.filter((name) => name !== "INV-1014.txt"),
+    }).documents.map((document) => document.name);
+    expect(documents).toEqual(["BNK-1014.txt", "LED-1014.txt", "PO-1014.txt", "REC-1014.txt", "INV-1014"]);
+  });
+
+  it("lists repeated source names once", () => {
+    const documents = toReportContent({
+      ...input,
+      sourceDocuments: [...CASE_14_FILES, " INV-1014.txt ", "BNK-1014.txt"],
+    }).documents.map((document) => document.name);
+    expect(documents).toEqual(CASE_14_FILES);
   });
 
   it("shows every finding with its label, explanation and related documents", () => {
@@ -209,10 +244,14 @@ describe("Case 14 report content", () => {
     expect(JSON.stringify(content)).not.toMatch(/severity|critical/i);
   });
 
-  it("leaves out the contents of the source documents", () => {
-    expect(CASE_14_INVOICE).toContain("Custom corrugated shipping cartons");
-    for (const line of ["Custom corrugated shipping cartons", "SPS/2026/2208", "GST @ 18%", "Bill To"]) {
-      expect(text).not.toContain(line);
+  it("leaves out the contents of every source document", () => {
+    const lines = CASE_14_SOURCES.flatMap((source) => source.split(/\r?\n/))
+      .map((line) => line.trim())
+      .filter((line) => line.length >= 10);
+    expect(lines).toContain("Description: Custom corrugated shipping cartons, bulk order");
+    for (const line of lines) expect(text).not.toContain(line);
+    for (const fragment of ["Custom corrugated shipping cartons", "SPS/2026/2208", "GST @ 18%", "Bill To", "Warehouse Operations"]) {
+      expect(text).not.toContain(fragment);
     }
   });
 });
@@ -306,6 +345,20 @@ describe("rupee sign and accented names", () => {
     expect(content.caseId).toBeNull();
     expect(content.source).toBe("Uploaded documents");
   });
+
+  it("keeps the upload run's own file list even when a source list is also given", () => {
+    const documents = toReportContent({ ...input, sourceDocuments: ["Other.pdf", "INV-2001.pdf"] }).documents;
+    expect(documents).toEqual(toReportContent(input).documents);
+  });
+
+  it("lists every uploaded file, including one not linked to a document", () => {
+    const workpaper = uploadRun({
+      uploaded_files: ["Facture_Café_Zoë.pdf", "Bestellung_Jürgen_Ñúñez.pdf", "Cover letter.pdf"],
+      unmapped_files: ["Cover letter.pdf"],
+    });
+    const names = toReportContent({ ...input, workpaper }).documents.map((document) => document.name);
+    expect(names).toEqual(["Facture_Café_Zoë.pdf", "Bestellung_Jürgen_Ñúñez.pdf", "Cover letter.pdf"]);
+  });
 });
 
 describe("long content", () => {
@@ -378,6 +431,8 @@ describe("invalid or incomplete report data", () => {
     ["a finding without a reference", withFinding({ finding_id: null })],
     ["a finding with an invalid document list", withFinding({ documents: "INV-1014" })],
     ["a finding with confidence above 1", withFinding({ confidence: 97 })],
+    ["a source document list that isn't a list of names", { ...valid, sourceDocuments: "INV-1014.txt" }],
+    ["a source document list with a non-name entry", { ...valid, sourceDocuments: ["INV-1014.txt", 7] }],
     ["items needing review but no finding details", { ...valid, workpaper: workpaperPayloadFallback }],
     ["items needing review and an empty findings list", { ...valid, workpaper: { ...CASE_14, findings: [] } }],
   ])("throws ReportPdfDataError for %s", (_, input) => {
