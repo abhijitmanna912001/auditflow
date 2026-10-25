@@ -31,10 +31,18 @@ export interface RecordedRequest {
 // - "network": fail before Google sees it (nothing changes).
 // - "lost": Google handles it, then the response is lost.
 // - "hang": never answer until the request is aborted.
+// - "stall": Google handles it and sends the status, but the body never
+//   finishes (and, unlike a real fetch, ignores the abort signal).
 // - a number: answer with that HTTP status (nothing changes).
 // - { body }: Google handles it, then answers 200 with this body instead.
 //   With `handled: false`, answers with the body without handling it.
-export type Fault = "network" | "lost" | "hang" | number | { readonly body: string; readonly handled?: boolean };
+export type Fault =
+  | "network"
+  | "lost"
+  | "hang"
+  | "stall"
+  | number
+  | { readonly body: string; readonly handled?: boolean };
 
 interface PendingFault {
   readonly match: (request: RecordedRequest) => boolean;
@@ -91,6 +99,7 @@ export class FakeDrive {
     if (fault && typeof fault === "object" && fault.handled === false) return new Response(fault.body, { status: 200 });
     const response = await this.handle(request);
     if (fault === "lost") throw new TypeError("Failed to fetch");
+    if (fault === "stall") return new Response(new ReadableStream<Uint8Array>(), { status: response.status });
     if (fault && typeof fault === "object") return new Response(fault.body, { status: 200 });
     return response;
   });

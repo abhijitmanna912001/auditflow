@@ -338,6 +338,34 @@ describe("uncertain uploads", () => {
     expect(await saver.save(upload())).toMatchObject({ status: "uncertain" });
   });
 
+  it("checks instead of re-uploading when Google created the file but its reply body never arrives", async () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    try {
+      const { drive, saver } = setup();
+      drive.failNext(isUpload, "stall");
+      const pending = saver.save(upload());
+      // Past the 60-second upload timeout; the stalled body can't hold it.
+      await vi.advanceTimersByTimeAsync(61_000);
+      const result = await pending;
+      expectSaved(result);
+      expect(uploads(drive)).toHaveLength(1);
+      expect(ownChecks(drive)).toHaveLength(1);
+      expect(pdfsIn(drive, drive.folderAt(...PATH)!.id)).toHaveLength(1);
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("never reports success when Drive is disconnected while the upload's reply body is read", async () => {
+    const { drive, saver, session } = setup();
+    drive.failNext(isUpload, "stall");
+    const pending = saver.save(upload());
+    await vi.waitFor(() => expect(uploads(drive)).toHaveLength(1));
+    session.disconnect();
+    expect(await pending).toMatchObject({ status: "uncertain", reason: "disconnected" });
+  });
+
   it("maps a timeout to an uncertain failure", async () => {
     const drive = new FakeDrive();
     drive.failNext(() => true, "hang");

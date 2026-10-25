@@ -70,26 +70,37 @@ export interface DriveContext {
   readonly signal?: AbortSignal;
 }
 
-async function failureForStatus(resp: Response): Promise<DriveFailure> {
-  if (resp.status === 401) return "expired";
-  if (resp.status === 404) return "not_found";
-  if (resp.status === 429) return "rate_limited";
-  if (resp.status >= 500) return "server";
-  if (resp.status === 403) {
-    // Drive reports rate limits as 403 with a reason; only that is read.
-    try {
-      const body = (await resp.json()) as { error?: { errors?: { reason?: unknown }[] } };
-      const reason = body.error?.errors?.[0]?.reason;
-      if (reason === "rateLimitExceeded" || reason === "userRateLimitExceeded") return "rate_limited";
-    } catch {
-      // No readable body: treat it as a permission problem.
-    }
-    return "permission";
-  }
+// What an error status means on its own, without reading the body.
+function failureForStatus(status: number): DriveFailure {
+  if (status === 401) return "expired";
+  if (status === 403) return "permission";
+  if (status === 404) return "not_found";
+  if (status === 429) return "rate_limited";
+  if (status >= 500) return "server";
   return "failed";
 }
 
-/** One Drive API request; returns the parsed JSON body. */
+// Drive reports rate limits as 403 with a reason in the body; only that is
+// read. A body that can't be read leaves the status's own meaning.
+async function failureForResponse(resp: Response): Promise<DriveFailure> {
+  const failure = failureForStatus(resp.status);
+  if (failure !== "permission") return failure;
+  try {
+    const body = (await resp.json()) as { error?: { errors?: { reason?: unknown }[] } };
+    const reason = body.error?.errors?.[0]?.reason;
+    if (reason === "rateLimitExceeded" || reason === "userRateLimitExceeded") return "rate_limited";
+  } catch {
+    // No readable body: treat it as a permission problem.
+  }
+  return failure;
+}
+
+/**
+ * One Drive API request; returns the parsed JSON body. The timeout and the
+ * disconnect signal cover the whole request, reading the response body
+ * included, and every wait is raced against them, so nothing can hang
+ * whatever the fetch implementation does with the abort signal.
+ */
 export async function driveRequest(
   ctx: DriveContext,
   url: string,
@@ -107,33 +118,61 @@ export async function driveRequest(
   }, timeoutMs);
   const onDisconnect = () => controller.abort();
   ctx.signal?.addEventListener("abort", onDisconnect);
-  let resp: Response;
+  // Rejects as soon as the request is aborted (timeout or disconnect).
+  const aborted = new Promise<never>((_resolve, reject) => {
+    controller.signal.addEventListener("abort", () => reject(controller.signal.reason), { once: true });
+  });
+  aborted.catch(() => {});
+  const untilAborted = <T>(work: Promise<T>) => Promise.race([work, aborted]);
+  // Why an aborted or dropped request failed. A disconnect wins over a timeout.
+  const interrupted = () =>
+    new DriveRequestError(ctx.signal?.aborted ? "disconnected" : timedOut ? "timeout" : "network");
+  let resp: Response | undefined;
   try {
-    resp = await ctx.fetchImpl(url, {
-      method: init.method,
-      headers: { ...init.headers, Authorization: `Bearer ${token}` },
-      body: init.body,
-      credentials: "omit",
-      cache: "no-store",
-      referrerPolicy: "no-referrer",
-      signal: controller.signal,
-    });
-  } catch {
-    if (ctx.signal?.aborted) throw new DriveRequestError("disconnected");
-    throw new DriveRequestError(timedOut ? "timeout" : "network");
+    try {
+      resp = await untilAborted(
+        ctx.fetchImpl(url, {
+          method: init.method,
+          headers: { ...init.headers, Authorization: `Bearer ${token}` },
+          body: init.body,
+          credentials: "omit",
+          cache: "no-store",
+          referrerPolicy: "no-referrer",
+          signal: controller.signal,
+        }),
+      );
+    } catch {
+      throw interrupted();
+    }
+
+    if (!resp.ok) {
+      let failure: DriveFailure;
+      try {
+        failure = await untilAborted(failureForResponse(resp));
+      } catch {
+        // The error body didn't arrive in time. The status alone still says
+        // Google refused the request, unless the user disconnected.
+        if (ctx.signal?.aborted) throw new DriveRequestError("disconnected");
+        failure = failureForStatus(resp.status);
+      }
+      if (failure === "expired") ctx.onTokenRejected?.(token);
+      throw new DriveRequestError(failure);
+    }
+
+    try {
+      return await untilAborted(resp.json());
+    } catch {
+      // A success status whose body never arrived stays a timeout (or
+      // disconnect), so a create that may have worked is checked before
+      // anything is retried. A body that arrived but isn't JSON is unreadable.
+      if (controller.signal.aborted) throw interrupted();
+      throw new DriveRequestError("invalid_response");
+    }
   } finally {
     clearTimeout(timer);
     ctx.signal?.removeEventListener("abort", onDisconnect);
-  }
-  if (!resp.ok) {
-    const failure = await failureForStatus(resp);
-    if (failure === "expired") ctx.onTokenRejected?.(token);
-    throw new DriveRequestError(failure);
-  }
-  try {
-    return await resp.json();
-  } catch {
-    throw new DriveRequestError("invalid_response");
+    // Stop downloading a body nobody will read.
+    if (controller.signal.aborted) void resp?.body?.cancel().catch(() => {});
   }
 }
 

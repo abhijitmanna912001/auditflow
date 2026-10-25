@@ -1,9 +1,10 @@
 import { readFileSync } from "node:fs";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   companyFolderName,
   DriveFolderCache,
   driveFailureOf,
+  driveRequest,
   escapeQueryValue,
   folderQuery,
   listUrl,
@@ -282,6 +283,114 @@ describe("requests", () => {
       expect(request.url.origin).toBe("https://www.googleapis.com");
       expect(request.init.credentials).toBe("omit");
       expect(request.init.referrerPolicy).toBe("no-referrer");
+    }
+  });
+});
+
+describe("timeout and disconnect cover the whole request, response body included", () => {
+  const URL_ = "https://www.googleapis.com/drive/v3/files";
+  // A response whose body never arrives, like a connection that stalls after
+  // the headers. `json` ignores any abort signal, the worst case.
+  const stalledResponse = (status: number, onRead?: () => void) =>
+    ({
+      ok: status >= 200 && status < 300,
+      status,
+      body: null,
+      json: () => {
+        onRead?.();
+        return new Promise(() => {});
+      },
+    }) as unknown as Response;
+  const request = (fetchImpl: DriveContext["fetchImpl"], timeoutMs: number, signal?: AbortSignal) =>
+    driveRequest({ getToken: () => TOKEN, fetchImpl, signal }, URL_, { method: "GET" }, timeoutMs).catch(
+      (error: unknown) => error,
+    );
+
+  it("times out a success response whose body never finishes, as an uncertain failure", async () => {
+    const started = Date.now();
+    const error = await request(async () => stalledResponse(200), 30);
+    expect(error).toMatchObject({ reason: "timeout", uncertain: true });
+    expect(Date.now() - started).toBeLessThan(2_000);
+  });
+
+  it("times out a real Response whose body stream never finishes", async () => {
+    const error = await request(async () => new Response(new ReadableStream<Uint8Array>(), { status: 200 }), 30);
+    expect(error).toMatchObject({ reason: "timeout", uncertain: true });
+  });
+
+  it("stops at once when Drive is disconnected while the body is being read", async () => {
+    const disconnect = new AbortController();
+    let reading = false;
+    const pending = request(async () => stalledResponse(200, () => (reading = true)), 60_000, disconnect.signal);
+    await vi.waitFor(() => expect(reading).toBe(true));
+    disconnect.abort();
+    expect(await pending).toMatchObject({ reason: "disconnected" });
+  });
+
+  it("classifies an HTTP error by its status when its body never finishes", async () => {
+    const onTokenRejected = vi.fn();
+    expect(await request(async () => stalledResponse(403), 30)).toMatchObject({ reason: "permission", uncertain: false });
+    const rejected = await driveRequest(
+      { getToken: () => TOKEN, fetchImpl: async () => stalledResponse(401), onTokenRejected },
+      URL_,
+      { method: "GET" },
+      30,
+    ).catch((error: unknown) => error);
+    expect(rejected).toMatchObject({ reason: "expired" });
+    expect(onTokenRejected).toHaveBeenCalledWith(TOKEN);
+  });
+
+  it("reports a disconnect while an HTTP error's body hangs as a disconnect", async () => {
+    const disconnect = new AbortController();
+    let reading = false;
+    const pending = request(async () => stalledResponse(403, () => (reading = true)), 60_000, disconnect.signal);
+    await vi.waitFor(() => expect(reading).toBe(true));
+    disconnect.abort();
+    expect(await pending).toMatchObject({ reason: "disconnected" });
+  });
+
+  it("still reads a 403 rate-limit reason from a body that arrives", async () => {
+    const body = JSON.stringify({ error: { errors: [{ reason: "userRateLimitExceeded" }] } });
+    expect(await request(async () => new Response(body, { status: 403 }), 1_000)).toMatchObject({
+      reason: "rate_limited",
+    });
+  });
+
+  const json = (status: number, body: string) => async () => new Response(body, { status });
+  const hang: DriveContext["fetchImpl"] = (_url, init) =>
+    new Promise((_resolve, reject) =>
+      init?.signal?.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError"))),
+    );
+  it.each([
+    ["a success", json(200, '{"files":[]}'), null, undefined],
+    ["an HTTP error", json(500, "{}"), null, "server"],
+    ["a 403 with a body", json(403, '{"error":{}}'), null, "permission"],
+    ["unreadable JSON", json(200, "not json"), null, "invalid_response"],
+    ["a network failure", async () => Promise.reject(new TypeError("Failed to fetch")), null, "network"],
+    ["a timeout before the answer", hang, "timeout", "timeout"],
+    ["a timeout while reading the body", async () => stalledResponse(200), "timeout", "timeout"],
+    ["a timeout while reading an error body", async () => stalledResponse(403), "timeout", "permission"],
+    ["a disconnect while reading the body", async () => stalledResponse(200), "disconnect", "disconnected"],
+  ] as const)("cleans up its timer and listener after %s", async (_, fetchImpl, interrupt, reason) => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    try {
+      const disconnect = new AbortController();
+      const add = vi.spyOn(disconnect.signal, "addEventListener");
+      const remove = vi.spyOn(disconnect.signal, "removeEventListener");
+      const pending = request(fetchImpl as DriveContext["fetchImpl"], 1_000, disconnect.signal);
+      if (interrupt === "timeout") await vi.advanceTimersByTimeAsync(1_000);
+      if (interrupt === "disconnect") {
+        await vi.advanceTimersByTimeAsync(0);
+        disconnect.abort();
+      }
+      const result = await pending;
+      if (reason) expect(result).toMatchObject({ reason });
+      else expect(result).toEqual({ files: [] });
+      expect(vi.getTimerCount()).toBe(0);
+      expect(add).toHaveBeenCalledTimes(1);
+      expect(remove).toHaveBeenCalledWith("abort", add.mock.calls[0][1]);
+    } finally {
+      vi.useRealTimers();
     }
   });
 });
